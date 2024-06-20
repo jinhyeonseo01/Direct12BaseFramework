@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{21d59e0c-798e-4657-937c-8ddcac11dc8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Headers">
+      <UniqueIdentifier>{2877404b-9113-4f2b-abd3-a672887df582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\Sources">
+      <UniqueIdentifier>{1daaff77-593d-4a38-bb28-f2918b2b95d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -27,10 +36,34 @@
     <ClInclude Include="Direct12BaseFramework.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\headers\debug_console.h">
+      <Filter>Shared\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\headers\convert_string.h">
+      <Filter>Shared\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\headers\simple_mesh.h">
+      <Filter>Shared\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\headers\pch.h">
+      <Filter>Shared\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="convert_direct.h">
+      <Filter>Shared\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\sources\debug_console.cpp">
+      <Filter>Shared\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\sources\simple_mesh.cpp">
+      <Filter>Shared\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\sources\pch.cpp">
+      <Filter>Shared\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -72,12 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(SolutionDir)plugins\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\headers;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(SolutionDir)plugins\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\headers;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -139,12 +139,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\shareds\headers\convert_string.h" />
+    <ClInclude Include="..\shareds\headers\debug_console.h" />
+    <ClInclude Include="..\shareds\headers\pch.h" />
+    <ClInclude Include="..\shareds\headers\simple_mesh.h" />
+    <ClInclude Include="convert_direct.h" />
     <ClInclude Include="Direct12BaseFramework.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\shareds\sources\debug_console.cpp" />
+    <ClCompile Include="..\shareds\sources\pch.cpp" />
+    <ClCompile Include="..\shareds\sources\simple_mesh.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />
   </ItemGroup>
   <ItemGroup>

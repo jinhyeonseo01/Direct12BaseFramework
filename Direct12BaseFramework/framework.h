@@ -13,3 +13,24 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+
+
+//------------------------------------------
+
+#include <string>
+#include <string_view>
+#include <memory>
+#include <algorithm>
+#include <numeric>
+#include <type_traits>
+
+#include <array>
+#include <vector>
+#include <set>
+#include <map>
+#include <unordered_set>
+#include <unordered_map>
+
+//#include "debug_console.h"
+//#include "convert_string.h"
