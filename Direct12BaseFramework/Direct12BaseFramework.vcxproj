@@ -72,12 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\headers;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\imgui;$(SolutionDir)shareds\imgui\backends;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\headers;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\imgui;$(SolutionDir)shareds\imgui\backends;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -115,6 +115,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeaderFile>stdafx.h, pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,6 +131,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeaderFile>stdafx.h, pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,28 +141,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\shareds\headers\convert_string.h" />
-    <ClInclude Include="..\shareds\headers\debug_console.h" />
-    <ClInclude Include="..\shareds\headers\pch.h" />
-    <ClInclude Include="..\shareds\headers\simple_mesh.h" />
-    <ClInclude Include="convert_direct.h" />
-    <ClInclude Include="Direct12BaseFramework.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\shareds\constants\headers\convert_directx.h" />
+    <ClInclude Include="..\shareds\constants\headers\convert_math.h" />
+    <ClInclude Include="..\shareds\constants\headers\convert_string.h" />
+    <ClInclude Include="..\shareds\constants\headers\convert_total.h" />
+    <ClInclude Include="..\shareds\constants\headers\debug_console.h" />
+    <ClInclude Include="..\shareds\constants\headers\pch.h" />
+    <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
+    <ClInclude Include="..\shareds\engines\headers\class_define.h" />
+    <ClInclude Include="..\shareds\engines\headers\dx_engine.h" />
+    <ClInclude Include="..\shareds\engines\headers\input_module.h" />
+    <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
+    <ClInclude Include="headers\exengine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\shareds\sources\debug_console.cpp" />
-    <ClCompile Include="..\shareds\sources\pch.cpp" />
-    <ClCompile Include="..\shareds\sources\simple_mesh.cpp" />
+    <ClCompile Include="..\shareds\constants\sources\debug_console.cpp" />
+    <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
+    <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
+    <ClCompile Include="..\shareds\engines\headers\input_module.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Direct12BaseFramework.ico" />
-    <Image Include="small.ico" />
+    <Image Include="configs\Icons\Direct12BaseFramework.ico" />
+    <Image Include="configs\Icons\small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

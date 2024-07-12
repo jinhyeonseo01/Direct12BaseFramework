@@ -420,3 +420,6 @@ FodyWeavers.xsd
 *.exe
 *.out
 *.app
+
+
+*.zip

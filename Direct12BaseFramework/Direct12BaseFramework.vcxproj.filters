@@ -13,57 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shared">
+    <Filter Include="Engine">
+      <UniqueIdentifier>{ddedc286-af9b-4960-ab07-4a4a7e2c1d9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Headers">
+      <UniqueIdentifier>{a3518768-8c1f-47f3-906d-d5d2102f5a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sources">
+      <UniqueIdentifier>{66a6d069-a3aa-468d-a6a8-4a80ba4d2eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Constant">
       <UniqueIdentifier>{21d59e0c-798e-4657-937c-8ddcac11dc8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared\Headers">
+    <Filter Include="Constant\Headers">
       <UniqueIdentifier>{2877404b-9113-4f2b-abd3-a672887df582}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared\Sources">
+    <Filter Include="Constant\Sources">
       <UniqueIdentifier>{1daaff77-593d-4a38-bb28-f2918b2b95d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="..\shareds\constants\headers\convert_math.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\convert_string.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\convert_total.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\debug_console.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\pch.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\convert_directx.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\dx_engine.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\stdafx.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\exengine.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\shareds\engines\headers\input_module.h">
+      <Filter>Engine\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Direct12BaseFramework.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\headers\debug_console.h">
-      <Filter>Shared\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\headers\convert_string.h">
-      <Filter>Shared\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\headers\simple_mesh.h">
-      <Filter>Shared\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\headers\pch.h">
-      <Filter>Shared\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="convert_direct.h">
-      <Filter>Shared\Headers</Filter>
+    <ClInclude Include="..\shareds\engines\headers\class_define.h">
+      <Filter>Engine\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\sources\debug_console.cpp">
-      <Filter>Shared\Sources</Filter>
+    <ClCompile Include="..\shareds\constants\sources\pch.cpp">
+      <Filter>Constant\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\sources\simple_mesh.cpp">
-      <Filter>Shared\Sources</Filter>
+    <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
+      <Filter>Constant\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\sources\pch.cpp">
-      <Filter>Shared\Sources</Filter>
+    <ClCompile Include="..\shareds\constants\sources\debug_console.cpp">
+      <Filter>Constant\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp">
+      <Filter>Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\headers\input_module.cpp">
+      <Filter>Engine\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,10 +96,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
+    <Image Include="configs\Icons\Direct12BaseFramework.ico">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="Direct12BaseFramework.ico">
+    <Image Include="configs\Icons\small.ico">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
