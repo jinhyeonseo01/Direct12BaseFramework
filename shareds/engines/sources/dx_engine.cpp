@@ -126,7 +126,8 @@ namespace dxe
 	std::shared_ptr<Engine> Engine::BaseInitialize()
 	{
 		this->_engineStartClock = std::chrono::steady_clock::now();
-		
+		this->_engineInput = std::make_unique<Input>(this->shared_from_this());
+
 		Engine::AppendEngine(this->shared_from_this());
 
 		this->_engineMainThread = std::make_unique<std::jthread>(std::bind(&Engine::ThreadExecute, this, std::placeholders::_1));
@@ -145,18 +146,44 @@ namespace dxe
 
 	void Engine::ThreadExecute(std::stop_token token)
 	{
-		InputEvent event;
+		InputEvent _event;
+
+		HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+		LARGE_INTEGER liDueTime;
+		liDueTime.QuadPart = -10000LL;
+
+		auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
 		while (1)
 		{
-			while (this->_engineInputDispatcher.try_pop(event))
+			auto currentTime = std::chrono::steady_clock::now();
+			double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentTime - prevTime).count()/(double)1000000;
+			//1 000 000 000
+			Debug::log << 1/deltaTime << "\n";
+			while (this->_engineInput->_inputDispatcher.try_pop(_event))
 			{
 				//Engine Frame
 
 				//수직동기화
 				//수직동기화 아닌거
-				Debug::log << "1234\n";
+				//Debug::log << _event.type;
 			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+			prevTime = currentTime;
+			//std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 대충 프레임
+			if(this->isFrameLock)
+			{ // 고정밀 스핀 Wait
+				if (SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, FALSE)) {
+
+					// 고정밀 타이머가 만료될 때까지 대기
+					WaitForSingleObject(hTimer, INFINITE);
+				}
+
+				if(false)
+				{
+					auto waitingStartTime = std::chrono::steady_clock::now();
+					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - waitingStartTime).count() < (pow(10, 6) / 100));
+				}
+			}
 		}
 	}
 
@@ -674,10 +701,10 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		switch (winEvent.message)
 		{
 		case WM_KEYDOWN:
-			Debug::log << winEvent.wParam << "\n";
+			//Debug::log << winEvent.wParam << "\n";
 		default:
 			break;
 		}
-		this->_engineInputDispatcher.push(eventDesc);
+		this->_engineInput->_inputDispatcher.push(eventDesc);
 	}
 }

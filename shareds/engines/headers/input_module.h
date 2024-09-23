@@ -215,6 +215,8 @@ namespace dxe
 	{
 	public:
 		std::weak_ptr<Engine> _engine;
-		concurrency::concurrent_queue<InputEvent> _InputDispatcher;
+		concurrency::concurrent_queue<InputEvent> _inputDispatcher;
+		Input(std::shared_ptr<dxe::Engine> _engine);
+		virtual ~Input();
 	};
 }

@@ -143,4 +143,15 @@ namespace dxe
 	short KeyCode::CenterMouse = 1002;
 	short KeyCode::X1Mouse = 1010;
 	short KeyCode::X2Mouse = 1011;
+
+
+
+	Input::Input(std::shared_ptr<dxe::Engine> _engine)
+	{
+		this->_engine = _engine;
+	}
+	Input::~Input()
+	{
+		this->_engine.reset();
+	}
 }

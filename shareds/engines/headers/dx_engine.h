@@ -13,6 +13,7 @@ namespace dxe
 		static std::vector<std::shared_ptr<Engine>> _engineList;
 		static int _mainEngineIndex;
 
+
 	public:
 		static HINSTANCE _processInstance;
 		static std::chrono::time_point<std::chrono::steady_clock> _processStartClock;
@@ -49,10 +50,14 @@ namespace dxe
 		bool isOpenWindow = false;
 		bool isActiveWindow = false;
 
-	public:
+	public: //Engine Field
 		std::chrono::time_point<std::chrono::steady_clock> _engineStartClock{};
 		std::unique_ptr<std::jthread> _engineMainThread{nullptr};
 		std::unique_ptr<Input> _engineInput;
+
+		bool isFrameLock = true;
+		double targetFrame = 60;
+		double currentFrame = 60;
 
 		static HINSTANCE SetWindowHInstance(HINSTANCE hInstance) { return Engine::_processInstance = hInstance; }
 		HWND SetWindowHWnd(HWND hWnd) { return _hWnd = hWnd; }
