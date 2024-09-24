@@ -148,9 +148,9 @@ namespace dxe
 	{
 		InputEvent _event;
 
-		HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
-		LARGE_INTEGER liDueTime;
-		liDueTime.QuadPart = -10000LL;
+		//HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+		//LARGE_INTEGER liDueTime;
+		//liDueTime.QuadPart = -10000LL;
 
 		auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
 		while (1)
@@ -172,16 +172,17 @@ namespace dxe
 			//std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 대충 프레임
 			if(this->isFrameLock)
 			{ // 고정밀 스핀 Wait
-				if (SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, FALSE)) {
+
+				//if (false && SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, FALSE)) {
 
 					// 고정밀 타이머가 만료될 때까지 대기
-					WaitForSingleObject(hTimer, INFINITE);
-				}
+					//WaitForSingleObject(hTimer, INFINITE);
+				//}
 
-				if(false)
+				if(true)
 				{
 					auto waitingStartTime = std::chrono::steady_clock::now();
-					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - waitingStartTime).count() < (pow(10, 6) / 100));
+					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - waitingStartTime).count() <= (pow(10, 6) / 100));
 				}
 			}
 		}

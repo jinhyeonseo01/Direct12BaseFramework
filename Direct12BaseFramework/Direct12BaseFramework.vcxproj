@@ -151,6 +151,7 @@
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
     <ClInclude Include="..\shareds\engines\headers\dx_engine.h" />
     <ClInclude Include="..\shareds\engines\headers\input_module.h" />
+    <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
     <ClInclude Include="headers\exengine.h" />
   </ItemGroup>
