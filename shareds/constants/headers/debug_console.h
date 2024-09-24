@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <string_view>
 #include <format> // c++20
+#include <array>
 
 #include <thread>
 #include <atomic>
@@ -22,6 +23,7 @@ namespace Debug
 	protected:
 		std::atomic_bool active{ false };
 		std::wstringstream oss;
+		std::array<wchar_t, 65536> consoleInputBuffer{ L'\0' };
 
 	public:
 		//static Console cout;
@@ -47,6 +49,7 @@ namespace Debug
 		int TextCount();
 		void TextQueueClear();
 		void TextPush(std::wstring& str);
+		std::wstring Read();
 
 		void AsyncWriteFunction()
 		{
@@ -66,7 +69,28 @@ namespace Debug
 				}
 				if (TextCount() >= 100'000)
 					TextQueueClear();
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+				//Read
+				if (true)//read
+				{
+					DWORD textSize = 0;
+					ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), consoleInputBuffer.data(), consoleInputBuffer.size(), &textSize, nullptr);
+					FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+					
+					while (textSize != 0 && (consoleInputBuffer[textSize - 1] == (wchar_t)0xA || consoleInputBuffer[textSize - 1] == (wchar_t)0xD))
+						textSize--;
+					consoleInputBuffer[textSize] = L'\0';
+					if (textSize != 0) {
+						std::wstring text{ consoleInputBuffer.begin(), consoleInputBuffer.begin() + textSize };
+						auto b = text.find_first_not_of(L" \t\n\r");
+						auto e = text.find_last_not_of(L" \t\n\r");
+						text = text.substr(b, e-b+1);
+						*this << text << "\n";
+						//2024-09-24
+					}
+				}
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 			if (isRecord)
 				debugLogOutPut.close();

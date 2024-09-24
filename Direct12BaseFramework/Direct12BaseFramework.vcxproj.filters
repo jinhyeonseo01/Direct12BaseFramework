@@ -72,6 +72,9 @@
     <ClInclude Include="..\shareds\engines\headers\singleton.h">
       <Filter>Engine\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\EObject.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -90,6 +93,9 @@
       <Filter>Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\headers\input_module.cpp">
+      <Filter>Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\EObject.cpp">
       <Filter>Engine\Sources</Filter>
     </ClCompile>
   </ItemGroup>

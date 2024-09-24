@@ -2,7 +2,6 @@
 #include <stdafx.h>
 #include <dx_engine.h>
 #include <input_module.h>
-//#include "../../../Direct12BaseFramework/Resource.h"
 
 namespace dxe
 {

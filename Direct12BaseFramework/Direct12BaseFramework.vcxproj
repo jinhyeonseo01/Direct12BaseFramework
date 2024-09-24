@@ -150,6 +150,7 @@
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
     <ClInclude Include="..\shareds\engines\headers\dx_engine.h" />
+    <ClInclude Include="..\shareds\engines\headers\EObject.h" />
     <ClInclude Include="..\shareds\engines\headers\input_module.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
     <ClCompile Include="..\shareds\engines\headers\input_module.cpp" />
     <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />
   </ItemGroup>
   <ItemGroup>

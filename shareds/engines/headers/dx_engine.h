@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdafx.h>
+#include <EObject.h>
 #include <input_module.h>
 
 

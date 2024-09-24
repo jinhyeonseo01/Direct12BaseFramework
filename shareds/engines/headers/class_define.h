@@ -16,4 +16,5 @@ namespace dxe
 	//----------------
 
 	class Engine;
+	class EObject;
 }

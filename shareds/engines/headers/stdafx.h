@@ -49,6 +49,7 @@
 
 #include <Windows.h>
 #pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "rpcrt4.lib")
 
 #include <concurrent_queue.h>
 
