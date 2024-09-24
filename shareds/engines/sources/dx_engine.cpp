@@ -153,10 +153,10 @@ namespace dxe
 		//liDueTime.QuadPart = -10000LL;
 
 		auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
-		while (1)
+		while (!token.stop_requested())
 		{
-			auto currentTime = std::chrono::steady_clock::now();
-			double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentTime - prevTime).count()/(double)1000000;
+			auto currentFrameStartTime = std::chrono::steady_clock::now();
+			double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count()/(double)1000000;
 			//1 000 000 000
 			Debug::log << 1/deltaTime << "\n";
 			while (this->_engineInput->_inputDispatcher.try_pop(_event))
@@ -168,21 +168,23 @@ namespace dxe
 				//Debug::log << _event.type;
 			}
 
-			prevTime = currentTime;
-			//std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 대충 프레임
+			prevTime = currentFrameStartTime;
+
 			if(this->isFrameLock)
 			{ // 고정밀 스핀 Wait
 
-				//if (false && SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, FALSE)) {
-
-					// 고정밀 타이머가 만료될 때까지 대기
-					//WaitForSingleObject(hTimer, INFINITE);
-				//}
-
-				if(true)
+				float targetFrame = 100;
+				
+				if(true) // 완충된 busy waiting
+				{	
+					//사전에 조금 멈추기
+					int contextSwitch_MS = max(0, (int)(1000 / targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
+					std::this_thread::sleep_for(std::chrono::milliseconds(contextSwitch_MS));
+					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
+				}
+				if (false) // 고정밀 busy waiting
 				{
-					auto waitingStartTime = std::chrono::steady_clock::now();
-					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - waitingStartTime).count() <= (pow(10, 6) / 100));
+					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
 				}
 			}
 		}

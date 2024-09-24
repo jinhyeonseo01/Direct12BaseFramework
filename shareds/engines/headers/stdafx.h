@@ -48,7 +48,7 @@
 #include <ranges>
 
 #include <Windows.h>
-
+#pragma comment(lib, "winmm.lib")
 
 #include <concurrent_queue.h>
 
