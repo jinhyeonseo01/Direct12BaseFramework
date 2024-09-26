@@ -44,12 +44,13 @@ namespace Debug
 		std::queue<std::wstring> wstringQueue;
 		std::mutex m;
 		std::wofstream debugLogOutPut;
+		
+		std::atomic_bool waiting{ false };
 
 		std::wstring TextPop();
 		int TextCount();
 		void TextQueueClear();
 		void TextPush(std::wstring& str);
-		std::wstring Read();
 
 		void AsyncWriteFunction()
 		{
@@ -58,36 +59,19 @@ namespace Debug
 				debugLogOutPut.open("Debug_Log.txt");
 			while (runningAsyncWriteThread.load())
 			{
-				std::wstring str;
-				int safeCount = 0;
-				
-				while (!(str = TextPop()).empty() && safeCount <= 10'000) {
-					if (isRecord)
-						debugLogOutPut << str;
-					WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), (const void*)str.c_str(), (DWORD)str.size(), 0, 0);
-					++safeCount;
-				}
-				if (TextCount() >= 100'000)
-					TextQueueClear();
-
-				//Read
-				if (true)//read
+				if (!waiting.load())
 				{
-					DWORD textSize = 0;
-					ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), consoleInputBuffer.data(), consoleInputBuffer.size(), &textSize, nullptr);
-					FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-					
-					while (textSize != 0 && (consoleInputBuffer[textSize - 1] == (wchar_t)0xA || consoleInputBuffer[textSize - 1] == (wchar_t)0xD))
-						textSize--;
-					consoleInputBuffer[textSize] = L'\0';
-					if (textSize != 0) {
-						std::wstring text{ consoleInputBuffer.begin(), consoleInputBuffer.begin() + textSize };
-						auto b = text.find_first_not_of(L" \t\n\r");
-						auto e = text.find_last_not_of(L" \t\n\r");
-						text = text.substr(b, e-b+1);
-						*this << text << "\n";
-						//2024-09-24
+					std::wstring str;
+					int safeCount = 0;
+
+					while (!(str = TextPop()).empty() && safeCount <= 10'000) {
+						if (isRecord)
+							debugLogOutPut << str;
+						WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), (const void*)str.c_str(), (DWORD)str.size(), 0, 0);
+						++safeCount;
 					}
+					if (TextCount() >= 100'000)
+						TextQueueClear();
 				}
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -203,6 +187,36 @@ namespace Debug
 					}
 				}
 			}
+			return *this;
+		}
+
+		Console& operator>>(std::wstring& value)
+		{
+			waiting.store(true);
+
+			DWORD textSize = 0;
+			ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), consoleInputBuffer.data(), consoleInputBuffer.size(), &textSize, nullptr);
+			FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+
+			while (textSize != 0 && (consoleInputBuffer[textSize - 1] == (wchar_t)0xA || consoleInputBuffer[textSize - 1] == (wchar_t)0xD))
+				textSize--;
+			consoleInputBuffer[textSize] = L'\0';
+			if (textSize != 0) {
+				std::wstring text{ consoleInputBuffer.begin(), consoleInputBuffer.begin() + textSize };
+				auto b = text.find_first_not_of(L" \t\n\r");
+				auto e = text.find_last_not_of(L" \t\n\r");
+				text = text.substr(b, e - b + 1);
+				value = text;
+			}
+			
+			waiting.store(false);
+			return *this;
+		}
+		Console& operator>>(std::string& value)
+		{
+			std::wstring original;
+			(*this) >> original;
+			value = std::to_string(original);
 			return *this;
 		}
 		

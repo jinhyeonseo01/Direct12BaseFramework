@@ -19,15 +19,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Initialize(hInstance);
     dxe::EObject eas{};
     eas.SetGUID(L"Test");
-    std::this_thread::sleep_for(std::chrono::seconds(30));
+    //
     MSG msg{};
     try
     {
         std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
         engine->SetTitleName(L"Game");
         engine->SetHandleName(L"main");
-        //engine->BaseInitialize();
-        //engine->Initialize();
+        engine->BaseInitialize();
+        engine->Initialize();
         engine = nullptr;
 
         std::shared_ptr<dxe::Engine> engine2 = std::make_shared<dxe::Engine>();

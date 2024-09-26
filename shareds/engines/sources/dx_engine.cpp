@@ -164,7 +164,15 @@ namespace dxe
 
 				//수직동기화
 				//수직동기화 아닌거
-				//Debug::log << _event.type;
+				
+				if (_event.type == dxe::InputType::Keyboard 
+					&& _event.keyboard.isDown
+					&& _event.keyCode == dxe::KeyCode::A)
+				{
+					Debug::log << "Test\n";
+					std::string test;
+					Debug::log >> test;
+				}
 			}
 
 			prevTime = currentFrameStartTime;
@@ -656,7 +664,6 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			bool isDown = !((winEvent.lParam >> 31) & 0x1);
 			bool isUp = !isDown;
 
-			InputEvent eventDesc;
 			std::memset(&eventDesc, 0, sizeof(InputEvent));
 			eventDesc.type = InputType::Keyboard;
 			eventDesc.keyCode = winEvent.wParam;
@@ -681,7 +688,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			bool isFirst = !((winEvent.lParam >> 30) & 0x1);
 			bool isDown = !((winEvent.lParam >> 31) & 0x1);
 			bool isUp = !isDown;
-			InputEvent eventDesc;
+
 			std::memset(&eventDesc, 0, sizeof(InputEvent));
 			eventDesc.type = InputType::Keyboard;
 			eventDesc.keyCode = winEvent.wParam;

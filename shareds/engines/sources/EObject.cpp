@@ -1,28 +1,20 @@
 #include "EObject.h"
+#include "engine_utility.h"
 
 namespace dxe
 {
 	EObject::EObject()
 	{
-
+		this->SetGUID(dxe::Guid::GetNewGuid());
 	}
 
 	EObject::EObject(std::wstring guid)
 	{
-
+		this->SetGUID(guid);
 	}
 
 	std::wstring EObject::SetGUID(std::wstring str)
 	{
-		UUID uuid;
-		RPC_WSTR uuidString = nullptr;
 
-		HRESULT result_create = UuidCreate(&uuid);
-		HRESULT result_change = UuidToStringW(&uuid, &uuidString);
-		std::wstring wstr{ reinterpret_cast<wchar_t*>(uuidString) };
-		RpcStringFreeW(&uuidString);
-		Debug::log << wstr << "\n";
-
-		return wstr;
 	}
 }

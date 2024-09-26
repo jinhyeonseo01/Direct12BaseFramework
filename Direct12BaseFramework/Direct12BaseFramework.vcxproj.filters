@@ -75,6 +75,9 @@
     <ClInclude Include="..\shareds\engines\headers\EObject.h">
       <Filter>Engine\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\engine_utility.h">
+      <Filter>Engine\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -96,6 +99,9 @@
       <Filter>Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp">
+      <Filter>Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\constants\sources\engine_utility.cpp">
       <Filter>Engine\Sources</Filter>
     </ClCompile>
   </ItemGroup>

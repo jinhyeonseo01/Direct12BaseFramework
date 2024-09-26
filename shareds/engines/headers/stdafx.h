@@ -59,8 +59,9 @@
 #include <SDKDDKVer.h>
 #include <Windows.h>
 
-
 #include <class_define.h>
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+
+using namespace dxe;
