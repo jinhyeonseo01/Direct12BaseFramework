@@ -162,9 +162,9 @@
     <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
     <ClCompile Include="..\shareds\constants\sources\engine_utility.cpp" />
-    <ClCompile Include="..\shareds\engines\headers\input_module.cpp" />
     <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp" />
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\input_module.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include <stdafx.h>
 #include <EObject.h>
 #include <input_module.h>
+#include <engine_utility.h>
 
 
 namespace dxe

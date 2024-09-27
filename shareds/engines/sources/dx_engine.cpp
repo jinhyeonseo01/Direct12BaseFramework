@@ -156,8 +156,9 @@ namespace dxe
 		{
 			auto currentFrameStartTime = std::chrono::steady_clock::now();
 			double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count()/(double)1000000;
-			//1 000 000 000
-			Debug::log << 1/deltaTime << "\n";
+			double fps = 1 / deltaTime;
+			Engine::SetTitleName(std::to_wstring(std::format("{} : {:0.3f}","Fps", fps)));
+
 			while (this->_engineInput->_inputDispatcher.try_pop(_event))
 			{
 				//Engine Frame

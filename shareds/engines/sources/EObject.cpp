@@ -15,6 +15,6 @@ namespace dxe
 
 	std::wstring EObject::SetGUID(std::wstring str)
 	{
-
+		return dxe::Guid::GetNewGuid();
 	}
 }

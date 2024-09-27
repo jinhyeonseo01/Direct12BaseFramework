@@ -25,5 +25,11 @@ std::wstring dxe::Guid::ConvertGuid(const GUID& guid)
 
 GUID dxe::Guid::ConvertGuid(const std::wstring& guid)
 {
-	//UuidFromStringW
+	UUID guid2;
+	UuidFromStringW((RPC_WSTR)(guid.c_str()), reinterpret_cast<UUID*>(&guid2));
+	Debug::log << guid2.Data1 << "\n";
+	Debug::log << guid2.Data2 << "\n";
+	Debug::log << guid2.Data3 << "\n";
+	Debug::log << guid2.Data4 << "\n";
+	return guid2;
 }

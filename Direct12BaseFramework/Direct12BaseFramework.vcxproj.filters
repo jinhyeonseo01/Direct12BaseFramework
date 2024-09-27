@@ -95,13 +95,13 @@
     <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp">
       <Filter>Engine\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\engines\headers\input_module.cpp">
-      <Filter>Engine\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp">
       <Filter>Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\engine_utility.cpp">
+      <Filter>Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\input_module.cpp">
       <Filter>Engine\Sources</Filter>
     </ClCompile>
   </ItemGroup>

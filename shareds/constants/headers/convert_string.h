@@ -254,4 +254,26 @@ namespace std
 
 		return str2;
 	}
+
+	template<class T, class Y>
+	inline int split(const T& target, const T& c, Y& split)
+	{
+		split.clear();
+		std::wstring str;
+		auto prevPtr = target.begin();
+		int count = 0;
+		while (true)
+		{
+			auto currentPtr = std::search(prevPtr, target.end(), c.begin(), c.end());
+			std::wstring s;
+			split.emplace_back(prevPtr, currentPtr);
+			if (currentPtr == target.end())
+				break;
+			if (count > 10000)
+				break;
+			
+			prevPtr = currentPtr + std::distance(c.begin(), c.end());
+		}
+		return count;
+	}
 }

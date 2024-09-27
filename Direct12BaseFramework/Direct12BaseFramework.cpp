@@ -18,7 +18,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Initialize(hInstance);
     dxe::EObject eas{};
-    eas.SetGUID(L"Test");
+    auto b = eas.SetGUID(L"Test");
+    Debug::log << b << "\n";
+    dxe::Guid::ConvertGuid(b);
     //
     MSG msg{};
     try
