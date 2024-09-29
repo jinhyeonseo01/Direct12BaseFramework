@@ -18,10 +18,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Initialize(hInstance);
     dxe::EObject eas{};
-    auto b = eas.SetGUID(L"Test");
-    Debug::log << b << "\n";
-    dxe::Guid::ConvertGuid(b);
-    //
+    Debug::log << eas.GetGUID() << "\n";
+
+    std::shared_ptr<EObject> obj = std::make_shared<EObject>();
+    std::shared_ptr<GameObject> obj3 = std::make_shared<GameObject>();
+    
+    std::shared_ptr<GameObject> obj4 = std::make_shared<GameObject>();
+    dxe::EObject::AddObject(obj4);
+    
+    dxe::EObject::AddObject(obj);
+    dxe::EObject::AddObject(obj3);
+
+    std::vector<std::shared_ptr<EObject>> v1;
+    auto a = dxe::EObject::ContainsByGuid(obj->guid);
+
+    Debug::log << a << "\n";
+
     MSG msg{};
     try
     {

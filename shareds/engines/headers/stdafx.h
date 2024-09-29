@@ -35,6 +35,7 @@
 #include <vector>
 #include <functional>
 #include <format>
+#include <unordered_map>
 
 #include <malloc.h>
 #include <memory.h>
@@ -60,6 +61,8 @@
 #include <Windows.h>
 
 #include <class_define.h>
+
+//여긴 자명한 외부 라이브러리 + 전방선언만.
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;

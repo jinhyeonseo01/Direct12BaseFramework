@@ -2,6 +2,7 @@
 
 #include <stdafx.h>
 #include <EObject.h>
+#include <GameObject.h>
 #include <input_module.h>
 #include <engine_utility.h>
 

@@ -17,4 +17,5 @@ namespace dxe
 
 	class Engine;
 	class EObject;
+	class GameObject;
 }

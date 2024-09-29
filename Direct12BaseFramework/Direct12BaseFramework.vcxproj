@@ -148,10 +148,14 @@
     <ClInclude Include="..\shareds\constants\headers\debug_console.h" />
     <ClInclude Include="..\shareds\constants\headers\pch.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
+    <ClInclude Include="..\shareds\engines\components\Component.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
+    <ClInclude Include="..\shareds\engines\headers\Component.h" />
     <ClInclude Include="..\shareds\engines\headers\dx_engine.h" />
     <ClInclude Include="..\shareds\engines\headers\engine_utility.h" />
     <ClInclude Include="..\shareds\engines\headers\EObject.h" />
+    <ClInclude Include="..\shareds\engines\headers\GameObject.h" />
+    <ClInclude Include="..\shareds\engines\headers\IClone.h" />
     <ClInclude Include="..\shareds\engines\headers\input_module.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
@@ -161,9 +165,12 @@
     <ClCompile Include="..\shareds\constants\sources\debug_console.cpp" />
     <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
-    <ClCompile Include="..\shareds\constants\sources\engine_utility.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
     <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\engine_utility.cpp" />
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\GameObject.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\IClone.cpp" />
     <ClCompile Include="..\shareds\engines\sources\input_module.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />
   </ItemGroup>
