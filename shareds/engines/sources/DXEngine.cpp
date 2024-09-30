@@ -1,6 +1,6 @@
 
 #include <stdafx.h>
-#include <dx_engine.h>
+#include <DXEngine.h>
 #include <input_module.h>
 
 namespace dxe

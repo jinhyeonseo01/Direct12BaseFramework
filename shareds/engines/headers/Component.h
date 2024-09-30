@@ -19,5 +19,9 @@ class Component
 	//------------------
 	//OnCollision(GameObject& other) // 아니면 콜리전으로
 
+	//------------------
+	//gameobject weak
+	//transform
+
 };
 
