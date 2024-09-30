@@ -31,6 +31,9 @@
     <Filter Include="Constant\Sources">
       <UniqueIdentifier>{1daaff77-593d-4a38-bb28-f2918b2b95d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{8866e6b0-8477-4cdf-82bd-66e6df6893c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shareds\constants\headers\convert_math.h">
@@ -54,29 +57,41 @@
     <ClInclude Include="..\shareds\constants\headers\convert_directx.h">
       <Filter>Constant\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\dx_engine.h">
-      <Filter>Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\stdafx.h">
-      <Filter>Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\exengine.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\input_module.h">
-      <Filter>Engine\Headers</Filter>
+    <ClInclude Include="..\shareds\engines\headers\Transform.h">
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\class_define.h">
-      <Filter>Engine\Headers</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\singleton.h">
-      <Filter>Engine\Headers</Filter>
+    <ClInclude Include="..\shareds\engines\headers\Component.h">
+      <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\EObject.h">
-      <Filter>Engine\Headers</Filter>
+    <ClInclude Include="..\shareds\engines\headers\DXEngine.h">
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\engine_utility.h">
-      <Filter>Engine\Headers</Filter>
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\EObject.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\GameObject.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\IClone.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\input_module.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Scene.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\singleton.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\stdafx.h">
+      <Filter>Engine\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,17 +107,35 @@
     <ClCompile Include="..\shareds\constants\sources\debug_console.cpp">
       <Filter>Constant\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\dx_engine.cpp">
-      <Filter>Engine\Sources</Filter>
+    <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Component.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\engine_utility.cpp">
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp">
-      <Filter>Engine\Sources</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\constants\sources\engine_utility.cpp">
-      <Filter>Engine\Sources</Filter>
+    <ClCompile Include="..\shareds\engines\sources\GameObject.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\IClone.cpp">
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\input_module.cpp">
-      <Filter>Engine\Sources</Filter>
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Scene.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Singleton.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Transform.cpp">
+      <Filter>Engine\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -29,7 +29,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     dxe::EObject::AddObject(obj);
     dxe::EObject::AddObject(obj3);
 
-    std::vector<std::shared_ptr<EObject>> v1;
+    std::vector<std::shared_ptr<EObject>> Testing;
+    EObject::FindObjectsByType<EObject>(Testing);
     auto a = dxe::EObject::ContainsByGuid(obj->guid);
 
     Debug::log << a << "\n";

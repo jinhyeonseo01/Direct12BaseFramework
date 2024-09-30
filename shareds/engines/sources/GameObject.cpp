@@ -1,6 +1,6 @@
 #include <stdafx.h>
 
-#include <dx_engine.h>
+#include <DXEngine.h>
 
 
 GameObject::GameObject()

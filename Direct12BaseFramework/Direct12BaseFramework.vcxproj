@@ -157,7 +157,7 @@
     <ClInclude Include="..\shareds\engines\headers\IClone.h" />
     <ClInclude Include="..\shareds\engines\headers\input_module.h" />
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
-    <ClInclude Include="..\shareds\engines\headers\Singleton.h" />
+    <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
   </ItemGroup>
