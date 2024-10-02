@@ -120,13 +120,13 @@ namespace dxe
 		EObject(EObject&& eObject) noexcept;
 		EObject& operator=(const EObject& eObject);
 		EObject& operator=(EObject&& eObject) noexcept;
+		bool operator==(const EObject& other) const;
+		bool operator<(const EObject& other) const;
 
 		virtual ~EObject();
 
 		void SetGUID(const std::wstring& str);
 		std::wstring GetGUID() const;
-
-		bool operator==(const EObject& other);
 
 		void* Clone() const override;
 		void ReRef() const override;

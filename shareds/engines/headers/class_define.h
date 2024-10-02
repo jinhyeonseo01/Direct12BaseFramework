@@ -18,4 +18,7 @@ namespace dxe
 	class Engine;
 	class EObject;
 	class GameObject;
+	class Scene;
+	class SceneManager;
+	class Component;
 }

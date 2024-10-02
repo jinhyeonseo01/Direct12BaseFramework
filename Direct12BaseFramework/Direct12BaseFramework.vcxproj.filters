@@ -93,6 +93,12 @@
     <ClInclude Include="..\shareds\engines\headers\stdafx.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\SceneManager.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\ResourceManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -136,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp">
       <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

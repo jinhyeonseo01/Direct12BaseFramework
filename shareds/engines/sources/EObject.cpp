@@ -64,9 +64,14 @@ namespace dxe
 		return this->guid;
 	}
 }
-bool EObject::operator==(const EObject& other)
+bool EObject::operator==(const EObject& other) const
 {
 	return other.guid == this->guid;
+}
+
+bool EObject::operator<(const EObject& other) const
+{
+	return other.guid < this->guid;
 }
 
 void* EObject::Clone() const
