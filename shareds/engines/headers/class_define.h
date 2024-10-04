@@ -21,4 +21,5 @@ namespace dxe
 	class Scene;
 	class SceneManager;
 	class Component;
+	class Transform;
 }

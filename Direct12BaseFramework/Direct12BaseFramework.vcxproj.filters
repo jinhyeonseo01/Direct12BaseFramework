@@ -97,7 +97,13 @@
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\IDelayedDestroy.h">
+      <Filter>Engine\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\simple_mesh_ext.h">
+      <Filter>Constant\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -147,7 +153,13 @@
       <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\IDelayedDestroy.cpp">
+      <Filter>Engine\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\constants\sources\simple_mesh_ext.cpp">
+      <Filter>Constant\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

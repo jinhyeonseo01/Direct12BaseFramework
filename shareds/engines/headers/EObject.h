@@ -23,6 +23,28 @@ namespace dxe
 			}
 			return false;
 		}
+		template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		static bool RemoveObject(std::shared_ptr<T> object)
+		{
+			if (object == nullptr)
+				return false;
+			if (_EObjectTable.contains(object->guid))
+			{
+				_EObjectTable.erase(object->guid);
+				return true;
+			}
+			return false;
+		}
+		static bool RemoveGuid(const std::wstring& guid)
+		{
+			auto iter = _EObjectTable.find(guid);
+			if (iter != _EObjectTable.end())
+			{
+				_EObjectTable.erase(iter);
+				return true;
+			}
+			return false;
+		}
 		static bool ContainsByGuid(std::wstring& guid)
 		{
 			if (_EObjectTable.contains(guid))
@@ -113,7 +135,7 @@ namespace dxe
 		}
 
 	public:
-		std::wstring guid;
+		std::wstring guid = L"";
 		EObject();
 		EObject(const std::wstring& guid);
 		EObject(const EObject& eObject);
@@ -128,8 +150,8 @@ namespace dxe
 		void SetGUID(const std::wstring& str);
 		std::wstring GetGUID() const;
 
-		void* Clone() const override;
-		void ReRef() const override;
+		virtual void* Clone() const override;
+		virtual void ReRef() const override;
 	};
 }
 

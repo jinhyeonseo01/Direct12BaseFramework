@@ -57,6 +57,8 @@
 #include <convert_total.h>
 #include <debug_console.h>
 #include <simple_mesh_LH.h>
+#include <simple_mesh_ext.h>
+
 #include <SDKDDKVer.h>
 #include <Windows.h>
 

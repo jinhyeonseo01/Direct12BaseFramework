@@ -5,41 +5,37 @@
 #include <stdafx.h>
 #include <DXEngine.h>
 
-#include "Scene.h"
-#include "SceneManager.h"
-
 using namespace dxe;
 
 void Initialize(HINSTANCE hInstance);
 void Release();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
 {
 
     Initialize(hInstance);
-	
+    /*
+    dxe::EObject eas{};
+    Debug::log << eas.GetGUID() << "\n";
 
-    auto scene = SceneManager::CreateScene(L"Test Scene");
-    scene->CreateGameObject(L"Hello");
-    scene->CreateGameObject(L"Hello2");
-    Debug::log << SceneManager::_sceneList.size() << "\n";
-    for (auto& b : SceneManager::_sceneList)
-        Debug::log << b->name << "\n";
-	for (auto& a : scene->_gameObjectList)
-        Debug::log << a->name << "\n";
+    std::shared_ptr<EObject> obj = std::make_shared<EObject>();
+    std::shared_ptr<GameObject> obj3 = std::make_shared<GameObject>();
 
-    Vector3 euler = Vector3(45*D2R, 45 * D2R, 45 * D2R);
-    Debug::log << euler << "\n";
-	Quaternion quat = Quaternion::CreateFromYawPitchRoll(euler);
-    Matrix mat = Matrix::CreateFromQuaternion(quat);
-    ToEuler(quat, euler);
-    Debug::log << euler << "\n";
-    Debug::log << euler * R2D << "\n";
-    Debug::log << mat.Forward() << "\n";
-    
+    std::shared_ptr<GameObject> obj4 = std::make_shared<GameObject>();
+    dxe::EObject::AddObject(obj4);
+
+    dxe::EObject::AddObject(obj);
+    dxe::EObject::AddObject(obj3);
+
+    std::vector<std::shared_ptr<EObject>> Testing;
+    EObject::FindObjectsByType<EObject>(Testing);
+    auto a = dxe::EObject::ContainsByGuid(obj->guid);
+    Debug::log << a << "\n";
+	*/
+
     MSG msg{};
     try
     {
@@ -78,15 +74,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     Release();
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 void Initialize(HINSTANCE hInstance)
 {
-
     timeBeginPeriod(1);
 
-    Debug::Console::CreateConsole(0,0,600,900,true);
+    Debug::Console::CreateConsole(0, 0, 600, 900, true);
     dxe::Engine::SetWindowHInstance(hInstance);
     dxe::Engine::_processStartClock = std::chrono::steady_clock::now();
 }

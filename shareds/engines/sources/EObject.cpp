@@ -6,8 +6,8 @@
 
 namespace dxe
 {
-	std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable(8192);
-	std::unordered_map<std::wstring, std::wstring> EObject::_CloneGuidTable(8192);
+	std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable;
+	std::unordered_map<std::wstring, std::wstring> EObject::_CloneGuidTable;
 
 	EObject::EObject()
 	{
@@ -15,7 +15,7 @@ namespace dxe
 	}
 	EObject::~EObject()
 	{
-		
+		RemoveGuid(this->guid);
 	}
 
 	EObject::EObject(const std::wstring& guid)
@@ -56,30 +56,39 @@ namespace dxe
 
 	void EObject::SetGUID(const std::wstring& str)
 	{
-		this->guid = dxe::Guid::GetNewGuid();
+		auto prevGuid = this->guid;
+		bool alreadyGuid = this->guid == L"" ? false : ContainsByGuid(this->guid);
+
+		this->guid = str;
+		if(alreadyGuid)
+		{
+			RemoveGuid(prevGuid);
+			AddObject(this->shared_from_this());
+		}
 	}
 
 	std::wstring EObject::GetGUID() const
 	{
 		return this->guid;
 	}
-}
-bool EObject::operator==(const EObject& other) const
-{
-	return other.guid == this->guid;
-}
 
-bool EObject::operator<(const EObject& other) const
-{
-	return other.guid < this->guid;
-}
+	bool EObject::operator==(const EObject& other) const
+	{
+		return other.guid == this->guid;
+	}
 
-void* EObject::Clone() const
-{
-	return nullptr;
-}
+	bool EObject::operator<(const EObject& other) const
+	{
+		return other.guid < this->guid;
+	}
 
-void EObject::ReRef() const
-{
-	
+	void* EObject::Clone() const
+	{
+		return nullptr;
+	}
+
+	void EObject::ReRef() const
+	{
+
+	}
 }

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{667200fd-24e7-4f62-9543-003889e45ddc}</ProjectGuid>
-    <RootNamespace>Direct12BaseFramework</RootNamespace>
+    <ProjectGuid>{6167673d-c8bc-4b6d-aa94-2adb48409b5f}</ProjectGuid>
+    <RootNamespace>TestScene</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,13 +71,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\imgui;$(SolutionDir)shareds\imgui\backends;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\imgui;$(SolutionDir)shareds\imgui\backends;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -115,7 +115,6 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeaderFile>stdafx.h, pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,7 +130,6 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeaderFile>stdafx.h, pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -141,56 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\shareds\constants\headers\convert_directx.h" />
-    <ClInclude Include="..\shareds\constants\headers\convert_math.h" />
-    <ClInclude Include="..\shareds\constants\headers\convert_string.h" />
-    <ClInclude Include="..\shareds\constants\headers\convert_total.h" />
-    <ClInclude Include="..\shareds\constants\headers\debug_console.h" />
-    <ClInclude Include="..\shareds\constants\headers\pch.h" />
-    <ClInclude Include="..\shareds\constants\headers\simple_mesh_ext.h" />
-    <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
-    <ClInclude Include="..\shareds\engines\headers\class_define.h" />
-    <ClInclude Include="..\shareds\engines\headers\Component.h" />
-    <ClInclude Include="..\shareds\engines\headers\DXEngine.h" />
-    <ClInclude Include="..\shareds\engines\headers\engine_utility.h" />
-    <ClInclude Include="..\shareds\engines\headers\EObject.h" />
-    <ClInclude Include="..\shareds\engines\headers\GameObject.h" />
-    <ClInclude Include="..\shareds\engines\headers\IClone.h" />
-    <ClInclude Include="..\shareds\engines\headers\IDelayedDestroy.h" />
-    <ClInclude Include="..\shareds\engines\headers\input_module.h" />
-    <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
-    <ClInclude Include="..\shareds\engines\headers\Scene.h" />
-    <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
-    <ClInclude Include="..\shareds\engines\headers\singleton.h" />
-    <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
-    <ClInclude Include="..\shareds\engines\headers\Transform.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\shareds\constants\sources\debug_console.cpp" />
-    <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
-    <ClCompile Include="..\shareds\constants\sources\simple_mesh_ext.cpp" />
-    <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\engine_utility.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\GameObject.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\IClone.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\IDelayedDestroy.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\input_module.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
-    <ClCompile Include="Direct12BaseFramework.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Direct12BaseFramework.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="configs\Icons\Direct12BaseFramework.ico" />
-    <Image Include="configs\Icons\small.ico" />
+    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
