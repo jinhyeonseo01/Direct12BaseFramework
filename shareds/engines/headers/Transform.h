@@ -4,7 +4,7 @@
 
 namespace dxe
 {
-	class Transform : public dxe::Component
+	class Transform : public Component
 	{
 	public:
 		Transform();
@@ -12,51 +12,51 @@ namespace dxe
 	public:
 		void* Clone() const override;
 		void ReRef() const override;
-	public:
-		Vector3 localPosition;
-		Vector3 localScale;
-		Vector3 _localEulerAngles;
-		Quaternion _localRotation;
-
+	protected:
 		Vector3 _prevlocalPosition;
 		Vector3 _prevlocalScale;
-		Vector3 _prevLocalEulerAngles;
+		Quaternion _prevLocalRotation;
+	public:
+
+		Vector3 localPosition;
+		Vector3 localScale;
+		Quaternion localRotation;
+
+		Vector3 _forward;
+		Vector3 _up;
+		Vector3 _right;
+
+		Vector3 forward(const Vector3& dir = Vector3::Zero);
+		Vector3 up(const Vector3& dir = Vector3::Zero);
+		Vector3 right(const Vector3& dir = Vector3::Zero);
 
 		Vector3 localEuler();
-		void localEuler(const Vector3& euler);
-		Quaternion localRotation();
-		void localRotation(const Quaternion& quat);
+		const Vector3& localEuler(const Vector3& euler);
 
 		Vector3 worldPosition();
+		const Vector3& worldPosition(const Vector3& worldPos);
 		Vector3 worldScale();
-		Vector3 worldRotation();
+		const Vector3& worldScale(const Vector3& worldScale);
+		Quaternion worldRotation();
+		const Quaternion& worldRotation(const Quaternion& quaternion);
 
-		Matrix localTrsMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
-		Matrix worldTrsMatrix = Matrix::Identity;
-		Matrix& GetLocalToWorldMatrix();
-		Matrix& GetLocalSRTMatrix();
-		bool islocaltrschanged = true; //이거 활성화시 시 월드매트릭스 갱신.isworldtrschanged 이거 활성화
-		bool isworldtrschanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
+		Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
+		Matrix localToWorldMatrix = Matrix::Identity;
+		bool GetLocalToWorldMatrix(Matrix& localToWorldMatrix);
+		bool GetLocalSRTMatrix(Matrix& localSRT);
+		bool CheckNeedLocalSRTUpdate() const;
+		bool CheckNeedLocalToWorldUpdate() const;
+		void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
+
+		bool isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
+		bool isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
+
+		Vector3 LocalToWorld_Position(const Vector3& value);
+		Vector3 LocalToWorld_Direction(const Vector3& value);
+		Quaternion LocalToWorld_Quaternion(const Quaternion& value);
+
+		Vector3 WorldToLocal_Position(const Vector3& value);
+		Vector3 WorldToLocal_Direction(const Vector3& value);
+		Quaternion WorldToLocal_Quaternion(const Quaternion& value);
 	};
 }
-
-
-
-// localTrsMatrix // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
-// worldTrsMatrix
-// bool islocaltrschanged 이거 활성화시 시 월드매트릭스 갱신. isworldtrschanged 이거 활성화
-// bool isworldtrschanged 부모가 local 업데이트 or 부모 world 변경시 이거 true. worldtrs변경.
-
-
-// func LocalToWorld_Position
-// func LocalToWorld_Direction
-
-// getForward
-// getRight
-// getUp
-
-// setForward Right랑 Cross후 Up 갱신
-// setRight Forward랑 Cross후 Up 갱신
-// setUp Farward랑 Cross
-
-// LookAt(target, upvector)

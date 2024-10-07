@@ -20,13 +20,13 @@ void Release();
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
 {
 
     Initialize(hInstance);
-	
+
 
     auto scene = SceneManager::CreateScene(L"Test Scene");
     auto obj1 = scene->CreateGameObject(L"Hello");
@@ -36,11 +36,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Debug::log << SceneManager::_sceneList.size() << "\n";
     for (auto& b : SceneManager::_sceneList)
         Debug::log << b->name << "\n";
-	//for (auto& a : scene->_gameObjectList)
+    //for (auto& a : scene->_gameObjectList)
         //Debug::log << a->name << "\n";
     obj2->SetParent(obj1);
     obj3->SetParent(obj2);
-	obj4->SetParent(obj1);
+    obj4->SetParent(obj1);
 
     obj1->Debug();
     std::vector<std::shared_ptr<GameObject>> vec;
@@ -51,10 +51,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
     MSG msg{};
-    Sleep(50000);
     try
     {
-        
+
         {
             std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
@@ -62,13 +61,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             engine->BaseInitialize();
             engine->Initialize();
             engine = nullptr;
-
-            std::shared_ptr<dxe::Engine> engine2 = std::make_shared<dxe::Engine>();
-            engine->SetTitleName(L"Gamea2");
-            engine->SetHandleName(L"maina2");
-            engine2->BaseInitialize();
-            engine2->Initialize();
-            engine2 = nullptr;
         }
 
         while (!dxe::Engine::GetEngineList().empty())
@@ -88,11 +80,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 }
             }
         }
-        //if(Engine::GetEngineList().empty())
+        if(Engine::GetEngineList().empty())
         {
             Debug::log << "모든 엔진이 제거됨\n" << "\n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            throw;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
     catch (const std::exception& e)
@@ -101,14 +92,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     Release();
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 void Initialize(HINSTANCE hInstance)
 {
     timeBeginPeriod(1);
 
-    Debug::Console::CreateConsole(0,0,600,900,true);
+    Debug::Console::CreateConsole(0, 0, 600, 900, true);
     dxe::Engine::SetWindowHInstance(hInstance);
     dxe::Engine::_processStartClock = std::chrono::steady_clock::now();
 }

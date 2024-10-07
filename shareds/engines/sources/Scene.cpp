@@ -1,5 +1,6 @@
 #include "Scene.h"
-
+#include "Component.h"
+#include "Transform.h"
 #include "GameObject.h"
 
 
@@ -70,8 +71,8 @@ namespace dxe
 	std::shared_ptr<GameObject> Scene::CreateGameObject(std::wstring name)
 	{
 		auto gameObject = std::make_shared<GameObject>(name);
-		Scene::AddGameObject(gameObject);
-
+		gameObject->Init();
+		AddGameObject(gameObject);
 		return gameObject;
 	}
 
@@ -118,5 +119,22 @@ namespace dxe
 		if (iter == this->_gameObjectList.end())
 			return nullptr;
 		return *iter;
+	}
+
+	int Scene::Find(std::wstring name, std::vector<std::shared_ptr<GameObject>> vec, bool includeDestroy)
+	{
+		if (vec.capacity() < (vec.size() / 2))
+			vec.reserve(vec.size());
+
+		for(int i=0;i< this->_gameObjectList.size();i++)
+		{
+			auto current = this->_gameObjectList[i];
+			if (!includeDestroy && current->IsDestroy())
+				continue;
+			if (current->name == name)
+				vec.push_back(current);
+		}
+		return vec.size();
+		
 	}
 }

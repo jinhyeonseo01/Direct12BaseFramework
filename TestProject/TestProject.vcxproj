@@ -24,6 +24,7 @@
     <ProjectGuid>{6167673d-c8bc-4b6d-aa94-2adb48409b5f}</ProjectGuid>
     <RootNamespace>TestScene</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>TestProject</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -139,7 +140,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="TestProject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Direct12BaseFramework\Direct12BaseFramework.vcxproj">
+      <Project>{667200fd-24e7-4f62-9543-003889e45ddc}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

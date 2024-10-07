@@ -34,5 +34,27 @@ namespace DirectX
             // 오일러 각을 Vector3로 저장 (Roll, Pitch, Yaw 순서로)
             euler = Vector3(roll, pitch, yaw); // 순서: Roll, Pitch, Yaw
 		};
+
+        inline Vector3 QuaternionToEuler(const Quaternion& quaternion) {
+            // 쿼터니언을 회전 행렬로 변환
+            XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(quaternion);
+
+            // 행렬에서 오일러 각 추출
+            float pitch, yaw, roll;
+
+            // 행렬에서 오일러 각 추출
+            pitch = std::asin(-rotationMatrix.r[2].m128_f32[0]);
+
+            if (std::cos(pitch) > 0.0001) { // 기울기(Gimbal Lock) 체크
+                yaw = std::atan2(rotationMatrix.r[2].m128_f32[1], rotationMatrix.r[2].m128_f32[2]);
+                roll = std::atan2(rotationMatrix.r[1].m128_f32[0], rotationMatrix.r[0].m128_f32[0]);
+            }
+            else {
+                yaw = std::atan2(-rotationMatrix.r[0].m128_f32[2], rotationMatrix.r[1].m128_f32[1]);
+                roll = 0.0f;
+            }
+
+            return Vector3(pitch, yaw, roll);
+        }
     }
 }

@@ -113,6 +113,8 @@ namespace dxe
 		if(_engineMainThread != nullptr)
 			_engineMainThread->request_stop();
 		_engineMainThread.release();
+
+		Debug::log << std::format("엔진 {} 릴리즈", std::to_string(_titleName)) << "\n";
 	}
 
 	std::shared_ptr<Engine> Engine::Reset()
@@ -146,55 +148,58 @@ namespace dxe
 	void Engine::ThreadExecute(std::stop_token token)
 	{
 		InputEvent _event;
-
-		//HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
-		//LARGE_INTEGER liDueTime;
-		//liDueTime.QuadPart = -10000LL;
-
-		auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
-		while (!token.stop_requested())
+		try
 		{
-			auto currentFrameStartTime = std::chrono::steady_clock::now();
-			double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count()/(double)1000000;
-			double fps = 1 / deltaTime;
-			Engine::SetTitleName(std::to_wstring(std::format("{} : {:0.3f}","Fps", fps)));
-
-			while (this->_engineInput->_inputDispatcher.try_pop(_event))
+			auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
+			while (!token.stop_requested())
 			{
-				//Engine Frame
+				auto currentFrameStartTime = std::chrono::steady_clock::now();
+				double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count() / (double)1000000;
+				double fps = 1 / deltaTime;
+				Engine::SetTitleName(std::to_wstring(std::format("{} : {:0.3f}", "Fps", fps)));
 
-				//수직동기화
-				//수직동기화 아닌거
-				
-				if (_event.type == dxe::InputType::Keyboard 
-					&& _event.keyboard.isDown
-					&& _event.keyCode == dxe::KeyCode::A)
+				while (this->_engineInput->_inputDispatcher.try_pop(_event))
 				{
-					Debug::log << "Test\n";
-					std::string test;
-					Debug::log >> test;
+					//Engine Frame
+
+					//수직동기화
+					//수직동기화 아닌거
+
+					if (_event.type == dxe::InputType::Keyboard
+						&& _event.keyboard.isDown
+						&& _event.keyCode == dxe::KeyCode::A)
+					{
+						Debug::log << "Test\n";
+						std::string test;
+						Debug::log >> test;
+					}
+				}
+				prevTime = currentFrameStartTime;
+
+				if (this->isFrameLock)
+				{ // 고정밀 스핀 Wait
+
+					float targetFrame = 100;
+
+					if (true) // 완충된 busy waiting
+					{
+						//사전에 조금 멈추기
+						int contextSwitch_MS = max(0, (int)(1000 / targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
+						std::this_thread::sleep_for(std::chrono::milliseconds(contextSwitch_MS));
+						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
+					}
+					if (false) // 고정밀 busy waiting
+					{
+						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
+					}
 				}
 			}
-
-			prevTime = currentFrameStartTime;
-
-			if(this->isFrameLock)
-			{ // 고정밀 스핀 Wait
-
-				float targetFrame = 100;
-				
-				if(true) // 완충된 busy waiting
-				{	
-					//사전에 조금 멈추기
-					int contextSwitch_MS = max(0, (int)(1000 / targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
-					std::this_thread::sleep_for(std::chrono::milliseconds(contextSwitch_MS));
-					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
-				}
-				if (false) // 고정밀 busy waiting
-				{
-					while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
-				}
-			}
+		}
+		catch (const std::exception& e)
+		{
+			Debug::log << "예외 발생: "<< std::format("Engine : {}, thread : {}", std::to_string(_titleName), GetCurrentThreadId())<<"\n" << e.what() << "\n";
+			std::this_thread::sleep_for(std::chrono::seconds(5));
+			DeleteEngine(this->shared_from_this());
 		}
 	}
 
@@ -343,13 +348,13 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		return this->GetWindowRect();
 	}
 
-	void Engine::SetTitleName(std::wstring name)
+	void Engine::SetTitleName(const std::wstring& name)
 	{
 		this->_titleName = name;
 		if (this->_hWnd != nullptr)
 			SetWindowTextW(this->_hWnd, this->_titleName.data());
 	}
-	void Engine::SetHandleName(std::wstring name)
+	void Engine::SetHandleName(const std::wstring& name)
 	{
 		this->_handleName = name;
 	}
@@ -509,6 +514,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			this->CloseWindow();
 			break;
 		case WM_DESTROY:
+			DeleteEngine(this->shared_from_this()); // 창 파괴시 엔진 제거
 			break;
 		case WM_SETFOCUS:
 			break;

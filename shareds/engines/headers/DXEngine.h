@@ -3,6 +3,8 @@
 #include <stdafx.h>
 #include <EObject.h>
 #include <GameObject.h>
+#include <Component.h>
+#include <Transform.h>
 #include <input_module.h>
 #include <engine_utility.h>
 
@@ -65,8 +67,8 @@ namespace dxe
 		static HINSTANCE SetWindowHInstance(HINSTANCE hInstance) { return Engine::_processInstance = hInstance; }
 		HWND SetWindowHWnd(HWND hWnd) { return _hWnd = hWnd; }
 		HWND GetWindowHWnd() { return _hWnd; }
-		void SetTitleName(std::wstring name);
-		void SetHandleName(std::wstring name);
+		void SetTitleName(const std::wstring& name);
+		void SetHandleName(const std::wstring& name);
 
 		void OpenWindow();
 		void EnableWindow();
@@ -86,6 +88,7 @@ namespace dxe
 		Engine();
 		virtual ~Engine();
 
+		int hasher(int _cpp_par_);
 		virtual void ThreadExecute(std::stop_token token);
 		std::shared_ptr<Engine> BaseInitialize();
 

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct12BaseFramework", "Direct12BaseFramework\Direct12BaseFramework.vcxproj", "{667200FD-24E7-4F62-9543-003889E45DDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestScene", "TestScene\TestScene.vcxproj", "{6167673D-C8BC-4B6D-AA94-2ADB48409B5F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestProject", "TestProject\TestProject.vcxproj", "{6167673D-C8BC-4B6D-AA94-2ADB48409B5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
