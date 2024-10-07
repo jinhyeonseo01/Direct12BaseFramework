@@ -9,7 +9,7 @@ namespace dxe
 	std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable;
 	std::unordered_map<std::wstring, std::wstring> EObject::_CloneGuidTable;
 
-	EObject::EObject() : _type("EObject")
+	EObject::EObject()
 	{
 		this->SetGUID(dxe::Guid::GetNewGuid());
 	}
@@ -26,13 +26,11 @@ namespace dxe
 	EObject::EObject(const EObject& eObject)
 	{
 		this->SetGUID(eObject.GetGUID());
-		this->_type = eObject._type;
 	}
 
 	EObject::EObject(EObject&& eObject) noexcept
 	{
 		this->SetGUID(std::move(eObject.guid));
-		this->_type = std::move(eObject._type);
 	}
 
 	EObject& EObject::operator=(const EObject& eObject)
@@ -41,7 +39,6 @@ namespace dxe
 			return *this;
 
 		this->SetGUID(eObject.GetGUID());
-		this->_type = eObject._type;
 		return *this;
 	}
 
@@ -51,7 +48,6 @@ namespace dxe
 			return *this;
 		
 		this->SetGUID(std::move(eObject.guid));
-		this->_type = std::move(eObject._type);
 		return *this;
 	}
 

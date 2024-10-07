@@ -136,7 +136,6 @@ namespace dxe
 
 	public:
 		std::wstring guid = L"";
-		std::wstring _type = L"EObject";
 
 		EObject();
 		EObject(const std::wstring& guid);

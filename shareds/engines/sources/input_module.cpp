@@ -146,11 +146,11 @@ namespace dxe
 
 
 
-	Input::Input(std::shared_ptr<dxe::Engine> _engine)
+	InputDispatcher::InputDispatcher(std::shared_ptr<dxe::Engine> _engine)
 	{
 		this->_engine = _engine;
 	}
-	Input::~Input()
+	InputDispatcher::~InputDispatcher()
 	{
 		this->_engine.reset();
 	}

@@ -58,7 +58,8 @@ namespace dxe
 	public: //Engine Field
 		std::chrono::time_point<std::chrono::steady_clock> _engineStartClock{};
 		std::unique_ptr<std::jthread> _engineMainThread{nullptr};
-		std::unique_ptr<Input> _engineInput;
+		std::unique_ptr<InputDispatcher> _engineInputDispatcher;
+		std::unique_ptr<Input> input;
 
 		bool isFrameLock = true;
 		double targetFrame = 60;

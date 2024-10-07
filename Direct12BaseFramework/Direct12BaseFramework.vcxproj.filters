@@ -105,6 +105,9 @@
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_ext.h">
       <Filter>Constant\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Input.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -160,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_ext.cpp">
       <Filter>Constant\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Input.cpp">
+      <Filter>Engine\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

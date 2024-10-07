@@ -4,7 +4,7 @@ namespace dxe
 {
 	struct WinEvent;
 	class KeyCode;
-	class Input;
+	class InputDispatcher;
 	struct InputEventDesc;
 	struct InputMouseDesc;
 	struct InputTextDesc;
@@ -22,4 +22,5 @@ namespace dxe
 	class SceneManager;
 	class Component;
 	class Transform;
+	class Input;
 }

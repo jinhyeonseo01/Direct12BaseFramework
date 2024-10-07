@@ -1,7 +1,8 @@
 
 #include <stdafx.h>
-#include <DXEngine.h>
 #include <input_module.h>
+#include <DXEngine.h>
+#include <Input.h>
 
 namespace dxe
 {
@@ -127,7 +128,8 @@ namespace dxe
 	std::shared_ptr<Engine> Engine::BaseInitialize()
 	{
 		this->_engineStartClock = std::chrono::steady_clock::now();
-		this->_engineInput = std::make_unique<Input>(this->shared_from_this());
+		this->_engineInputDispatcher = std::make_unique<InputDispatcher>(this->shared_from_this());
+		this->input = std::make_unique<Input>();
 
 		Engine::AppendEngine(this->shared_from_this());
 
@@ -151,28 +153,16 @@ namespace dxe
 		try
 		{
 			auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
-			while (!token.stop_requested())
+			while (!token.stop_requested()) //Frame Loop
 			{
 				auto currentFrameStartTime = std::chrono::steady_clock::now();
 				double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count() / (double)1000000;
 				double fps = 1 / deltaTime;
 				Engine::SetTitleName(std::to_wstring(std::format("{} : {:0.3f}", "Fps", fps)));
 
-				while (this->_engineInput->_inputDispatcher.try_pop(_event))
-				{
-					//Engine Frame
-
-					//수직동기화
-					//수직동기화 아닌거
-
-					if (_event.type == dxe::InputType::Keyboard
-						&& _event.keyboard.isDown
-						&& _event.keyCode == dxe::KeyCode::A)
-					{
-						Debug::log << "Test\n";
-						std::string test;
-						Debug::log >> test;
-					}
+				input->DataBeginUpdate();
+				while (this->_engineInputDispatcher->_inputDispatcher.try_pop(_event)) { // Input 등록
+					input->DataUpdate(_event);
 				}
 				prevTime = currentFrameStartTime;
 
@@ -184,7 +174,7 @@ namespace dxe
 					if (true) // 완충된 busy waiting
 					{
 						//사전에 조금 멈추기
-						int contextSwitch_MS = max(0, (int)(1000 / targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
+						int contextSwitch_MS = std::max(0, (int)(1000 / targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
 						std::this_thread::sleep_for(std::chrono::milliseconds(contextSwitch_MS));
 						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
 					}
@@ -721,6 +711,6 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		default:
 			break;
 		}
-		this->_engineInput->_inputDispatcher.push(eventDesc);
+		this->_engineInputDispatcher->_inputDispatcher.push(eventDesc);
 	}
 }

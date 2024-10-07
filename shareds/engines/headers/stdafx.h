@@ -48,6 +48,8 @@
 #include <concepts>
 #include <ranges>
 
+#define NOMINMAX
+
 #include <Windows.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "rpcrt4.lib")
@@ -60,7 +62,6 @@
 #include <simple_mesh_ext.h>
 
 #include <SDKDDKVer.h>
-#include <Windows.h>
 
 #include <class_define.h>
 

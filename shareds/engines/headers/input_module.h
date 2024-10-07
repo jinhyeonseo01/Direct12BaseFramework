@@ -209,14 +209,15 @@ namespace dxe
 			InputMouseDesc mouse;
 			InputEventDesc event;
 		};
+		std::chrono::time_point<std::chrono::steady_clock> time;
 	};
 
-	class Input
+	class InputDispatcher
 	{
 	public:
 		std::weak_ptr<Engine> _engine;
 		concurrency::concurrent_queue<InputEvent> _inputDispatcher;
-		Input(std::shared_ptr<dxe::Engine> _engine);
-		virtual ~Input();
+		InputDispatcher(std::shared_ptr<dxe::Engine> _engine);
+		virtual ~InputDispatcher();
 	};
 }

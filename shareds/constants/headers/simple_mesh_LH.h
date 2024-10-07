@@ -676,7 +676,7 @@ namespace DirectX
 
             static void Transform(const Plane& plane, const Quaternion& rotation, Plane& result) noexcept;
             static Plane Transform(const Plane& plane, const Quaternion& rotation) noexcept;
-                // Input quaternion must be the inverse transpose of the transformation
+                // InputDispatcher quaternion must be the inverse transpose of the transformation
         };
 
         //------------------------------------------------------------------------------
