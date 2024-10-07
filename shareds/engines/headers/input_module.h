@@ -149,6 +149,7 @@ namespace dxe
 		static short NumPadDot;
 		static short NumPad0;
 
+		static short MOUSE_KECODE_OFFSET;
 		static short LeftMouse;
 		static short RightMouse;
 		static short CenterMouse;

@@ -97,5 +97,9 @@ namespace dxe
 		virtual std::shared_ptr<Engine> Reset();
 		virtual void Release();
 
+	public:
+		virtual void LogicPipeline();
+		virtual void RenderingPipeline();
+
 	};
 }

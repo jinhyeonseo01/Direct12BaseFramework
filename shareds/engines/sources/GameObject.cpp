@@ -239,6 +239,21 @@ bool GameObject::SetActiveSelf(bool _active)
 	return _active;
 }
 
+bool GameObject::SetActivePrev(bool activePrev)
+{
+	return _active_total_prev = activePrev;
+}
+
+bool GameObject::CheckActiveUpdated()
+{
+	return _active_total_prev != _active_total;
+}
+
+bool GameObject::SyncActiveState()
+{
+	return  _active_total_prev = _active_total;
+}
+
 void GameObject::ActiveUpdateChain(bool _active_total)
 {
 	this->_active_total = _active_total && _active_self;

@@ -138,11 +138,13 @@ namespace dxe
 	short KeyCode::NumPadDot = 110;
 	short KeyCode::NumPad0 = 96;
 
-	short KeyCode::LeftMouse = 1000;
-	short KeyCode::RightMouse = 1001;
-	short KeyCode::CenterMouse = 1002;
-	short KeyCode::X1Mouse = 1010;
-	short KeyCode::X2Mouse = 1011;
+	short KeyCode::MOUSE_KECODE_OFFSET = 1000;
+
+	short KeyCode::LeftMouse = KeyCode::MOUSE_KECODE_OFFSET + 0;
+	short KeyCode::RightMouse = KeyCode::MOUSE_KECODE_OFFSET + 1;
+	short KeyCode::CenterMouse = KeyCode::MOUSE_KECODE_OFFSET + 2;
+	short KeyCode::X1Mouse = KeyCode::MOUSE_KECODE_OFFSET + 10;
+	short KeyCode::X2Mouse = KeyCode::MOUSE_KECODE_OFFSET + 11;
 
 
 

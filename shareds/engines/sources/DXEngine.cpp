@@ -4,6 +4,9 @@
 #include <DXEngine.h>
 #include <Input.h>
 
+#include "Scene.h"
+#include "SceneManager.h"
+
 namespace dxe
 {
 	int Engine::_mainEngineIndex = -1;
@@ -164,6 +167,20 @@ namespace dxe
 				while (this->_engineInputDispatcher->_inputDispatcher.try_pop(_event)) { // Input 등록
 					input->DataUpdate(_event);
 				}
+
+				if (input->GetKeyDown(KeyCode::A))
+					SceneManager::_currentScene->_gameObjectList[0]->SetActiveSelf(SceneManager::_currentScene->_gameObjectList[0]->GetActiveSelf());
+
+				auto logicPipelineStartTime = std::chrono::steady_clock::now();
+				LogicPipeline();
+				auto logicPipelineEndTime = std::chrono::steady_clock::now();
+				auto renderingPipelineStartTime = logicPipelineEndTime;
+				RenderingPipeline();
+				auto renderingPipelineEndTime = std::chrono::steady_clock::now();
+				auto logicPipelineDeltaTime = logicPipelineEndTime - logicPipelineStartTime;
+				auto renderingPipelineDeltaTime = renderingPipelineEndTime - renderingPipelineStartTime;
+
+
 				prevTime = currentFrameStartTime;
 
 				if (this->isFrameLock)
@@ -519,6 +536,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		case WM_NCMBUTTONUP:
 		case WM_NCXBUTTONUP:
 		{
+			break;
 			eventDesc.type = InputType::Mouse;
 			eventDesc.mouse.isCtrl = winEvent.wParam & MK_CONTROL;
 			eventDesc.mouse.isShift = winEvent.wParam & MK_SHIFT;
@@ -534,6 +552,8 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			}
 			if (winEvent.wParam & MK_XBUTTON1)	eventDesc.keyCode = KeyCode::X1Mouse;
 			if (winEvent.wParam & MK_XBUTTON1)	eventDesc.keyCode = KeyCode::X2Mouse;
+
+			//ReleaseCapture();
 			break;
 		}
 		case WM_NCLBUTTONDOWN: //비클라이언트 영역에서 왼쪽 마우스 버튼이 눌릴 때
@@ -541,6 +561,11 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		case WM_NCMBUTTONDOWN: //비클라이언트 영역에서 가운데 마우스 버튼이 눌릴 때
 		case WM_NCXBUTTONDOWN:
 		{
+			break;
+			if (winEvent.wParam == HTCAPTION) {
+				DefWindowProc(winEvent.hWnd, winEvent.message, winEvent.wParam, winEvent.lParam);
+				break;
+			}
 			eventDesc.type = InputType::Mouse;
 			eventDesc.mouse.isCtrl = winEvent.wParam & MK_CONTROL;
 			eventDesc.mouse.isShift = winEvent.wParam & MK_SHIFT;
@@ -558,6 +583,8 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 				if (winEvent.wParam & MK_XBUTTON1)	eventDesc.keyCode = KeyCode::X2Mouse;
 				break;
 			}
+
+			//SetCapture(winEvent.hWnd);
 			break;
 		}
 		case WM_LBUTTONUP:
@@ -635,7 +662,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			eventDesc.mouse.isUp = sign > 0;
 			eventDesc.mouse.isCtrl = winEvent.wParam & MK_CONTROL;
 			eventDesc.mouse.isShift = winEvent.wParam & MK_SHIFT;
-			eventDesc.keyCode = KeyCode::CenterMouse; break;
+			eventDesc.keyCode = KeyCode::CenterMouse;
 			break;
 		}
 		case WM_MOUSEHOVER:

@@ -33,3 +33,7 @@ Test Scene
       Components
       : class dxe::Transform
       Childs
+enable
+enable
+enable
+enable

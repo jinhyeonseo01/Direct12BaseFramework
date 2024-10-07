@@ -128,14 +128,18 @@ namespace dxe
 
 	public:
 
-		bool _active_self_prev = false;
 		bool _active_self = true;
-		bool _active_total_prev = true;
+		bool _active_total_prev = false;
 		bool _active_total = true;
 
 		bool GetActive();//_active_total
 		bool GetActiveSelf(); // _active_self
 		bool SetActiveSelf(bool _active); //_active_self
+		bool SetActivePrev(bool activePrev);
+
+		bool CheckActiveUpdated();
+		bool SyncActiveState();
+
 	protected:
 		void ActiveUpdateChain(bool _active_total);
 	public:

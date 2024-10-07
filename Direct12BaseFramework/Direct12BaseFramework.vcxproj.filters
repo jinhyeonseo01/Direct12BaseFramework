@@ -167,6 +167,9 @@
     <ClCompile Include="..\shareds\engines\sources\Input.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\DXEngine_pipeline.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc">

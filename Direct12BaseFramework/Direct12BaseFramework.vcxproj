@@ -173,6 +173,7 @@
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\DXEngine_pipeline.cpp" />
     <ClCompile Include="..\shareds\engines\sources\engine_utility.cpp" />
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
     <ClCompile Include="..\shareds\engines\sources\GameObject.cpp" />

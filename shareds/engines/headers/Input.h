@@ -25,10 +25,10 @@ namespace dxe
 	class Input
 	{
 	protected:
-		static const int _maxInputKeyField;
-		static const int _maxInputMouseField;
+		static const int _maxInputKeyField = 2048;
+		static const int _maxInputMouseField = 1100;
 		InputKeyData _inputKeyboardField[Input::_maxInputKeyField];
-		InputKeyData _inputMouseField[Input::_maxInputMouseField];
+		InputMouseData _inputMouseField[Input::_maxInputMouseField];
 
 		Vector2 mousePos{ 0, 0 };
 	public:
@@ -36,12 +36,13 @@ namespace dxe
 		bool GetKey(int keycode);
 		bool GetKeyUp(int keycode);
 
+
 		bool GetMouseDown(int keycode);
 		bool GetMouse(int keycode);
 		bool GetMouseUp(int keycode);
 
 		bool DataUpdate(InputEvent& event);
-		bool DataBeginUpdate();
+		void DataBeginUpdate();
 
 
 		Vector2 GetMousePosition();

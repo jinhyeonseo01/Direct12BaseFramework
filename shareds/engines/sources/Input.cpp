@@ -1,37 +1,34 @@
 #include "Input.h"
 
 
-const int Input::_maxInputKeyField = 2048;
-const int Input::_maxInputMouseField = 256;
-
 bool Input::GetKeyDown(int keycode)
 {
-
+	return  _inputKeyboardField[keycode].down;
 }
 
 bool Input::GetKey(int keycode)
 {
-
+	return  _inputKeyboardField[keycode].stay;
 }
 
 bool Input::GetKeyUp(int keycode)
 {
-
+	return  _inputKeyboardField[keycode].up;
 }
 
 bool Input::GetMouseDown(int keycode)
 {
-
+	return  _inputMouseField[keycode].down;
 }
 
 bool Input::GetMouse(int keycode)
 {
-
+	return  _inputMouseField[keycode].stay;
 }
 
 bool Input::GetMouseUp(int keycode)
 {
-	_inputKeyboardField[e.keyCode]
+	return  _inputMouseField[keycode].up;
 }
 
 bool Input::DataUpdate(InputEvent& e)
@@ -39,19 +36,57 @@ bool Input::DataUpdate(InputEvent& e)
 	switch (e.type)
 	{
 	case InputType::Keyboard:
-		_inputKeyboardField[e.keyCode].down = e.keyboard.isDown;
-		_inputKeyboardField[e.keyCode].up = e.keyboard.isUp;
+		if((!_inputKeyboardField[e.keyCode].stay) && e.keyboard.isDown)
+			_inputKeyboardField[e.keyCode].down = e.keyboard.isDown;
+		if ((_inputKeyboardField[e.keyCode].stay) && e.keyboard.isUp)
+			_inputKeyboardField[e.keyCode].up = e.keyboard.isUp;
 
 		if (_inputKeyboardField[e.keyCode].down)
+		{
+			if (_inputKeyboardField[e.keyCode].stay)
+				_inputKeyboardField[e.keyCode].up = true;
 			_inputKeyboardField[e.keyCode].stay = true;
+			_inputKeyboardField[e.keyCode]._lastDown_Time = e.time;
+		}
+		if(_inputKeyboardField[e.keyCode].up)
+		{
+			_inputKeyboardField[e.keyCode]._lastUp_Time = e.time;
+		}
+		return true;
 		break;
 	case InputType::Mouse:
+		if((!e.mouse.isUp) && (!e.mouse.isDown))
+		{
+			mousePos = Vector2(e.mouse.posX, e.mouse.posY);
+		}
+		else
+		{
+			if ((!_inputMouseField[e.keyCode].down) && e.mouse.isDown)
+				_inputMouseField[e.keyCode].down = e.mouse.isDown;
+			if ((!_inputMouseField[e.keyCode].up) && e.mouse.isUp)
+				_inputMouseField[e.keyCode].up = e.mouse.isUp;
 
+			if (_inputMouseField[e.keyCode].down)
+			{
+				if (_inputMouseField[e.keyCode].stay)
+					_inputMouseField[e.keyCode].up = true;
+				_inputMouseField[e.keyCode].stay = true;
+				_inputMouseField[e.keyCode]._lastDown_Time = e.time;
+				_inputMouseField[e.keyCode].downPos = Vector2(e.mouse.posX, e.mouse.posY);
+			}
+			if (_inputMouseField[e.keyCode].up)
+			{
+				_inputMouseField[e.keyCode]._lastUp_Time = e.time;
+				_inputMouseField[e.keyCode].upPos = Vector2(e.mouse.posX, e.mouse.posY);
+			}
+		}
+		return true;
 		break;
 	}
+	return false;
 }
 
-bool Input::DataBeginUpdate()
+void Input::DataBeginUpdate()
 {
 	for(int i=0;i<Input::_maxInputKeyField;i++)
 	{
@@ -65,7 +100,7 @@ bool Input::DataBeginUpdate()
 
 		}
 	}
-	for (int i = 0; i < Input::_maxInputMouseField; i++)
+	for (int i = KeyCode::MOUSE_KECODE_OFFSET; i < Input::_maxInputMouseField; i++)
 	{
 		if (_inputMouseField[i].down)
 			_inputMouseField[i].down = false;
@@ -81,15 +116,15 @@ bool Input::DataBeginUpdate()
 
 Vector2 Input::GetMousePosition()
 {
-
+	return mousePos;
 }
 
 Vector2 Input::GetMouseDownPosition(int keycode)
 {
-
+	return _inputMouseField[keycode].downPos;
 }
 
 Vector2 Input::GetMouseUpPosition(int keycode)
 {
-
+	return  _inputMouseField[keycode].upPos;
 }
