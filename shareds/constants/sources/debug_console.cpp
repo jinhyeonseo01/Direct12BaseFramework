@@ -85,7 +85,7 @@ namespace Debug
 			}
 		}
 		//HWND_TOP
-		SetWindowPos(GetConsoleWindow(), 0, offsetX, offsetY, width, hegiht, SWP_SHOWWINDOW|
+		SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, offsetX, offsetY, width, hegiht, SWP_SHOWWINDOW|
 			SWP_ASYNCWINDOWPOS);
 		return log;
 	}

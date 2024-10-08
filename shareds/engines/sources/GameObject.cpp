@@ -63,14 +63,16 @@ bool GameObject::RemoveAtComponent(int index)
 {
 	if (index >= 0 && index < this->_components.size())
 	{
-		this->_components.erase(this->_components.begin() + index);
+		this->_components[index]->Destroy();
+		return true;
 	}
 	return false;
 }
 
 void dxe::GameObject::Destroy()
 {
-	_destroy = true;
+	IDelayedDestroy::Destroy();
+
 	SetActiveSelf(false);
 	for (int i = 0; i < _childs.size(); i++)
 	{
@@ -235,7 +237,7 @@ bool GameObject::GetActiveSelf()
 bool GameObject::SetActiveSelf(bool _active)
 {
 	_active_self = _active;
-	ActiveUpdateChain(_active_total);
+	ActiveUpdateChain((parent.lock() ? parent.lock()->_active_total : true));
 	return _active;
 }
 
@@ -254,6 +256,16 @@ bool GameObject::SyncActiveState()
 	return  _active_total_prev = _active_total;
 }
 
+bool GameObject::IsReady()
+{
+	return _ready;
+}
+
+bool GameObject::Ready()
+{
+	return _ready = true;
+}
+
 void GameObject::ActiveUpdateChain(bool _active_total)
 {
 	this->_active_total = _active_total && _active_self;
@@ -269,23 +281,19 @@ void GameObject::ActiveUpdateChain(bool _active_total)
 void GameObject::Debug(int depth)
 {
 	for (int i = 0; i < depth; i++)
-		Debug::log << "    ";
-	Debug::log << "- " << name << std::format(" (act_t{}, act_s{}, des{})", _active_total,_active_self,_destroy) << "\n";
-
-	for (int i = 0; i < depth; i++)
-		Debug::log << "    ";
-	Debug::log << "  " << "Components" << "\n";
+		Debug::log << "      ";
+	//Debug::log << "-Obj:" << name << std::format(" (act_t{}, act_s{}, des{})", _active_total,_active_self,_destroy) << "\n";
+	Debug::log << "-Obj:" << name << "\n";
 
 	for (int i = 0; i < _components.size(); i++)
 	{
-		for (int i = 0; i < depth; i++)
-			Debug::log << "    ";
-		Debug::log << "  : " << typeid(*_components[i].get()).name() << "\n";
+		//if(std::dynamic_pointer_cast<Transform>(_components[i]) != nullptr)
+		//	continue;
+		for (int j = 0; j < depth; j++)
+			Debug::log << "      ";
+		Debug::log << "   Com:" << _components[i]->GetTypeName() << "\n";
 	}
 
-	for (int i = 0; i < depth; i++)
-		Debug::log << "    ";
-	Debug::log << "  " << "Childs" << "\n";
 	for (int i = 0; i < _childs.size(); i++)
 		if (_childs[i].lock())
 			_childs[i].lock()->Debug(depth + 1);

@@ -1,10 +1,11 @@
 #pragma once
 #include "stdafx.h"
 #include "EObject.h"
+#include "IDelayedDestroy.h"
 
 namespace dxe
 {
-	class Component : public EObject
+	class Component : public EObject, public IDelayedDestroy
 	{
 	public:
 		Component();
@@ -22,14 +23,23 @@ namespace dxe
 
 		std::weak_ptr<GameObject> gameObject;
 
+	protected:
+		bool _first = true;
+	public:
+		bool IsFirst();
+		void FirstDisable();
+		void Destroy() override;
+
 		//Init <- 이건 Component가 GameObject에 처음 소속될때.
 		// 
-		//Start 첫프레임
-		//Update
-		//LastUpdate
-		//OnEnable
-		//OnDisable
-		//OnDestroy
+		virtual void Init();
+		virtual void Start();
+		virtual void Update();
+		virtual void LateUpdate();
+		virtual void OnEnable();
+		virtual void OnDisable();
+		virtual void OnDestroy();
+		virtual void OnComponentDestroy();
 
 		//Remove Cycle
 

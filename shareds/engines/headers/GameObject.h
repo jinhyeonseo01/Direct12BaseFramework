@@ -66,10 +66,11 @@ namespace dxe
 			auto componentCast = std::dynamic_pointer_cast<Component>(component);
 			componentCast->gameObject = std::dynamic_pointer_cast<GameObject>(this->shared_from_this());
 			_components.push_back(componentCast);
+			componentCast->Init();
 			return component;
 		}
 
-		template<class T, class = class std::enable_if_t<std::is_convertible_v<T*, Component*>>>
+		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, Component*>>>
 		std::shared_ptr<T> AddComponent(const std::shared_ptr<T>& component)
 		{
 			auto componentCast = std::dynamic_pointer_cast<Component>(component);
@@ -78,6 +79,7 @@ namespace dxe
 			{
 				componentCast->gameObject = std::dynamic_pointer_cast<GameObject>(this->shared_from_this());
 				this->_components.push_back(componentCast);
+				componentCast->Init();
 			}
 			else
 			{
@@ -86,17 +88,18 @@ namespace dxe
 			return component;
 		}
 
-		template<class T, class = class std::enable_if_t<std::is_convertible_v<T*, Component*>>>
-		std::vector<std::shared_ptr<Component>>::iterator RemoveComponent(const std::shared_ptr<T>& component)
+		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, Component*>>>
+		bool RemoveComponent(const std::shared_ptr<T>& component)
 		{
-			auto iter = std::ranges::find(_components, component);
+			auto iter = std::ranges::find(_components, std::dynamic_pointer_cast<Component>(component));
 			if (iter != this->_components.end())
 			{
-				auto next = this->_components.erase(iter);
-				return next;
+				//auto next = this->_components.erase(iter);
+				(*iter)->Destroy();
+				return true;
 			}
 			
-			return iter;
+			return false;
 		}
 		bool RemoveAtComponent(int index);
 
@@ -139,6 +142,12 @@ namespace dxe
 
 		bool CheckActiveUpdated();
 		bool SyncActiveState();
+
+	protected:
+		bool _ready = false;
+	public:
+		bool IsReady();
+		bool Ready();
 
 	protected:
 		void ActiveUpdateChain(bool _active_total);

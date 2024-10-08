@@ -36,6 +36,9 @@ namespace dxe
 		std::shared_ptr<GameObject> Find(std::wstring name, bool includeDestroy = false);
 		int Find(std::wstring name, std::vector<std::shared_ptr<GameObject>> vec, bool includeDestroy = false);
 
+	public:
+		void Debug();
+
 	};
 }
 

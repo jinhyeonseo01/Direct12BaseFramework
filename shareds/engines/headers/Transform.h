@@ -58,5 +58,13 @@ namespace dxe
 		Vector3 WorldToLocal_Position(const Vector3& value);
 		Vector3 WorldToLocal_Direction(const Vector3& value);
 		Quaternion WorldToLocal_Quaternion(const Quaternion& value);
+		void Start() override;
+		void Update() override;
+		void LateUpdate() override;
+		void OnEnable() override;
+		void OnDisable() override;
+		void OnDestroy() override;
+		void Init() override;
+		void OnComponentDestroy() override;
 	};
 }

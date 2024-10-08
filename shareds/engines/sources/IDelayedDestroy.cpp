@@ -9,7 +9,7 @@ namespace dxe
 
 	void IDelayedDestroy::Destroy()
 	{
-
+		_destroy = true;
 	}
 
 	IDelayedDestroy::~IDelayedDestroy() = default;

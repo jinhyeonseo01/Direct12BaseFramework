@@ -61,6 +61,72 @@
 #include <simple_mesh_LH.h>
 #include <simple_mesh_ext.h>
 
+
+
+//Assimp
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <Assimp/postprocess.h>
+#include <assimp/cimport.h>
+
+#include <assimp/ai_assert.h>
+#include <assimp/aabb.h>
+#include <assimp/color4.h>
+#include <assimp/quaternion.h>
+#include <assimp/vector3.h>
+#include <assimp/vector2.h>
+#include <assimp/matrix4x4.h>
+#include <assimp/matrix3x3.h>
+
+
+#ifdef _DEBUG
+#pragma comment(lib, "assimp-vc143-mtd.lib")
+#else
+#pragma comment(lib, "assimp-vc143-mt.lib")
+#endif
+
+
+
+//direct12
+
+#include <d3d12.h>
+#include <dxgi1_4.h>
+
+#include <wrl.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <DirectXColors.h>
+
+#include <DirectXTex.h>
+
+#pragma comment(lib, "d3d12")
+#pragma comment(lib, "dxgi")
+#pragma comment(lib, "dxguid")
+#pragma comment(lib, "d3dcompiler")
+
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTex_Debug.lib")
+#else
+#pragma comment(lib, "DirectXTex.lib")
+#endif
+
+
+
+//imgui
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx12.h"
+
+#ifdef _DEBUG
+#include <dxgidebug.h>
+#pragma comment(lib, "dxguid.lib")
+#endif
+
+#include "imgui_internal.h"
+
+
 #include <SDKDDKVer.h>
 
 #include <class_define.h>
@@ -69,5 +135,7 @@
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+using namespace DirectX::PackedVector;
+using namespace Microsoft::WRL;
 
 using namespace dxe;

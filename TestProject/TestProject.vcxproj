@@ -72,12 +72,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\imgui;$(SolutionDir)shareds\imgui\backends;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\imgui;$(SolutionDir)shareds\imgui\backends;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

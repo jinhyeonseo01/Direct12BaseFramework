@@ -5,7 +5,6 @@
 void Engine::LogicPipeline()
 {
 	std::shared_ptr<Scene>& scene = SceneManager::_currentScene;
-	std::shared_ptr<GameObject> currentObject;
 	std::vector<std::shared_ptr<GameObject>>& gameObjects = scene->_gameObjectList;
 	
 
@@ -17,39 +16,130 @@ void Engine::LogicPipeline()
 
 	for (int i = gameObjects.size() - 1; i >= 0; --i) // Enable
 	{
-		currentObject = gameObjects[i];
-		if ((!currentObject->IsDestroy()) && currentObject->GetActive()) {
-			if (currentObject->CheckActiveUpdated()) {
-				//currentObject->OnEnable()
-				Debug::log << "enable\n";
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+
+		//여기서 생성된오브젝트 활성화 시간이 필요할듯.
+		if (!currentObject->IsReady())
+			currentObject->Ready();
+
+		if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
+
+			//그럼 이 외부에서 루프 돌아야겠네
+			if (currentObject->CheckActiveUpdated()) { //
 				currentObject->SetActivePrev(true);
+				auto& components = currentObject->_components;
+				for(int j = components.size()-1;j>= 0;--j)
+				{
+					components[j]->OnEnable();
+					//enable
+				}
+
+			}
+			else
+			{
+				auto& components = currentObject->_components;
+				for (int j = components.size() - 1; j >= 0; --j)
+				{
+					if(components[j]->IsFirst())
+					{
+						components[j]->OnEnable();
+					}
+				}
+			}
+		}
+	}
+
+	for (int i = gameObjects.size() - 1; i >= 0; --i)
+	{
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+		if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
+			//Start
+			auto& components = currentObject->_components;
+			for (int j = components.size() - 1; j >= 0; --j)
+			{
+				if (components[j]->IsFirst())
+				{
+					components[j]->Start();
+					components[j]->FirstDisable();
+				}
+			}
+		}
+	}
+
+	for (int i = gameObjects.size() - 1; i >= 0; --i) 
+	{
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+		if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
+			auto& components = currentObject->_components;
+			for (int j = components.size() - 1; j >= 0; --j)
+			{
+				if (!components[j]->IsFirst())
+					components[j]->Update();
+			}
+		}
+	}
+	for (int i = gameObjects.size() - 1; i >= 0; --i)
+	{
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+		if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
+			//LateUpdate
+			auto& components = currentObject->_components;
+			for (int j = components.size() - 1; j >= 0; --j)
+			{
+				if (!components[j]->IsFirst())
+					components[j]->LateUpdate();
 			}
 		}
 	}
 
 	for (int i = gameObjects.size() - 1; i >= 0; --i) // Disable
 	{
-		currentObject = gameObjects[i];
-		if (currentObject->IsDestroy() || (!currentObject->GetActive())) {
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+		if ((currentObject->IsDestroy() || (!currentObject->GetActive())) && currentObject->IsReady()) {
 			if (currentObject->CheckActiveUpdated()) {
-				//currentObject->OnDisable()
-				Debug::log << "disable\n";
-
 				currentObject->SetActivePrev(false);
+				auto& components = currentObject->_components;
+				for (int j = components.size() - 1; j >= 0; --j)
+				{
+					if (!components[j]->IsFirst())
+						components[j]->OnDisable();
+				}
+
 			}
 		}
 	}
 	for (int i = gameObjects.size() - 1; i >= 0; --i) // OnDestroy
 	{
-		currentObject = gameObjects[i];
-		if (currentObject->IsDestroy()) {
-			//OnDestroy
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+		if (currentObject->IsReady())
+		{
+			if (currentObject->IsDestroy())
+			{
+				auto& components = currentObject->_components;
+				for (int j = components.size() - 1; j >= 0; --j)
+				{
+					components[j]->OnDestroy();
+					components[j]->OnComponentDestroy();
+				}
+			}
+			else
+			{
+				auto& components = currentObject->_components;
+				for (int j = components.size() - 1; j >= 0; --j)
+				{
+					if(components[j]->IsDestroy()) {
+						components[j]->OnComponentDestroy();
+						components.erase(components.begin() + j);
+					}
+				}
+			}
+			
 		}
 	}
 	
 	for (int i = gameObjects.size() - 1; i >= 0; --i) // Remover
 	{
-		currentObject = gameObjects[i];
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
 		if (currentObject->IsDestroy())
 			scene->_gameObjectList.erase(scene->_gameObjectList.begin() + i);
 	}
@@ -59,12 +149,15 @@ void Engine::LogicPipeline()
 void Engine::RenderingPipeline()
 {
 	std::shared_ptr<Scene>& scene = SceneManager::_currentScene;
-	std::shared_ptr<GameObject> currentObject;
 	std::vector<std::shared_ptr<GameObject>>& gameObjects = scene->_gameObjectList;
 
 	for (int i = gameObjects.size() - 1; i >= 0; --i)
 	{
-		currentObject = gameObjects[i];
+		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+
+		if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
+
+		}
 		//GetAcrive -> prevRendering
 	}
 }

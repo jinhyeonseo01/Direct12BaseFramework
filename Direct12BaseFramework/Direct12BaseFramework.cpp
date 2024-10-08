@@ -50,6 +50,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     obj1->Debug();
 
 
+
     MSG msg{};
     Sleep(50000);
     try

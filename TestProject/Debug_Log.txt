@@ -1,39 +1,11 @@
 1
 Test Scene
-- Hello (act_ttrue, act_strue, desfalse)
-  Components
-  : class dxe::Transform
-  Childs
-    - Hello2 (act_ttrue, act_strue, desfalse)
-      Components
-      : class dxe::Transform
-      Childs
-        - Hello3 (act_ttrue, act_strue, desfalse)
-          Components
-          : class dxe::Transform
-          Childs
-    - Hello4 (act_ttrue, act_strue, desfalse)
-      Components
-      : class dxe::Transform
-      Childs
-1
-- Hello (act_ttrue, act_strue, desfalse)
-  Components
-  : class dxe::Transform
-  Childs
-    - Hello2 (act_ttrue, act_strue, desfalse)
-      Components
-      : class dxe::Transform
-      Childs
-        - Hello3 (act_ttrue, act_strue, desfalse)
-          Components
-          : class dxe::Transform
-          Childs
-    - Hello4 (act_ttrue, act_strue, desfalse)
-      Components
-      : class dxe::Transform
-      Childs
-enable
-enable
-enable
-enable
+-Obj:Hello
+   Com:Transform
+      -Obj:Hello2
+         Com:Transform
+            -Obj:Hello3
+               Com:Transform
+      -Obj:Hello4
+         Com:Transform
+Game : 

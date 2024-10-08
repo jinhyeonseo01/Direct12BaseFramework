@@ -10,7 +10,8 @@
 
 
 namespace dxe
-{	
+{
+
 	class Engine : public std::enable_shared_from_this<Engine>
 	{
 		// Global Setting ----------------------------------------------------
@@ -61,14 +62,17 @@ namespace dxe
 		std::unique_ptr<InputDispatcher> _engineInputDispatcher;
 		std::unique_ptr<Input> input;
 
-		bool isFrameLock = true;
+		bool isFrameLock = false;
 		double targetFrame = 60;
 		double currentFrame = 60;
+		double deltaTime = 60;
+		bool deltaTimeLimit = false;
 
 		static HINSTANCE SetWindowHInstance(HINSTANCE hInstance) { return Engine::_processInstance = hInstance; }
 		HWND SetWindowHWnd(HWND hWnd) { return _hWnd = hWnd; }
 		HWND GetWindowHWnd() { return _hWnd; }
 		void SetTitleName(const std::wstring& name);
+		void UpdateTitleName(const std::wstring& name);
 		void SetHandleName(const std::wstring& name);
 
 		void OpenWindow();
@@ -89,7 +93,6 @@ namespace dxe
 		Engine();
 		virtual ~Engine();
 
-		int hasher(int _cpp_par_);
 		virtual void ThreadExecute(std::stop_token token);
 		std::shared_ptr<Engine> BaseInitialize();
 
@@ -101,5 +104,20 @@ namespace dxe
 		virtual void LogicPipeline();
 		virtual void RenderingPipeline();
 
+	public:
+		virtual void DebugInit();
+		virtual void DebugUpdate();
+		std::vector<DebugCommand> _debugCommandList;
+		bool _debugCommandMode = false;
+	};
+
+	class DebugCommand
+	{
+	public:
+		std::string command;
+		std::wstring detail;
+		std::function<void(std::vector<std::wstring>&)> func;
+		bool operator==(const std::string& command) const;
+		bool operator==(const std::wstring& command) const;
 	};
 }

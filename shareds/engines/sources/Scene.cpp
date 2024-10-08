@@ -137,4 +137,15 @@ namespace dxe
 		return vec.size();
 		
 	}
+
+	void Scene::Debug()
+	{
+		Debug::log << std::format("\nScene : {}", std::to_string(name)) << "\n";
+		for(int i=0;i<_gameObjectList.size();i++)
+		{
+			if(!_gameObjectList[i]->parent.lock())
+				_gameObjectList[i]->Debug();
+		}
+		Debug::log << "\n";
+	}
 }

@@ -5,6 +5,7 @@
 #include "convert_string.h"
 #include "convert_directx.h"
 #include "convert_math.h"
+#include "convert_assimp.h"
 
 
 template <typename, typename T>

@@ -108,7 +108,6 @@ const Vector3& Transform::worldPosition(const Vector3& worldPos)
 		Matrix mat;
 		parent->transform->GetLocalToWorldMatrix(mat);
 		localPosition = Vector3::Transform(worldPos, mat.Invert());
-		Debug::log <<"local"<< localPosition << "\n";
 	}
 	else
 		localPosition = worldPos;
@@ -252,10 +251,7 @@ Vector3 Transform::LocalToWorld_Position(const Vector3& value)
 	if (CheckNeedLocalToWorldUpdate())
 		GetLocalToWorldMatrix(mat);
 
-	Vector4 result = Vector4(value);
-	result.w = 1;
-	Vector4::Transform(result, mat, result);
-	return Vector3(result);
+	return Vector3::Transform(value, mat);
 }
 
 Vector3 Transform::LocalToWorld_Direction(const Vector3& value)
@@ -264,33 +260,81 @@ Vector3 Transform::LocalToWorld_Direction(const Vector3& value)
 	if (CheckNeedLocalToWorldUpdate())
 		GetLocalToWorldMatrix(mat);
 
-	Vector3 result;
-	Vector3::Transform(value, mat, result);
-	return result;
+	return Vector3::TransformNormal(value, mat);
 }
 
 Quaternion Transform::LocalToWorld_Quaternion(const Quaternion& value)
 {
-	Matrix& mat = localToWorldMatrix;
-	if (CheckNeedLocalToWorldUpdate())
-		GetLocalToWorldMatrix(mat);
-	//mat * value;
-	return Quaternion();
+	return value * worldRotation();
 }
 
 Vector3 Transform::WorldToLocal_Position(const Vector3& value)
 {
-	return Vector3();
+	Matrix mat = localToWorldMatrix;
+	if (CheckNeedLocalToWorldUpdate())
+		GetLocalToWorldMatrix(mat);
+	mat.Invert(mat);
+	return Vector3::Transform(value, mat);
 }
 
 Vector3 Transform::WorldToLocal_Direction(const Vector3& value)
 {
-	return Vector3();
+	Matrix mat = localToWorldMatrix;
+	if (CheckNeedLocalToWorldUpdate())
+		GetLocalToWorldMatrix(mat);
+	mat.Invert(mat);
+	Vector3 vec = Vector3::TransformNormal(value, mat);
+	vec.Normalize(vec);
+	return vec;
 }
 
 Quaternion Transform::WorldToLocal_Quaternion(const Quaternion& value)
 {
-	return Quaternion();
+	Quaternion result;
+	worldRotation().Inverse(result);
+	result = value * result;
+	result.Normalize();
+	return result;
+}
+
+void Transform::Start()
+{
+	Component::Start();
+}
+
+void Transform::Update()
+{
+	Component::Update();
+}
+
+void Transform::LateUpdate()
+{
+	Component::LateUpdate();
+}
+
+void Transform::OnEnable()
+{
+	Component::OnEnable();
+}
+
+void Transform::OnDisable()
+{
+	Component::OnDisable();
+}
+
+void Transform::OnDestroy()
+{
+	Component::OnDestroy();
+}
+
+void Transform::Init()
+{
+	Component::Init();
+}
+
+void Transform::OnComponentDestroy()
+{
+	Component::OnComponentDestroy();
 }
 
 Transform::Transform()

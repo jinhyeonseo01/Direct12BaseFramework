@@ -34,6 +34,15 @@
     <Filter Include="Engine\Utility">
       <UniqueIdentifier>{62fce090-481e-4e67-b6fa-10c532f627b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{1ea0f648-d062-4b29-a2b5-4d3bf23d1a37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Imgui">
+      <UniqueIdentifier>{94e4a97d-768f-4b0f-beda-fcb96f695635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Imgui\core">
+      <UniqueIdentifier>{f9e33a03-f6a3-4daf-8b3d-1e958039cf50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shareds\constants\headers\convert_math.h">
@@ -58,9 +67,6 @@
       <Filter>Constant\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\DXEngine.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\EObject.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\GameObject.h">
@@ -108,6 +114,60 @@
     <ClInclude Include="..\shareds\engines\headers\Input.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\IType.h">
+      <Filter>Engine\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\EObject.h">
+      <Filter>Engine\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imconfig.h">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imgui.h">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imgui_internal.h">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imstb_rectpack.h">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imstb_textedit.h">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imstb_truetype.h">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.h">
+      <Filter>Engine\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_win32.h">
+      <Filter>Engine\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Vertex.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\convert_assimp.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\MeshRenderer.h">
+      <Filter>Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\MeshLinker.h">
+      <Filter>Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Camera.h">
+      <Filter>Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h">
+      <Filter>Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Mesh.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Model.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -121,9 +181,6 @@
     </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\debug_console.cpp">
       <Filter>Constant\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\EObject.cpp">
-      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\GameObject.cpp">
       <Filter>Engine\Core</Filter>
@@ -167,8 +224,62 @@
     <ClCompile Include="..\shareds\engines\sources\Input.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\DXEngine_pipeline.cpp">
+    <ClCompile Include="..\shareds\engines\sources\DXEngine_Debug.cpp">
       <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\DXEngine_Pipeline.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\IType.cpp">
+      <Filter>Engine\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\EObject.cpp">
+      <Filter>Engine\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui.cpp">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_demo.cpp">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_draw.cpp">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_tables.cpp">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_widgets.cpp">
+      <Filter>Engine\Imgui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp">
+      <Filter>Engine\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>Engine\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Vertex.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\constants\sources\convert_assimp.cpp">
+      <Filter>Constant\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\MeshRenderer.cpp">
+      <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\MeshLinker.cpp">
+      <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Camera.cpp">
+      <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp">
+      <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Mesh.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Model.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

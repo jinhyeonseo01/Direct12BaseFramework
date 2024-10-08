@@ -194,6 +194,9 @@ namespace Debug
 		{
 			waiting.store(true);
 
+			SetForegroundWindow(GetConsoleWindow());
+			ShowWindow(GetConsoleWindow(), SW_SHOW);
+
 			DWORD textSize = 0;
 			ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), consoleInputBuffer.data(), consoleInputBuffer.size(), &textSize, nullptr);
 			FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));

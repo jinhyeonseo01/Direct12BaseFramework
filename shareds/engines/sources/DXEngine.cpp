@@ -136,6 +136,8 @@ namespace dxe
 
 		Engine::AppendEngine(this->shared_from_this());
 
+		DebugInit();
+
 		this->_engineMainThread = std::make_unique<std::jthread>(std::bind(&Engine::ThreadExecute, this, std::placeholders::_1));
 		this->_engineMainThread->detach();
 
@@ -159,17 +161,21 @@ namespace dxe
 			while (!token.stop_requested()) //Frame Loop
 			{
 				auto currentFrameStartTime = std::chrono::steady_clock::now();
-				double deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count() / (double)1000000;
-				double fps = 1 / deltaTime;
-				Engine::SetTitleName(std::to_wstring(std::format("{} : {:0.3f}", "Fps", fps)));
+
+				auto limitDeltaTimeValue = 0.333;
+				this->deltaTime = std::min(std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count() / (double)1000000, limitDeltaTimeValue);
+				this->deltaTimeLimit = this->deltaTime >= limitDeltaTimeValue;
+				this->currentFrame = 1 / deltaTime;
+
+				UpdateTitleName(std::to_wstring(std::format("{} ({}:{:0.2f})", std::to_string(_titleName), "Fps", this->currentFrame)));
 
 				input->DataBeginUpdate();
 				while (this->_engineInputDispatcher->_inputDispatcher.try_pop(_event)) { // Input 등록
 					input->DataUpdate(_event);
 				}
 
-				if (input->GetKeyDown(KeyCode::A))
-					SceneManager::_currentScene->_gameObjectList[0]->SetActiveSelf(SceneManager::_currentScene->_gameObjectList[0]->GetActiveSelf());
+				DebugUpdate();
+
 
 				auto logicPipelineStartTime = std::chrono::steady_clock::now();
 				LogicPipeline();
@@ -182,22 +188,18 @@ namespace dxe
 
 
 				prevTime = currentFrameStartTime;
-
 				if (this->isFrameLock)
 				{ // 고정밀 스핀 Wait
-
-					float targetFrame = 100;
-
 					if (true) // 완충된 busy waiting
 					{
 						//사전에 조금 멈추기
-						int contextSwitch_MS = std::max(0, (int)(1000 / targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
+						int contextSwitch_MS = std::max(0, (int)(1000 / this->targetFrame) - 2); //최대 오차 +-1에 대한 베리어로 2값
 						std::this_thread::sleep_for(std::chrono::milliseconds(contextSwitch_MS));
-						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
+						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() <= (pow(10, 6) / this->targetFrame));
 					}
 					if (false) // 고정밀 busy waiting
 					{
-						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() < (pow(10, 6) / targetFrame));
+						while (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - currentFrameStartTime).count() <= (pow(10, 6) / this->targetFrame));
 					}
 				}
 			}
@@ -358,9 +360,15 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 	void Engine::SetTitleName(const std::wstring& name)
 	{
 		this->_titleName = name;
-		if (this->_hWnd != nullptr)
-			SetWindowTextW(this->_hWnd, this->_titleName.data());
+		Engine::UpdateTitleName(this->_titleName);
 	}
+
+	void Engine::UpdateTitleName(const std::wstring& name)
+	{
+		if (this->_hWnd != nullptr)
+			SetWindowTextW(this->_hWnd, name.data());
+	}
+
 	void Engine::SetHandleName(const std::wstring& name)
 	{
 		this->_handleName = name;

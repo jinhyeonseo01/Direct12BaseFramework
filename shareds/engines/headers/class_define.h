@@ -13,10 +13,19 @@ namespace dxe
 
 	enum InputType;
 
+
+	class IType;
+	class EObject;
+	class ResourceManager;
+	//
+	class Vertex;
+	class Mesh;
+	class Model; //fbx, obj
+
 	//----------------
+	class DebugCommand;
 
 	class Engine;
-	class EObject;
 	class GameObject;
 	class Scene;
 	class SceneManager;

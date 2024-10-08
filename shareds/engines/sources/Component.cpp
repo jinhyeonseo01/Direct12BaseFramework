@@ -60,4 +60,52 @@ namespace dxe
 	{
 		EObject::ReRef();
 	}
+
+	bool Component::IsFirst()
+	{
+		return _first;
+	}
+
+	void Component::FirstDisable()
+	{
+		_first = false;
+	}
+
+	void Component::Destroy()
+	{
+		IDelayedDestroy::Destroy();
+	}
+
+	void Component::Init()
+	{
+	}
+
+	void Component::Start()
+	{
+	}
+
+	void Component::Update()
+	{
+	}
+
+	void Component::LateUpdate()
+	{
+	}
+
+	void Component::OnEnable()
+	{
+	}
+
+	void Component::OnDisable()
+	{
+	}
+
+	void Component::OnDestroy()
+	{
+	}
+
+	void Component::OnComponentDestroy()
+	{
+		Debug::log << "Test" << "\n";
+	}
 }

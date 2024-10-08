@@ -43,11 +43,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     obj4->SetParent(obj1);
 
     obj1->Debug();
-    std::vector<std::shared_ptr<GameObject>> vec;
-    obj1->GetChildsAllByName(vec, L"Hello4");
-    Debug::log << vec.size() << "\n";
-
-    obj1->Debug();
 
 
     MSG msg{};

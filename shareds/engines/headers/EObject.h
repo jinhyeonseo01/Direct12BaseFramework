@@ -3,15 +3,18 @@
 #include <stdafx.h>
 #include <IClone.h>
 
+#include <IType.h>
+
 namespace dxe
 {
-	class EObject : public std::enable_shared_from_this<EObject>, public dxe::IClone
+	class EObject : public std::enable_shared_from_this<EObject>, public dxe::IClone, public IType
 	{
 	public:
 		static std::unordered_map<std::wstring, std::weak_ptr<EObject>> _EObjectTable;
 		static std::unordered_map<std::wstring, std::wstring> _CloneGuidTable;
 		
-		template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
 		static bool AddObject(std::shared_ptr<T> object)
 		{
 			if (object == nullptr)
@@ -23,7 +26,8 @@ namespace dxe
 			}
 			return false;
 		}
-		template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
 		static bool RemoveObject(std::shared_ptr<T> object)
 		{
 			if (object == nullptr)
@@ -136,6 +140,7 @@ namespace dxe
 
 	public:
 		std::wstring guid = L"";
+		std::wstring type = L"";
 
 		EObject();
 		EObject(const std::wstring& guid);

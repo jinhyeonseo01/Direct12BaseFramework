@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdafx.h>
+
 namespace dxe
 {
 	class ResourceManager
@@ -7,4 +9,3 @@ namespace dxe
 
 	};
 }
-
