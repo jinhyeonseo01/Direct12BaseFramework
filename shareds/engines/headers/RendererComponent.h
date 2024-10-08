@@ -1,12 +1,13 @@
 #pragma once
-#include "RendererComponent.h"
+#include "Component.h"
 
-namespace dxe
+namespace xe
 {
-    class MeshRenderer : public xe::RendererComponent
+    class RendererComponent : public Component
     {
     public:
-        ~MeshRenderer() override;
+        RendererComponent();
+        virtual ~RendererComponent();
         void* Clone() const override;
         void ReRef() override;
         void Destroy() override;

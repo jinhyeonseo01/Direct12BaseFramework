@@ -178,6 +178,7 @@
     <ClInclude Include="..\shareds\engines\headers\MeshLinker.h" />
     <ClInclude Include="..\shareds\engines\headers\MeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\Model.h" />
+    <ClInclude Include="..\shareds\engines\headers\RendererComponent.h" />
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="..\shareds\engines\sources\MeshLinker.cpp" />
     <ClCompile Include="..\shareds\engines\sources\MeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Model.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />

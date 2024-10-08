@@ -14,7 +14,7 @@ void* Camera::Clone() const
     return Component::Clone();
 }
 
-void Camera::ReRef() const
+void Camera::ReRef()
 {
     Component::ReRef();
 }

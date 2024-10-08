@@ -85,8 +85,8 @@ namespace dxe
 		return nullptr;
 	}
 
-	void EObject::ReRef() const
-	{
+	void EObject::ReRef()
+    {
 
 	}
 }

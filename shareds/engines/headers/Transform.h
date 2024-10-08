@@ -11,7 +11,7 @@ namespace dxe
 		virtual ~Transform();
 	public:
 		void* Clone() const override;
-		void ReRef() const override;
+		void ReRef() override;
 	protected:
 		Vector3 _prevlocalPosition;
 		Vector3 _prevlocalScale;
@@ -47,6 +47,7 @@ namespace dxe
 		bool GetLocalSRTMatrix(Matrix& localSRT);
         bool SetLocalSRTMatrix(Matrix& localSRT);
 		bool CheckNeedLocalSRTUpdate() const;
+        bool CheckNeedLocalChangedUpdate() const;
 		bool CheckNeedLocalToWorldUpdate() const;
 		void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
 

@@ -19,7 +19,7 @@ namespace dxe
 
 	public:
 		void* Clone() const override;
-		void ReRef() const override;
+		void ReRef() override;
 
 		std::weak_ptr<GameObject> gameObject;
 

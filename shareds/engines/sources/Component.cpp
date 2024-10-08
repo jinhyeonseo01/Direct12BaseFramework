@@ -56,8 +56,8 @@ namespace dxe
 		return EObject::Clone();
 	}
 
-	void Component::ReRef() const
-	{
+	void Component::ReRef()
+    {
 		EObject::ReRef();
 	}
 

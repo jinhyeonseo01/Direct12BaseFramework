@@ -177,6 +177,9 @@
     <ClInclude Include="..\shareds\engines\headers\Bone.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\RendererComponent.h">
+      <Filter>Engine\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -298,6 +301,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Bone.cpp">
       <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp">
+      <Filter>Engine\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

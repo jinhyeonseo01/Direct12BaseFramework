@@ -128,15 +128,39 @@ namespace dxe
 		template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
 		static void AddClone(const T& obj, T& cloneObj)
 		{
-			if ((EObject)obj != (EObject)cloneObj)
+            Debug::log << EObject::_EObjectTable.size() << "-\n";
+			if (obj != cloneObj)
 			{
-				AddObject(cloneObj);
-				if (_CloneGuidTable.contains(cloneObj->guid))
+                Debug::log << EObject::_EObjectTable.size() << "--\n";
+				if (!_CloneGuidTable.contains(cloneObj.guid))
 				{
-					_CloneGuidTable.insert(std::make_pair(obj->guid, cloneObj->guid));
+                    Debug::log << EObject::_EObjectTable.size() << "---\n";
+					_CloneGuidTable.insert(std::make_pair(obj.guid, cloneObj.guid));
 				}
 			}
+            Debug::log << EObject::_EObjectTable.size() << "----\n";
 		}
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static std::shared_ptr<T> FindCloneByGuid(std::wstring& guid)
+        {
+            if (!_CloneGuidTable.contains(guid))
+                return nullptr;
+            guid = _CloneGuidTable[guid];
+            if (_EObjectTable.contains(guid))
+            {
+                auto current = _EObjectTable[guid];
+                if (!current.expired())
+                {
+                    auto ptr = std::dynamic_pointer_cast<T>(current.lock());
+                    return ptr;
+                }
+                else
+                {
+                    _EObjectTable.erase(guid);
+                }
+            }
+            return nullptr;
+        }
 
 	public:
 		std::wstring guid = L"";
@@ -157,7 +181,7 @@ namespace dxe
 		std::wstring GetGUID() const;
 
 		virtual void* Clone() const override;
-		virtual void ReRef() const override;
+		virtual void ReRef() override;
 	};
 }
 

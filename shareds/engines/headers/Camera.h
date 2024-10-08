@@ -10,14 +10,21 @@ namespace dxe
         virtual ~Camera();
 
     public:
-        float _near;
-        float _far;
-        float _fovy;
+        float _near = 0.03f;
+        float _far = 1000.0f;
+        float _fovy = 60.0f;
+        float _aspect = 1;
+
+        Matrix _projection;
+        void A()
+        {
+            Matrix::CreatePerspectiveFieldOfView(_fovy, _aspect, _near, _far);
+        }
 
     public:
 
         void* Clone() const override;
-        void ReRef() const override;
+        void ReRef() override;
         void Init() override;
         void Start() override;
         void Update() override;

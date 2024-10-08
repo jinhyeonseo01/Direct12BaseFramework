@@ -8,7 +8,7 @@ void* Transform::Clone() const
 	return Component::Clone();
 }
 
-void Transform::ReRef() const
+void Transform::ReRef()
 {
 	Component::ReRef();
 }
@@ -191,7 +191,6 @@ bool Transform::GetLocalToWorldMatrix(Matrix& localToWorldMatrix)
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
 	isLocalSRTChanged = CheckNeedLocalSRTUpdate();
-
 	if (isLocalSRTChanged)
 	{
 		_prevlocalPosition = localPosition;
@@ -202,6 +201,11 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 		Matrix matTranslation = Matrix::CreateTranslation(localPosition);
         _prevlocalSRTMatrix = localSRTMatrix = matScale * matRotation * matTranslation;
 	}
+    if(CheckNeedLocalChangedUpdate())
+    {
+        _prevlocalSRTMatrix = localSRTMatrix;
+        isLocalSRTChanged = true;
+    }
 	localSRT = localSRTMatrix;
 	return isLocalSRTChanged;
 }
@@ -211,10 +215,10 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     Vector3 position;
     Quaternion rotation;
     Vector3 scale;
-    localSRTMatrix = localSRT;
     // 행렬을 위치, 회전, 스케일로 분해
     if(localSRT.Decompose(scale, rotation, position))
     {
+        localSRTMatrix = localSRT;
         localScale = scale;
         localRotation = rotation;
         localPosition = position;
@@ -230,9 +234,14 @@ bool Transform::CheckNeedLocalSRTUpdate() const
 {
 	return (_prevlocalPosition != localPosition)
 		|| (_prevLocalRotation != localRotation)
-		|| (_prevlocalScale != localScale)
-        || (_prevlocalSRTMatrix != localToWorldMatrix);
+		|| (_prevlocalScale != localScale);
 }
+
+bool Transform::CheckNeedLocalChangedUpdate() const
+{
+    return CheckNeedLocalSRTUpdate() || (_prevlocalSRTMatrix != localToWorldMatrix);
+}
+
 bool Transform::CheckNeedLocalToWorldUpdate() const
 {
 	//bottom-up check 방식
@@ -240,7 +249,7 @@ bool Transform::CheckNeedLocalToWorldUpdate() const
 	auto currentObj = gameObject.lock();
 	while (currentObj != nullptr && (!needUpdate))
 	{
-		needUpdate |= currentObj->transform->CheckNeedLocalSRTUpdate();
+		needUpdate |= currentObj->transform->CheckNeedLocalChangedUpdate();
 		currentObj = currentObj->parent.lock();
 	}
 	return needUpdate;

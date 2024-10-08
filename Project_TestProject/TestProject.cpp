@@ -28,7 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto obj3 = scene->CreateGameObject(L"Hello3");
     auto obj4 = scene->CreateGameObject(L"Hello4");
 
-
+    /*
     int offset = 0;
     std::vector<Vertex> vertexs;
     vertexs.reserve(100);
@@ -63,8 +63,31 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         Debug::log << (int)(*b.get())[i];
     }
 
+    float _near = 0.03f;
+    float _far = 1000.0f;
+    float _fovy = 60.0f;
+    float _aspect = 1;
     
+    Debug::log<< Matrix::CreatePerspectiveFieldOfView(_fovy, _aspect, _near, _far)<<"\n";
+    */
+    obj2->SetParent(obj1);
+    obj3->SetParent(obj2);
+    obj4->SetParent(obj2);
 
+    Debug::log << EObject::_EObjectTable.size() << "\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));;
+
+    SceneManager::_currentScene->Debug();
+    Debug::log << EObject::_EObjectTable.size() << "\n";
+    EObject::ClearCloneTable();
+    Debug::log << EObject::_EObjectTable.size() << "\n";
+    auto ptr = obj1->Clone();
+    Debug::log << EObject::_EObjectTable.size() << "\n";
+    Debug::log << EObject::_CloneGuidTable.size() << "\n";
+    auto cloneObject = std::dynamic_pointer_cast<GameObject>(((GameObject*)ptr)->shared_from_this());
+    cloneObject->ReRef();
+    EObject::ClearCloneTable();
+    SceneManager::_currentScene->Debug();
 
     MSG msg{};
     try
