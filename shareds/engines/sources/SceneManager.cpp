@@ -6,6 +6,7 @@
 std::vector<std::shared_ptr<Scene>> SceneManager::_sceneList;
 std::shared_ptr<Scene> SceneManager::_currentScene = nullptr;
 
+//탬플릿으로 빼고 Create<T>로 바꾸고 Init 구조로 잡기
 std::shared_ptr<Scene> dxe::SceneManager::CreateScene(std::wstring name)
 {
 	auto scene = std::make_shared<Scene>(name);
