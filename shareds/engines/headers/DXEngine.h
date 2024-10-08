@@ -7,6 +7,12 @@
 #include <Transform.h>
 #include <input_module.h>
 #include <engine_utility.h>
+#include <GameObject.h>
+#include <Component.h>
+#include <Transform.h>
+#include <Scene.h>
+#include <SceneManager.h>
+#include <Vertex.h>
 
 
 namespace dxe
@@ -62,10 +68,10 @@ namespace dxe
 		std::unique_ptr<InputDispatcher> _engineInputDispatcher;
 		std::unique_ptr<Input> input;
 
-		bool isFrameLock = false;
-		double targetFrame = 60;
-		double currentFrame = 60;
-		double deltaTime = 60;
+		bool isFrameLock = true;
+		double targetFrame = 144;
+		double currentFrame = 144;
+		double deltaTime = 0.016;
 		bool deltaTimeLimit = false;
 
 		static HINSTANCE SetWindowHInstance(HINSTANCE hInstance) { return Engine::_processInstance = hInstance; }

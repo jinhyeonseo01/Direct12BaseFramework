@@ -41,6 +41,34 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 
+    int offset = 0;
+    std::vector<Vertex> vertexs;
+    vertexs.reserve(100);
+    for (int i = 0; i < 100; i++)
+    {
+        Vertex v;
+        v.position = Vector3(i, i+1, i+3);
+        v.normal = Vector3(i, i, i);
+        v.uvs.emplace_back(i, i, i);
+        v.uvs.emplace_back(i, i, i);
+        vertexs.push_back(v);
+    }
+    std::vector<VertexProp> selector = {
+        VertexProp::pos,
+        VertexProp::normal,
+        VertexProp::uv
+    };
+    auto info = Vertex::GetSelectorInfo(selector);
+    std::shared_ptr<std::vector<float>> b = std::make_shared<std::vector<float>>();
+    b->resize(info.totalSize*100);
+    for (auto& a : vertexs)
+        a.WriteBuffer(b->data(), offset, selector);
+    for (int i = 0; i < 900; i++)
+    {
+        Debug::log << (int)(*b.get())[i];
+    }
+
+
     MSG msg{};
     try
     {

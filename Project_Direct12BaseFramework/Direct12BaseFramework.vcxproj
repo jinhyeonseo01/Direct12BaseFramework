@@ -160,6 +160,7 @@
     <ClInclude Include="..\shareds\constants\headers\pch.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_ext.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
+    <ClInclude Include="..\shareds\engines\headers\Bone.h" />
     <ClInclude Include="..\shareds\engines\headers\Camera.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
     <ClInclude Include="..\shareds\engines\headers\Component.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="..\shareds\engines\headers\engine_utility.h" />
     <ClInclude Include="..\shareds\engines\headers\EObject.h" />
     <ClInclude Include="..\shareds\engines\headers\GameObject.h" />
+    <ClInclude Include="..\shareds\engines\headers\GraphicManager.h" />
     <ClInclude Include="..\shareds\engines\headers\IClone.h" />
     <ClInclude Include="..\shareds\engines\headers\IDelayedDestroy.h" />
     <ClInclude Include="..\shareds\engines\headers\Input.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
+    <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
     <ClInclude Include="..\shareds\engines\headers\Vertex.h" />
   </ItemGroup>
@@ -198,6 +201,7 @@
     <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_ext.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Bone.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Camera.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp" />
@@ -206,6 +210,7 @@
     <ClCompile Include="..\shareds\engines\sources\engine_utility.cpp" />
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
     <ClCompile Include="..\shareds\engines\sources\GameObject.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\GraphicManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\IClone.cpp" />
     <ClCompile Include="..\shareds\engines\sources\IDelayedDestroy.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Input.cpp" />
@@ -220,6 +225,7 @@
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Texture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Vertex.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />

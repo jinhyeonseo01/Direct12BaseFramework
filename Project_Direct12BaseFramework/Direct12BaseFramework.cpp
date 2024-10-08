@@ -5,13 +5,6 @@
 #include <stdafx.h>
 #include <DXEngine.h>
 
-#include <GameObject.h>
-#include <Component.h>
-#include <Transform.h>
-
-#include "Scene.h"
-#include "SceneManager.h"
-
 using namespace dxe;
 
 void Initialize(HINSTANCE hInstance);
@@ -49,6 +42,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     obj1->Debug();
 
+
+    float* b = new float[100*9];
+    int offset = 0;
+    std::vector<Vertex> vertexs;
+    vertexs.reserve(100);
+    for(int i=0;i<100;i++)
+    {
+        Vertex v;
+        v.position = Vector3(i, i, i);
+        v.normal = Vector3(i, i, i);
+        v.uvs.emplace_back(i, i, i);
+        v.uvs.emplace_back(i, i, i);
+        vertexs.push_back(v);
+    }
+    std::vector<VertexProp> selector = {
+        VertexProp::pos,
+        VertexProp::normal,
+        VertexProp::uv
+    };
+    for (auto& a : vertexs)
+        a.WriteBuffer(b, offset, selector);
+    for (int i = 0; i < 900; i++)
+        Debug::log << b;
 
 
     MSG msg{};
