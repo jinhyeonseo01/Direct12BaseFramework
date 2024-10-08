@@ -5,12 +5,6 @@
 #include <stdafx.h>
 #include <DXEngine.h>
 
-#include <GameObject.h>
-#include <Component.h>
-#include <Transform.h>
-
-#include "Scene.h"
-#include "SceneManager.h"
 
 using namespace dxe;
 
@@ -35,12 +29,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto obj4 = scene->CreateGameObject(L"Hello4");
 
 
-    obj2->SetParent(obj1);
-    obj3->SetParent(obj2);
-    obj4->SetParent(obj1);
-
-
-
     int offset = 0;
     std::vector<Vertex> vertexs;
     vertexs.reserve(100);
@@ -56,17 +44,26 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     std::vector<VertexProp> selector = {
         VertexProp::pos,
         VertexProp::normal,
-        VertexProp::uv
+        VertexProp::tangent,
+        //VertexProp::binormal,
+        //VertexProp::color,
+        //VertexProp::uv,
+        //VertexProp::uv2,
+        //VertexProp::uv3,
+        //VertexProp::uv4,
+        //VertexProp::bone_ids,
+        //VertexProp::bone_weights,
     };
     auto info = Vertex::GetSelectorInfo(selector);
     std::shared_ptr<std::vector<float>> b = std::make_shared<std::vector<float>>();
     b->resize(info.totalSize*100);
     for (auto& a : vertexs)
         a.WriteBuffer(b->data(), offset, selector);
-    for (int i = 0; i < 900; i++)
-    {
+    for (int i = 0; i < info.totalSize * 100; i++) {
         Debug::log << (int)(*b.get())[i];
     }
+
+    
 
 
     MSG msg{};

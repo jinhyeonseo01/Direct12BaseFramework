@@ -40,10 +40,12 @@ namespace dxe
 		Quaternion worldRotation();
 		const Quaternion& worldRotation(const Quaternion& quaternion);
 
+        Matrix _prevlocalSRTMatrix = Matrix::Identity;
 		Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
 		Matrix localToWorldMatrix = Matrix::Identity;
 		bool GetLocalToWorldMatrix(Matrix& localToWorldMatrix);
 		bool GetLocalSRTMatrix(Matrix& localSRT);
+        bool SetLocalSRTMatrix(Matrix& localSRT);
 		bool CheckNeedLocalSRTUpdate() const;
 		bool CheckNeedLocalToWorldUpdate() const;
 		void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);

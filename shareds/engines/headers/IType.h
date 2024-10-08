@@ -16,8 +16,8 @@ namespace dxe
     public:
         IType();
         virtual ~IType();
-        virtual std::string& GetTypeName();
-        virtual std::string GetTypeFullName();
+        std::string& GetTypeName();
+        std::string GetTypeFullName();
 
     private:
         static std::unordered_map<std::string, std::function<void*()>> typeTable;

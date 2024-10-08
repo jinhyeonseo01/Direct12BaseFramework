@@ -2,8 +2,6 @@
 
 #include <stdafx.h>
 
-#include "IType.h"
-
 namespace dxe
 {
     enum class VertexProp
@@ -33,8 +31,11 @@ namespace dxe
         bone_w2,
         bone_w3,
     };
+
+
     typedef struct VertexPropInfo
     {
+    public:
         int size;
         int byteSize;
         int offset;
@@ -50,6 +51,7 @@ namespace dxe
         std::vector<VertexPropInfo> propInfos;
         std::vector<VertexProp> props;
     };
+
 	class Vertex
 	{
 	public:

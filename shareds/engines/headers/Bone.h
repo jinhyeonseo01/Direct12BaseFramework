@@ -10,6 +10,7 @@ namespace dxe
         std::wstring boneName;
 
         Bone();
+        Bone(const std::wstring& boneName, int boneId);
         virtual ~Bone();
 
     };

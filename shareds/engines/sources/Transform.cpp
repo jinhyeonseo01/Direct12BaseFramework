@@ -162,7 +162,6 @@ const Quaternion& Transform::worldRotation(const Quaternion& quaternion)
 	localRotation = quaternion * result;
 	localRotation.Normalize();
 	*/
-
 	auto parent = gameObject.lock()->parent.lock();
 	if (parent)
 	{
@@ -201,17 +200,38 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 		Matrix matScale = Matrix::CreateScale(localScale);
 		Matrix matRotation = Matrix::CreateFromQuaternion(localRotation);
 		Matrix matTranslation = Matrix::CreateTranslation(localPosition);
-		localSRTMatrix = matScale * matRotation * matTranslation;
+        _prevlocalSRTMatrix = localSRTMatrix = matScale * matRotation * matTranslation;
 	}
 	localSRT = localSRTMatrix;
 	return isLocalSRTChanged;
+}
+
+bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
+{
+    Vector3 position;
+    Quaternion rotation;
+    Vector3 scale;
+    localSRTMatrix = localSRT;
+    // 행렬을 위치, 회전, 스케일로 분해
+    if(localSRT.Decompose(scale, rotation, position))
+    {
+        localScale = scale;
+        localRotation = rotation;
+        localPosition = position;
+        _prevlocalPosition = localPosition;
+        _prevLocalRotation = localRotation;
+        _prevlocalScale = localScale;
+        return true;
+    }
+    return false;
 }
 
 bool Transform::CheckNeedLocalSRTUpdate() const
 {
 	return (_prevlocalPosition != localPosition)
 		|| (_prevLocalRotation != localRotation)
-		|| (_prevlocalScale != localScale);
+		|| (_prevlocalScale != localScale)
+        || (_prevlocalSRTMatrix != localToWorldMatrix);
 }
 bool Transform::CheckNeedLocalToWorldUpdate() const
 {
