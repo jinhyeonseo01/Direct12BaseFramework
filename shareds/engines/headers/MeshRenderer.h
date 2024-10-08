@@ -3,11 +3,11 @@
 
 namespace dxe
 {
-    class MeshRenderer : public xe::RendererComponent
+    class MeshRenderer : public dxe::RendererComponent
     {
     public:
         ~MeshRenderer() override;
-        void* Clone() const override;
+        void* Clone() override;
         void ReRef() override;
         void Destroy() override;
         void Init() override;

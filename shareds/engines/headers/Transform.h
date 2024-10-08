@@ -10,11 +10,11 @@ namespace dxe
 		Transform();
 		virtual ~Transform();
 	public:
-		void* Clone() const override;
+		void* Clone() override;
 		void ReRef() override;
 	protected:
-		Vector3 _prevlocalPosition;
-		Vector3 _prevlocalScale;
+		Vector3 _prevLocalPosition;
+		Vector3 _prevLocalScale;
 		Quaternion _prevLocalRotation;
 	public:
 
@@ -40,7 +40,7 @@ namespace dxe
 		Quaternion worldRotation();
 		const Quaternion& worldRotation(const Quaternion& quaternion);
 
-        Matrix _prevlocalSRTMatrix = Matrix::Identity;
+        Matrix _prevLocalSRTMatrix = Matrix::Identity;
 		Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
 		Matrix localToWorldMatrix = Matrix::Identity;
 		bool GetLocalToWorldMatrix(Matrix& localToWorldMatrix);

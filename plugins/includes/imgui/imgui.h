@@ -804,7 +804,7 @@ namespace ImGui
     // Tables: Sorting & Miscellaneous functions
     // - Sorting: call TableGetSortSpecs() to retrieve latest sort specs for the table. NULL when not sorting.
     //   When 'sort_specs->SpecsDirty == true' you should sort your data. It will be true when sorting specs have
-    //   changed since last call, or the first time. Make sure to set 'SpecsDirty = false' after sorting,
+    //   changed since last call, or the first time. MakeInit sure to set 'SpecsDirty = false' after sorting,
     //   else you may wastefully sort your data every frame!
     // - Functions args 'int column_n' treat the default value of -1 as the same as passing the current column index.
     IMGUI_API ImGuiTableSortSpecs*  TableGetSortSpecs();                        // get latest sort specs for the table (NULL if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable().
@@ -848,8 +848,8 @@ namespace ImGui
     IMGUI_API void          LogTextV(const char* fmt, va_list args) IM_FMTLIST(1);
 
     // Drag and Drop
-    // - On source items, call BeginDragDropSource(), if it returns true also call SetDragDropPayload() + EndDragDropSource().
-    // - On target candidates, call BeginDragDropTarget(), if it returns true also call AcceptDragDropPayload() + EndDragDropTarget().
+    // - MakeInit source items, call BeginDragDropSource(), if it returns true also call SetDragDropPayload() + EndDragDropSource().
+    // - MakeInit target candidates, call BeginDragDropTarget(), if it returns true also call AcceptDragDropPayload() + EndDragDropTarget().
     // - If you stop calling BeginDragDropSource() the payload is preserved however it won't have a preview tooltip (we currently display a fallback "..." tooltip, see #1725)
     // - An item can be both drag source and drop target.
     IMGUI_API bool          BeginDragDropSource(ImGuiDragDropFlags flags = 0);                                      // call after submitting an item which may be dragged. when this return true, you can call SetDragDropPayload() + EndDragDropSource()
@@ -1032,7 +1032,7 @@ enum ImGuiWindowFlags_
     ImGuiWindowFlags_NoResize               = 1 << 1,   // Disable user resizing with the lower-right grip
     ImGuiWindowFlags_NoMove                 = 1 << 2,   // Disable user moving the window
     ImGuiWindowFlags_NoScrollbar            = 1 << 3,   // Disable scrollbars (window can still scroll with mouse or programmatically)
-    ImGuiWindowFlags_NoScrollWithMouse      = 1 << 4,   // Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.
+    ImGuiWindowFlags_NoScrollWithMouse      = 1 << 4,   // Disable user vertically scrolling with mouse wheel. MakeInit child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.
     ImGuiWindowFlags_NoCollapse             = 1 << 5,   // Disable user collapsing window by double-clicking on it. Also referred to as Window Menu Button (e.g. within a docking node).
     ImGuiWindowFlags_AlwaysAutoResize       = 1 << 6,   // Resize every window to its content every frame
     ImGuiWindowFlags_NoBackground           = 1 << 7,   // Disable drawing background color (WindowBg, etc.) and outside border. Similar as using SetNextWindowBgAlpha(0.0f).
@@ -1433,7 +1433,7 @@ enum ImGuiKey : int
     ImGuiKey_GamepadBack,           // View (Xbox)      - (Switch)   Share (PS)
     ImGuiKey_GamepadFaceLeft,       // X (Xbox)         Y (Switch)   Square (PS)        // Tap: Toggle Menu. Hold: Windowing mode (Focus/Move/Resize windows)
     ImGuiKey_GamepadFaceRight,      // B (Xbox)         A (Switch)   Circle (PS)        // Cancel / Close / Exit
-    ImGuiKey_GamepadFaceUp,         // Y (Xbox)         X (Switch)   Triangle (PS)      // Text Input / On-screen Keyboard
+    ImGuiKey_GamepadFaceUp,         // Y (Xbox)         X (Switch)   Triangle (PS)      // Text Input / MakeInit-screen Keyboard
     ImGuiKey_GamepadFaceDown,       // A (Xbox)         B (Switch)   Cross (PS)         // Activate / Open / Toggle / Tweak
     ImGuiKey_GamepadDpadLeft,       // D-pad Left                                       // Move / Tweak / Resize Window (in Windowing mode)
     ImGuiKey_GamepadDpadRight,      // D-pad Right                                      // Move / Tweak / Resize Window (in Windowing mode)
@@ -1470,7 +1470,7 @@ enum ImGuiKey : int
     // - In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.
     //   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and
     //   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...
-    // - On macOS, we swap Cmd(Super) and Ctrl keys at the time of the io.AddKeyEvent() call.
+    // - MakeInit macOS, we swap Cmd(Super) and Ctrl keys at the time of the io.AddKeyEvent() call.
     ImGuiMod_None                   = 0,
     ImGuiMod_Ctrl                   = 1 << 12, // Ctrl (non-macOS), Cmd (macOS)
     ImGuiMod_Shift                  = 1 << 13, // Shift
@@ -1739,7 +1739,7 @@ enum ImGuiSliderFlags_
 {
     ImGuiSliderFlags_None                   = 0,
     ImGuiSliderFlags_AlwaysClamp            = 1 << 4,       // Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.
-    ImGuiSliderFlags_Logarithmic            = 1 << 5,       // Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
+    ImGuiSliderFlags_Logarithmic            = 1 << 5,       // MakeInit the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
     ImGuiSliderFlags_NoRoundToFormat        = 1 << 6,       // Disable rounding underlying value to match precision of the display format string (e.g. %.3f values are rounded to those 3 digits).
     ImGuiSliderFlags_NoInput                = 1 << 7,       // Disable CTRL+Click or Enter key allowing to input text directly into the widget.
     ImGuiSliderFlags_WrapAround             = 1 << 8,       // Enable wrapping around from max to min and from min to max (only supported by DragXXX() functions for now.
@@ -1855,8 +1855,8 @@ enum ImGuiTableFlags_
     ImGuiTableFlags_SizingStretchProp          = 3 << 13,  // Columns default to _WidthStretch with default weights proportional to each columns contents widths.
     ImGuiTableFlags_SizingStretchSame          = 4 << 13,  // Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().
     // Sizing Extra Options
-    ImGuiTableFlags_NoHostExtendX              = 1 << 16,  // Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.
-    ImGuiTableFlags_NoHostExtendY              = 1 << 17,  // Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.
+    ImGuiTableFlags_NoHostExtendX              = 1 << 16,  // MakeInit outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.
+    ImGuiTableFlags_NoHostExtendY              = 1 << 17,  // MakeInit outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.
     ImGuiTableFlags_NoKeepColumnsVisible       = 1 << 18,  // Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.
     ImGuiTableFlags_PreciseWidths              = 1 << 19,  // Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.
     // Clipping
@@ -1897,8 +1897,8 @@ enum ImGuiTableColumnFlags_
     ImGuiTableColumnFlags_NoSortDescending      = 1 << 11,  // Disable ability to sort in the descending direction.
     ImGuiTableColumnFlags_NoHeaderLabel         = 1 << 12,  // TableHeadersRow() will not submit horizontal label for this column. Convenient for some small columns. Name will still appear in context menu or in angled headers.
     ImGuiTableColumnFlags_NoHeaderWidth         = 1 << 13,  // Disable header text width contribution to automatic column width.
-    ImGuiTableColumnFlags_PreferSortAscending   = 1 << 14,  // Make the initial sort direction Ascending when first sorting on this column (default).
-    ImGuiTableColumnFlags_PreferSortDescending  = 1 << 15,  // Make the initial sort direction Descending when first sorting on this column.
+    ImGuiTableColumnFlags_PreferSortAscending   = 1 << 14,  // MakeInit the initial sort direction Ascending when first sorting on this column (default).
+    ImGuiTableColumnFlags_PreferSortDescending  = 1 << 15,  // MakeInit the initial sort direction Descending when first sorting on this column.
     ImGuiTableColumnFlags_IndentEnable          = 1 << 16,  // Use current Indent value when entering cell (default for column 0).
     ImGuiTableColumnFlags_IndentDisable         = 1 << 17,  // Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.
     ImGuiTableColumnFlags_AngledHeader          = 1 << 18,  // TableHeadersRow() will submit an angled header row for this column. Note this will add an extra row.
@@ -1943,7 +1943,7 @@ enum ImGuiTableBgTarget_
 // Sorting specifications for a table (often handling sort specs for a single column, occasionally more)
 // Obtained by calling TableGetSortSpecs().
 // When 'SpecsDirty == true' you can sort your data. It will be true with sorting specs have changed since last call, or the first time.
-// Make sure to set 'SpecsDirty = false' after sorting, else you may wastefully sort your data every frame!
+// MakeInit sure to set 'SpecsDirty = false' after sorting, else you may wastefully sort your data every frame!
 struct ImGuiTableSortSpecs
 {
     const ImGuiTableColumnSortSpecs* Specs;     // Pointer to sort spec array.
@@ -2334,7 +2334,7 @@ struct ImGuiIO
     bool        MouseReleased[5];                   // Mouse button went from Down to !Down
     bool        MouseDownOwned[5];                  // Track if button was clicked inside a dear imgui window or over void blocked by a popup. We don't request mouse capture from the application if click started outside ImGui bounds.
     bool        MouseDownOwnedUnlessPopupClose[5];  // Track if button was clicked inside a dear imgui window.
-    bool        MouseWheelRequestAxisSwap;          // On a non-Mac system, holding SHIFT requests WheelY to perform the equivalent of a WheelX event. On a Mac system this is already enforced by the system.
+    bool        MouseWheelRequestAxisSwap;          // MakeInit a non-Mac system, holding SHIFT requests WheelY to perform the equivalent of a WheelX event. MakeInit a Mac system this is already enforced by the system.
     bool        MouseCtrlLeftAsRightClick;          // (OSX) Set to true when the current click was a ctrl-click that spawned a simulated right click
     float       MouseDownDuration[5];               // Duration the mouse button has been down (0.0f == just clicked)
     float       MouseDownDurationPrev[5];           // Previous time the mouse button has been down
@@ -2528,7 +2528,7 @@ struct ImGuiStorage
     // [Internal]
     ImVector<ImGuiStoragePair>      Data;
 
-    // - Get***() functions find pair, never add/allocate. Pairs are sorted so a query is O(log N)
+    // - GetThis***() functions find pair, never add/allocate. Pairs are sorted so a query is O(log N)
     // - Set***() functions find pair, insertion on demand if missing.
     // - Sorted insertion is costly, paid once. A typical frame shouldn't need to insert any new pair.
     void                Clear() { Data.clear(); }
@@ -2541,8 +2541,8 @@ struct ImGuiStorage
     IMGUI_API void*     GetVoidPtr(ImGuiID key) const; // default_val is NULL
     IMGUI_API void      SetVoidPtr(ImGuiID key, void* val);
 
-    // - Get***Ref() functions finds pair, insert on demand if missing, return pointer. Useful if you intend to do Get+Set.
-    // - References are only valid until a new value is added to the storage. Calling a Set***() function or a Get***Ref() function invalidates the pointer.
+    // - GetThis***Ref() functions finds pair, insert on demand if missing, return pointer. Useful if you intend to do GetThis+Set.
+    // - References are only valid until a new value is added to the storage. Calling a Set***() function or a GetThis***Ref() function invalidates the pointer.
     // - A typical use case where this is convenient for quick hacking (e.g. add storage during a live Edit&Continue session if you can't modify existing struct)
     //      float* pvar = ImGui::GetFloatRef(key); ImGui::SliderFloat("var", pvar, 0, 100.0f); some_var += *pvar;
     IMGUI_API int*      GetIntRef(ImGuiID key, int default_val = 0);
@@ -3032,7 +3032,7 @@ struct ImFontGlyphRangesBuilder
 
     ImFontGlyphRangesBuilder()              { Clear(); }
     inline void     Clear()                 { int size_in_bytes = (IM_UNICODE_CODEPOINT_MAX + 1) / 8; UsedChars.resize(size_in_bytes / (int)sizeof(ImU32)); memset(UsedChars.Data, 0, (size_t)size_in_bytes); }
-    inline bool     GetBit(size_t n) const  { int off = (int)(n >> 5); ImU32 mask = 1u << (n & 31); return (UsedChars[off] & mask) != 0; }  // Get bit n in the array
+    inline bool     GetBit(size_t n) const  { int off = (int)(n >> 5); ImU32 mask = 1u << (n & 31); return (UsedChars[off] & mask) != 0; }  // GetThis bit n in the array
     inline void     SetBit(size_t n)        { int off = (int)(n >> 5); ImU32 mask = 1u << (n & 31); UsedChars[off] |= mask; }               // Set bit n in the array
     inline void     AddChar(ImWchar c)      { SetBit(c); }                      // Add character
     IMGUI_API void  AddText(const char* text, const char* text_end = NULL);     // Add string (each character of the UTF-8 string are added)
@@ -3110,7 +3110,7 @@ struct ImFontAtlas
     //-------------------------------------------
 
     // Helpers to retrieve list of common Unicode ranges (2 value per range, values are inclusive, zero-terminated list)
-    // NB: Make sure that your string are UTF-8 and NOT in your local code page.
+    // NB: MakeInit sure that your string are UTF-8 and NOT in your local code page.
     // Read https://github.com/ocornut/imgui/blob/master/docs/FONTS.md/#about-utf-8-encoding for details.
     // NB: Consider using ImFontGlyphRangesBuilder to build glyph ranges from textual data.
     IMGUI_API const ImWchar*    GetGlyphRangesDefault();                // Basic Latin, Extended Latin

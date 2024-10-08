@@ -1,14 +1,14 @@
 #pragma once
 #include "Component.h"
 
-namespace xe
+namespace dxe
 {
     class RendererComponent : public Component
     {
     public:
         RendererComponent();
         virtual ~RendererComponent();
-        void* Clone() const override;
+        void* Clone() override;
         void ReRef() override;
         void Destroy() override;
         void Init() override;

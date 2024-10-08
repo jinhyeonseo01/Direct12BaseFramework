@@ -4,7 +4,7 @@ MeshRenderer::~MeshRenderer()
 {
 }
 
-void* MeshRenderer::Clone() const
+void* MeshRenderer::Clone()
 {
     return RendererComponent::Clone();
 }

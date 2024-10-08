@@ -78,16 +78,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     std::this_thread::sleep_for(std::chrono::milliseconds(20));;
 
     SceneManager::_currentScene->Debug();
-    Debug::log << EObject::_EObjectTable.size() << "\n";
-    EObject::ClearCloneTable();
-    Debug::log << EObject::_EObjectTable.size() << "\n";
-    auto ptr = obj1->Clone();
-    Debug::log << EObject::_EObjectTable.size() << "\n";
-    Debug::log << EObject::_CloneGuidTable.size() << "\n";
-    auto cloneObject = std::dynamic_pointer_cast<GameObject>(((GameObject*)ptr)->shared_from_this());
-    cloneObject->ReRef();
+    auto clone = ((GameObject*)(obj1->Clone()))->GetThis<GameObject>();
+    clone->ReRef();
     EObject::ClearCloneTable();
     SceneManager::_currentScene->Debug();
+
+    obj1->transform->localPosition = Vector3(0, 0, 1);
+    clone->transform->localPosition = Vector3(1, 0, 0);
+
+    Debug::log << obj1->GetChild(0)->transform->worldPosition() << "\n";
+    Debug::log << clone->GetChild(0)->transform->worldPosition() << "\n";
 
     MSG msg{};
     try

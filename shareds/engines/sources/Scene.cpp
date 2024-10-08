@@ -70,7 +70,7 @@ namespace dxe
 
 	std::shared_ptr<GameObject> Scene::CreateGameObject(std::wstring name)
 	{
-		auto gameObject = std::make_shared<GameObject>(name);
+		auto gameObject = std::make_shared<GameObject>(name)->MakeInit<GameObject>();
 		gameObject->Init();
 		AddGameObject(gameObject);
 		return gameObject;

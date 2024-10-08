@@ -57,7 +57,7 @@ void Engine::LogicPipeline()
 			auto& components = currentObject->_components;
 			for (int j = components.size() - 1; j >= 0; --j)
 			{
-				if (components[j]->IsFirst())
+				if (components[j] && components[j]->IsFirst())
 				{
 					components[j]->Start();
 					components[j]->FirstDisable();
@@ -73,7 +73,7 @@ void Engine::LogicPipeline()
 			auto& components = currentObject->_components;
 			for (int j = components.size() - 1; j >= 0; --j)
 			{
-				if (!components[j]->IsFirst())
+				if (components[j] && !components[j]->IsFirst())
 					components[j]->Update();
 			}
 		}
@@ -86,7 +86,7 @@ void Engine::LogicPipeline()
 			auto& components = currentObject->_components;
 			for (int j = components.size() - 1; j >= 0; --j)
 			{
-				if (!components[j]->IsFirst())
+				if (components[j] && !components[j]->IsFirst())
 					components[j]->LateUpdate();
 			}
 		}
@@ -101,7 +101,7 @@ void Engine::LogicPipeline()
 				auto& components = currentObject->_components;
 				for (int j = components.size() - 1; j >= 0; --j)
 				{
-					if (!components[j]->IsFirst())
+					if (components[j] && !components[j]->IsFirst())
 						components[j]->OnDisable();
 				}
 
@@ -118,8 +118,11 @@ void Engine::LogicPipeline()
 				auto& components = currentObject->_components;
 				for (int j = components.size() - 1; j >= 0; --j)
 				{
-					components[j]->OnDestroy();
-					components[j]->OnComponentDestroy();
+                    if (components[j])
+                    {
+                        components[j]->OnDestroy();
+                        components[j]->OnComponentDestroy();
+                    }
 				}
 			}
 			else
@@ -127,10 +130,12 @@ void Engine::LogicPipeline()
 				auto& components = currentObject->_components;
 				for (int j = components.size() - 1; j >= 0; --j)
 				{
-					if(components[j]->IsDestroy()) {
+					if(components[j] && components[j]->IsDestroy()) {
 						components[j]->OnComponentDestroy();
 						components.erase(components.begin() + j);
 					}
+                    else if(!components[j])
+                        components.erase(components.begin() + j);
 				}
 			}
 			

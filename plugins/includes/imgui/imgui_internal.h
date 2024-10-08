@@ -974,7 +974,7 @@ enum ImGuiSeparatorFlags_
     ImGuiSeparatorFlags_None                    = 0,
     ImGuiSeparatorFlags_Horizontal              = 1 << 0,   // Axis default to current layout type, so generally Horizontal unless e.g. in a menu bar
     ImGuiSeparatorFlags_Vertical                = 1 << 1,
-    ImGuiSeparatorFlags_SpanAllColumns          = 1 << 2,   // Make separator cover all columns of a legacy Columns() set.
+    ImGuiSeparatorFlags_SpanAllColumns          = 1 << 2,   // MakeInit separator cover all columns of a legacy Columns() set.
 };
 
 // Flags for FocusWindow(). This is not called ImGuiFocusFlags to avoid confusion with public-facing ImGuiFocusedFlags.
@@ -1563,9 +1563,9 @@ enum ImGuiNavHighlightFlags_
 enum ImGuiNavMoveFlags_
 {
     ImGuiNavMoveFlags_None                  = 0,
-    ImGuiNavMoveFlags_LoopX                 = 1 << 0,   // On failed request, restart from opposite side
+    ImGuiNavMoveFlags_LoopX                 = 1 << 0,   // MakeInit failed request, restart from opposite side
     ImGuiNavMoveFlags_LoopY                 = 1 << 1,
-    ImGuiNavMoveFlags_WrapX                 = 1 << 2,   // On failed request, request from opposite side one line down (when NavDir==right) or one line up (when NavDir==left)
+    ImGuiNavMoveFlags_WrapX                 = 1 << 2,   // MakeInit failed request, request from opposite side one line down (when NavDir==right) or one line up (when NavDir==left)
     ImGuiNavMoveFlags_WrapY                 = 1 << 3,   // This is not super useful but provided for completeness
     ImGuiNavMoveFlags_WrapMask_             = ImGuiNavMoveFlags_LoopX | ImGuiNavMoveFlags_LoopY | ImGuiNavMoveFlags_WrapX | ImGuiNavMoveFlags_WrapY,
     ImGuiNavMoveFlags_AllowCurrentNavId     = 1 << 4,   // Allow scoring and considering the current NavId as a move target candidate. This is used when the move source is offset (e.g. pressing PageDown actually needs to send a Up move request, if we are pressing PageDown from the bottom-most item we need to stay in place)
@@ -3495,7 +3495,7 @@ namespace ImGui
     IMGUI_API bool          TempInputText(const ImRect& bb, ImGuiID id, const char* label, char* buf, int buf_size, ImGuiInputTextFlags flags);
     IMGUI_API bool          TempInputScalar(const ImRect& bb, ImGuiID id, const char* label, ImGuiDataType data_type, void* p_data, const char* format, const void* p_clamp_min = NULL, const void* p_clamp_max = NULL);
     inline bool             TempInputIsActive(ImGuiID id)       { ImGuiContext& g = *GImGui; return (g.ActiveId == id && g.TempInputId == id); }
-    inline ImGuiInputTextState* GetInputTextState(ImGuiID id)   { ImGuiContext& g = *GImGui; return (id != 0 && g.InputTextState.ID == id) ? &g.InputTextState : NULL; } // Get input text state if active
+    inline ImGuiInputTextState* GetInputTextState(ImGuiID id)   { ImGuiContext& g = *GImGui; return (id != 0 && g.InputTextState.ID == id) ? &g.InputTextState : NULL; } // GetThis input text state if active
     IMGUI_API void          SetNextItemRefVal(ImGuiDataType data_type, void* p_data);
 
     // Color

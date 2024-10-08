@@ -8,6 +8,8 @@ namespace dxe
 {
 	std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable;
 	std::unordered_map<std::wstring, std::wstring> EObject::_CloneGuidTable;
+    std::vector<std::shared_ptr<EObject>> EObject::_TempLifeCycle;
+
 
 	EObject::EObject()
 	{
@@ -80,8 +82,8 @@ namespace dxe
 		return other.guid < this->guid;
 	}
 
-	void* EObject::Clone() const
-	{
+	void* EObject::Clone()
+    {
 		return nullptr;
 	}
 
@@ -89,4 +91,11 @@ namespace dxe
     {
 
 	}
+
+
+    void EObject::ClearCloneTable()
+    {
+        _CloneGuidTable.clear();
+        _TempLifeCycle.clear();
+    }
 }

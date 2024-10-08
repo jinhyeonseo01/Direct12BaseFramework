@@ -23,7 +23,7 @@ namespace dxe
 
     public:
 
-        void* Clone() const override;
+        void* Clone() override;
         void ReRef() override;
         void Init() override;
         void Start() override;

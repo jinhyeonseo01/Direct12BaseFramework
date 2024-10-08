@@ -9,9 +9,19 @@ Camera::~Camera()
 {
 }
 
-void* Camera::Clone() const
+void* Camera::Clone()
 {
-    return Component::Clone();
+    auto thisObject = GetThis<Camera>();
+    auto cloneObject = std::make_shared<Camera>()->MakeInit<Camera>();
+    AddClone(thisObject, cloneObject);
+
+    cloneObject->gameObject = thisObject->gameObject;
+    cloneObject->_first = thisObject->_first;
+    {
+
+    }
+
+    return cloneObject.get();
 }
 
 void Camera::ReRef()

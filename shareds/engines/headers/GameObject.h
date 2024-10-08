@@ -62,7 +62,7 @@ namespace dxe
 		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, Component*>>>
 		std::shared_ptr<T> AddComponent()
 		{
-			auto component = std::make_shared<T>();
+			auto component = std::make_shared<T>()->MakeInit<T>();
 			auto componentCast = std::dynamic_pointer_cast<Component>(component);
 			componentCast->gameObject = std::dynamic_pointer_cast<GameObject>(this->shared_from_this());
 			_components.push_back(componentCast);
@@ -107,7 +107,7 @@ namespace dxe
 		void Destroy() override;
 
 	public:
-		void* Clone() const override;
+		void* Clone() override;
 		void ReRef() override;
 
 		std::weak_ptr<GameObject> parent;
@@ -156,4 +156,3 @@ namespace dxe
 	};
 
 }
-

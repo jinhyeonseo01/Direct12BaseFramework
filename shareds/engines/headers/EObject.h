@@ -12,6 +12,7 @@ namespace dxe
 	public:
 		static std::unordered_map<std::wstring, std::weak_ptr<EObject>> _EObjectTable;
 		static std::unordered_map<std::wstring, std::wstring> _CloneGuidTable;
+        static std::vector<std::shared_ptr<EObject>> _TempLifeCycle;
 		
 		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
 		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
@@ -49,7 +50,7 @@ namespace dxe
 			}
 			return false;
 		}
-		static bool ContainsByGuid(std::wstring& guid)
+		static bool ContainsByGuid(const std::wstring& guid)
 		{
 			if (_EObjectTable.contains(guid))
 			{
@@ -121,34 +122,34 @@ namespace dxe
 			return nullptr;
 		}
 
-		static void ClearCloneTable()
-		{
-			_CloneGuidTable.clear();
-		}
 		template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
-		static void AddClone(const T& obj, T& cloneObj)
+		static bool AddClone(const std::shared_ptr<T>& originalObj, std::shared_ptr<T>& cloneObj)
 		{
-            Debug::log << EObject::_EObjectTable.size() << "-\n";
-			if (obj != cloneObj)
-			{
-                Debug::log << EObject::_EObjectTable.size() << "--\n";
-				if (!_CloneGuidTable.contains(cloneObj.guid))
-				{
-                    Debug::log << EObject::_EObjectTable.size() << "---\n";
-					_CloneGuidTable.insert(std::make_pair(obj.guid, cloneObj.guid));
+            auto originalEObject = std::dynamic_pointer_cast<EObject>(originalObj);
+            auto cloneEObject = std::dynamic_pointer_cast<EObject>(cloneObj);
+			if (originalEObject != cloneEObject) {
+				if (!_CloneGuidTable.contains(cloneObj->guid)) {
+					_CloneGuidTable.insert(std::make_pair(originalObj->guid, cloneObj->guid));
+
+                    _TempLifeCycle.push_back(originalEObject);
+                    _TempLifeCycle.push_back(cloneEObject);
+                    return true;
 				}
 			}
-            Debug::log << EObject::_EObjectTable.size() << "----\n";
+            return false;
 		}
+
+        static void ClearCloneTable();
+
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
-        static std::shared_ptr<T> FindCloneByGuid(std::wstring& guid)
+        static std::shared_ptr<T> FindCloneByGuid(const std::wstring& guid)
         {
             if (!_CloneGuidTable.contains(guid))
                 return nullptr;
-            guid = _CloneGuidTable[guid];
-            if (_EObjectTable.contains(guid))
+		    const std::wstring& cloneGuid = _CloneGuidTable[guid];
+            if (_EObjectTable.contains(cloneGuid))
             {
-                auto current = _EObjectTable[guid];
+                auto current = _EObjectTable[cloneGuid];
                 if (!current.expired())
                 {
                     auto ptr = std::dynamic_pointer_cast<T>(current.lock());
@@ -156,11 +157,184 @@ namespace dxe
                 }
                 else
                 {
-                    _EObjectTable.erase(guid);
+                    _EObjectTable.erase(cloneGuid);
                 }
             }
             return nullptr;
         }
+
+        /// <summary>
+        /// 재참조 처리를 수행할 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static bool ReRefChain(std::weak_ptr<T>& other)
+        {
+            if (other.lock() && ContainsByGuid(other.lock()->GetGUID()) && (FindCloneByGuid<T>(other.lock()->GetGUID()) == nullptr)) {
+                other.lock()->ReRef();
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 재참조 처리를 수행할 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static bool ReRefChain(std::shared_ptr<T>& other)
+        {
+            if (ContainsByGuid(other->GetGUID()) && FindCloneByGuid<T>(other->GetGUID()) == nullptr) {
+                other->ReRef();
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 재참조 처리를 수행할 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static void ReRefChain(std::vector<std::weak_ptr<T>>& others)
+        {
+            for (auto& other : others)
+                RerefChain(other);
+        }
+        /// <summary>
+        /// 재참조 처리를 수행할 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static void ReRefChain(std::vector<std::shared_ptr<T>>& others)
+        {
+            for (auto& other : others)
+                RerefChain(other);
+        }
+        /// <summary>
+        /// 깊은 복사 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static bool CloneChain(std::weak_ptr<T>& other)
+		{
+            if (other.lock() && (ContainsByGuid(other.lock()->GetGUID()) && FindCloneByGuid<T>(other.lock()->GetGUID()) == nullptr)) {
+                other.lock()->Clone();
+                return true;
+            }
+            return false;
+		}
+        /// <summary>
+        /// 깊은 복사 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static bool CloneChain(std::shared_ptr<T>& other)
+        {
+            if (ContainsByGuid(other->GetGUID()) && FindCloneByGuid<T>(other->GetGUID()) == nullptr) {
+                other->Clone();
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 깊은 복사 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static void CloneChain(std::vector<std::weak_ptr<T>>& others)
+        {
+            for (auto& other : others)
+                CloneChain(other);
+        }
+        /// <summary>
+        /// 깊은 복사 대상 추가
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static void CloneChain(std::vector<std::shared_ptr<T>>& others)
+        {
+            for (auto& other : others)
+                CloneChain(other);
+        }
+
+        /// <summary>
+        /// 재참조 처리 수행
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_base_of<EObject, T>::value>::type>
+        static bool ChangePtrToClone(std::weak_ptr<T>& other)
+        {
+            std::shared_ptr<T> cloneObject;
+            if (other.lock() && (ContainsByGuid(other.lock()->GetGUID()) && (cloneObject = FindCloneByGuid<T>(other.lock()->GetGUID())) != nullptr)) {
+                other = cloneObject;
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 재참조 처리 수행
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static bool ChangePtrToClone(std::shared_ptr<T>& other)
+        {
+            std::shared_ptr<T> cloneObject;
+            if (ContainsByGuid(other->GetGUID()) && (cloneObject = FindCloneByGuid<T>(other->GetGUID())) != nullptr) {
+                other = cloneObject;
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 재참조 처리 수행
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static void ChangePtrToClone(std::vector<std::weak_ptr<T>>& others)
+        {
+            for (int i = 0; i < others.size(); i++)
+            {
+                auto& other = others[i];
+                ChangedClonePtr(other);
+            }
+        }
+        /// <summary>
+        /// 재참조 처리 수행
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name=""></typeparam>
+        /// <param name="others"></param>
+        template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+        static void ChangePtrToClone(std::vector<std::shared_ptr<T>>& others)
+        {
+            for (int i = 0; i < others.size(); i++)
+            {
+                auto& other = others[i];
+                ChangedClonePtr(other);
+            }
+        }
+
 
 	public:
 		std::wstring guid = L"";
@@ -180,8 +354,20 @@ namespace dxe
 		void SetGUID(const std::wstring& str);
 		std::wstring GetGUID() const;
 
-		virtual void* Clone() const override;
+		virtual void* Clone() override;
 		virtual void ReRef() override;
+
+        template<class T, class = std::enable_if_t<std::is_base_of_v<EObject, T>>>
+        std::shared_ptr<T> MakeInit()
+        {
+            AddObject(this->shared_from_this());
+            return GetThis<T>();
+        }
+        template<class T, class = std::enable_if_t<std::is_base_of_v<EObject, T>>>
+        std::shared_ptr<T> GetThis()
+        {
+            return std::dynamic_pointer_cast<T>(this->shared_from_this());
+        }
 	};
 }
 

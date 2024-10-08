@@ -1,4 +1,4 @@
-4
+9
 
 Scene : Test Scene
 -Obj:Hello
@@ -10,38 +10,6 @@ Scene : Test Scene
             -Obj:Hello4
                Com:Transform
 
-4
-4
-4
-5
-5-
-5--
-5---
-5----
-5
-5
-6
-6-
-6--
-6---
-6----
-6
-6
-7
-7-
-7--
-7---
-7----
-7
-7
-8
-8-
-8--
-8---
-8----
-8
-8
-4
 
 Scene : Test Scene
 -Obj:Hello
@@ -61,3 +29,5 @@ Scene : Test Scene
             -Obj:Hello4(clone)
                Com:Transform
 
+[0, 0, 1]
+[1, 0, 0]

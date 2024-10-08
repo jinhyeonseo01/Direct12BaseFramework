@@ -1,64 +1,64 @@
 #include "RendererComponent.h"
 
-xe::RendererComponent::RendererComponent()
+dxe::RendererComponent::RendererComponent()
 {
 }
 
-xe::RendererComponent::~RendererComponent()
+dxe::RendererComponent::~RendererComponent()
 {
 }
 
-void* xe::RendererComponent::Clone() const
+void* dxe::RendererComponent::Clone()
 {
     return Component::Clone();
 }
 
-void xe::RendererComponent::ReRef()
+void dxe::RendererComponent::ReRef()
 {
     Component::ReRef();
 }
 
-void xe::RendererComponent::Destroy()
+void dxe::RendererComponent::Destroy()
 {
     Component::Destroy();
 }
 
-void xe::RendererComponent::Init()
+void dxe::RendererComponent::Init()
 {
     Component::Init();
 }
 
-void xe::RendererComponent::Start()
+void dxe::RendererComponent::Start()
 {
     Component::Start();
 }
 
-void xe::RendererComponent::Update()
+void dxe::RendererComponent::Update()
 {
     Component::Update();
 }
 
-void xe::RendererComponent::LateUpdate()
+void dxe::RendererComponent::LateUpdate()
 {
     Component::LateUpdate();
 }
 
-void xe::RendererComponent::OnEnable()
+void dxe::RendererComponent::OnEnable()
 {
     Component::OnEnable();
 }
 
-void xe::RendererComponent::OnDisable()
+void dxe::RendererComponent::OnDisable()
 {
     Component::OnDisable();
 }
 
-void xe::RendererComponent::OnDestroy()
+void dxe::RendererComponent::OnDestroy()
 {
     Component::OnDestroy();
 }
 
-void xe::RendererComponent::OnComponentDestroy()
+void dxe::RendererComponent::OnComponentDestroy()
 {
     Component::OnComponentDestroy();
 }

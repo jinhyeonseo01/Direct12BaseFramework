@@ -3,14 +3,42 @@
 
 #include "GameObject.h"
 
-void* Transform::Clone() const
+void* Transform::Clone()
 {
-	return Component::Clone();
+	Component::Clone();
+
+    auto thisObject = std::dynamic_pointer_cast<Transform>(this->shared_from_this());
+    auto cloneObject = std::make_shared<Transform>()->MakeInit<Transform>();
+    AddClone(thisObject, cloneObject);
+
+    cloneObject->gameObject = thisObject->gameObject;
+    cloneObject->_first = thisObject->_first;
+    {
+        cloneObject->localPosition = thisObject->localPosition;
+        cloneObject->localRotation = thisObject->localRotation;
+        cloneObject->localScale = thisObject->localScale;
+        cloneObject->localSRTMatrix = thisObject->localSRTMatrix;
+        cloneObject->localToWorldMatrix = thisObject->localToWorldMatrix;
+
+        cloneObject->_prevLocalPosition = thisObject->_prevLocalPosition;
+        cloneObject->_prevLocalRotation = thisObject->_prevLocalRotation;
+        cloneObject->_prevLocalScale = thisObject->_prevLocalScale;
+        cloneObject->_prevLocalSRTMatrix = thisObject->_prevLocalSRTMatrix;
+
+        cloneObject->isLocalSRTChanged = thisObject->isLocalSRTChanged;
+        cloneObject->isLocalToWorldChanged = thisObject->isLocalToWorldChanged;
+        cloneObject->_right = thisObject->_right;
+        cloneObject->_up = thisObject->_up;
+        cloneObject->_forward = thisObject->_forward;
+    }
+
+    return cloneObject.get();
 }
 
 void Transform::ReRef()
 {
 	Component::ReRef();
+
 }
 
 
@@ -193,17 +221,17 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 	isLocalSRTChanged = CheckNeedLocalSRTUpdate();
 	if (isLocalSRTChanged)
 	{
-		_prevlocalPosition = localPosition;
+		_prevLocalPosition = localPosition;
 		_prevLocalRotation = localRotation;
-		_prevlocalScale = localScale;
+		_prevLocalScale = localScale;
 		Matrix matScale = Matrix::CreateScale(localScale);
 		Matrix matRotation = Matrix::CreateFromQuaternion(localRotation);
 		Matrix matTranslation = Matrix::CreateTranslation(localPosition);
-        _prevlocalSRTMatrix = localSRTMatrix = matScale * matRotation * matTranslation;
+        _prevLocalSRTMatrix = localSRTMatrix = matScale * matRotation * matTranslation;
 	}
     if(CheckNeedLocalChangedUpdate())
     {
-        _prevlocalSRTMatrix = localSRTMatrix;
+        _prevLocalSRTMatrix = localSRTMatrix;
         isLocalSRTChanged = true;
     }
 	localSRT = localSRTMatrix;
@@ -222,9 +250,9 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
         localScale = scale;
         localRotation = rotation;
         localPosition = position;
-        _prevlocalPosition = localPosition;
+        _prevLocalPosition = localPosition;
         _prevLocalRotation = localRotation;
-        _prevlocalScale = localScale;
+        _prevLocalScale = localScale;
         return true;
     }
     return false;
@@ -232,14 +260,14 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
 
 bool Transform::CheckNeedLocalSRTUpdate() const
 {
-	return (_prevlocalPosition != localPosition)
+	return (_prevLocalPosition != localPosition)
 		|| (_prevLocalRotation != localRotation)
-		|| (_prevlocalScale != localScale);
+		|| (_prevLocalScale != localScale);
 }
 
 bool Transform::CheckNeedLocalChangedUpdate() const
 {
-    return CheckNeedLocalSRTUpdate() || (_prevlocalSRTMatrix != localToWorldMatrix);
+    return CheckNeedLocalSRTUpdate() || (_prevLocalSRTMatrix != localToWorldMatrix);
 }
 
 bool Transform::CheckNeedLocalToWorldUpdate() const
@@ -372,8 +400,8 @@ Transform::Transform()
 	localScale = Vector3(1, 1, 1);
 	localRotation = Quaternion::Identity;
 
-	_prevlocalPosition = Vector3(-1, -1, -1);
-	_prevlocalScale = Vector3(-1, -1, -1);
+	_prevLocalPosition = Vector3(-1, -1, -1);
+	_prevLocalScale = Vector3(-1, -1, -1);
 	_prevLocalRotation = Quaternion(-1,-1,-1,-1);
 
 	localSRTMatrix = Matrix::Identity;

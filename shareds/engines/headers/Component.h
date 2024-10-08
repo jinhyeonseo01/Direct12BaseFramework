@@ -18,7 +18,7 @@ namespace dxe
 		bool operator==(const Component& other) const;
 
 	public:
-		void* Clone() const override;
+		void* Clone() override;
 		void ReRef() override;
 
 		std::weak_ptr<GameObject> gameObject;

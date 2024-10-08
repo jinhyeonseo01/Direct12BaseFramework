@@ -51,7 +51,6 @@ GameObject::~GameObject()
 std::shared_ptr<GameObject> GameObject::Init()
 {
 	auto thisPtr = std::dynamic_pointer_cast<GameObject>(this->shared_from_this());
-    EObject::AddObject(thisPtr);
 	rootParent = thisPtr;
 	parent.reset();
 	_childs.reserve(16);
@@ -83,25 +82,25 @@ void dxe::GameObject::Destroy()
 	}
 }
 
-void* GameObject::Clone() const
+void* GameObject::Clone()
 {
-    Debug::log << EObject::_EObjectTable.size() << "\n";
-    auto cloneObject = SceneManager::_currentScene->CreateGameObject();
-    Debug::log << EObject::_EObjectTable.size() << "\n";
+    auto thisObject = GetThis<GameObject>();
+    auto cloneObject = scene.lock()->CreateGameObject();
+    AddClone(thisObject, cloneObject);
+
     cloneObject->parent = this->parent;
+    cloneObject->scene = this->scene;
     cloneObject->name = this->name + L"(clone)";
+    cloneObject->_ready = this->_ready;
+    cloneObject->_active_self = this->_active_self;
+    cloneObject->_sortingOrder = _sortingOrder;
     cloneObject->_childs = this->_childs;
     cloneObject->_components = this->_components;
     cloneObject->transform = this->transform;
 
-    AddClone(*this, *(cloneObject.get()));
 
-    Debug::log << EObject::_EObjectTable.size() << "\n";
-    for (auto& comp : this->_components)
-        comp->Clone();
-    for (auto& child : this->_childs)
-        if(child.lock())
-            child.lock()->Clone();
+    CloneChain(this->_components);
+    CloneChain(this->_childs);
     return cloneObject.get();
 }
 
@@ -109,22 +108,15 @@ void GameObject::ReRef()
 {
 	EObject::ReRef();
     std::wstring guid;
-    if (this->parent.lock())
-    {
-        guid = this->parent.lock()->GetGUID();
-        auto parent = FindCloneByGuid<GameObject>(guid);
-        this->parent = parent;
-    }
-    for (auto& child : this->_childs)
-    {
-        if (child.lock())
-        {
-            guid = child.lock()->GetGUID();
-            child = FindCloneByGuid<GameObject>(guid);
-            if (child.lock())
-                child.lock()->ReRef();
-        }
-    }
+
+    ChangePtrToClone(this->parent);
+    ChangePtrToClone(this->transform);
+
+    ChangePtrToClone(this->_components);
+    ChangePtrToClone(this->_childs);
+
+    ReRefChain(this->_components);
+    ReRefChain(this->_childs);
 }
 
 std::shared_ptr<GameObject> GameObject::GetChild(int index)

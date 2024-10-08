@@ -1,4 +1,6 @@
 #include <Component.h>
+#include <EObject.h>
+#include <GameObject.h>
 
 
 namespace dxe
@@ -51,14 +53,15 @@ namespace dxe
 		return EObject::operator==(other);
 	}
 
-	void* Component::Clone() const
-	{
+	void* Component::Clone()
+    {
 		return EObject::Clone();
 	}
 
 	void Component::ReRef()
     {
 		EObject::ReRef();
+        ChangePtrToClone(gameObject);
 	}
 
 	bool Component::IsFirst()
@@ -106,6 +109,6 @@ namespace dxe
 
 	void Component::OnComponentDestroy()
 	{
-		Debug::log << "Test" << "\n";
+		
 	}
 }
