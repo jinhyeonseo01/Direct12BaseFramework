@@ -54,7 +54,13 @@
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "rpcrt4.lib")
 
+
 #include <concurrent_queue.h>
+
+//fmt
+#include <nlohmann/json.hpp>
+
+// custom develop
 
 #include <convert_total.h>
 #include <debug_console.h>
@@ -121,8 +127,8 @@
 
 #ifdef _DEBUG
 #include <dxgidebug.h>
-#pragma comment(lib, "dxguid.lib")
 #endif
+
 
 #include "imgui_internal.h"
 
@@ -137,5 +143,7 @@ using namespace DirectX;
 using namespace DirectX::SimpleMath;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
+
+namespace dx = DirectX;
 
 using namespace dxe;

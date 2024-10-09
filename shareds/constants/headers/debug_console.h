@@ -44,8 +44,10 @@ namespace Debug
 		std::queue<std::wstring> wstringQueue;
 		std::mutex m;
 		std::wofstream debugLogOutPut;
-		
-		std::atomic_bool waiting{ false };
+	    std::atomic_bool waiting{ false };
+        static int debugDeltaTime;
+
+
 
 		std::wstring TextPop();
 		int TextCount();
@@ -74,7 +76,7 @@ namespace Debug
 						TextQueueClear();
 				}
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				std::this_thread::sleep_for(std::chrono::milliseconds(debugDeltaTime));
 			}
 			if (isRecord)
 				debugLogOutPut.close();
@@ -194,8 +196,7 @@ namespace Debug
 		{
 			waiting.store(true);
 
-			SetForegroundWindow(GetConsoleWindow());
-			ShowWindow(GetConsoleWindow(), SW_SHOW);
+            Call();
 
 			DWORD textSize = 0;
 			ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), consoleInputBuffer.data(), consoleInputBuffer.size(), &textSize, nullptr);
@@ -221,6 +222,11 @@ namespace Debug
 			(*this) >> original;
 			value = std::to_string(original);
 			return *this;
+		}
+        void Call()
+		{
+            SetForegroundWindow(GetConsoleWindow());
+            ShowWindow(GetConsoleWindow(), SW_SHOW);
 		}
 		
 		std::string GetContextAll();

@@ -76,15 +76,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
             engine->SetHandleName(L"main");
-            engine->BaseInitialize();
-            engine->Initialize();
+            engine->EngineInit();
+            engine->VisualInit();
             engine = nullptr;
 
             std::shared_ptr<dxe::Engine> engine2 = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Gamea2");
             engine->SetHandleName(L"maina2");
-            engine2->BaseInitialize();
-            engine2->Initialize();
+            engine2->EngineInit();
+            engine2->VisualInit();
             engine2 = nullptr;
         }
 
@@ -124,7 +124,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Initialize(HINSTANCE hInstance)
 {
     timeBeginPeriod(1);
-
     Debug::Console::CreateConsole(0,0,600,900,true);
     dxe::Engine::SetWindowHInstance(hInstance);
     dxe::Engine::_processStartClock = std::chrono::steady_clock::now();

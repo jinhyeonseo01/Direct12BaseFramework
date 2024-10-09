@@ -192,7 +192,7 @@ namespace dxe
 	};
 	struct InputEventDesc
 	{
-
+        bool isQuit;
 	};
 
 	class InputEvent

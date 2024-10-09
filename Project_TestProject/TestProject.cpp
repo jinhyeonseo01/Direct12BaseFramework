@@ -97,8 +97,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
             engine->SetHandleName(L"main");
-            engine->BaseInitialize();
-            engine->Initialize();
+            engine->EngineInit();
+            engine->VisualInit();
             engine = nullptr;
         }
 

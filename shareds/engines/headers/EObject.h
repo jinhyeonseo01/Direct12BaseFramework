@@ -203,7 +203,7 @@ namespace dxe
         static void ReRefChain(std::vector<std::weak_ptr<T>>& others)
         {
             for (auto& other : others)
-                RerefChain(other);
+                ReRefChain(other);
         }
         /// <summary>
         /// 재참조 처리를 수행할 대상 추가
@@ -215,7 +215,7 @@ namespace dxe
         static void ReRefChain(std::vector<std::shared_ptr<T>>& others)
         {
             for (auto& other : others)
-                RerefChain(other);
+                ReRefChain(other);
         }
         /// <summary>
         /// 깊은 복사 대상 추가
@@ -316,7 +316,7 @@ namespace dxe
             for (int i = 0; i < others.size(); i++)
             {
                 auto& other = others[i];
-                ChangedClonePtr(other);
+                ChangePtrToClone(other);
             }
         }
         /// <summary>
@@ -331,7 +331,7 @@ namespace dxe
             for (int i = 0; i < others.size(); i++)
             {
                 auto& other = others[i];
-                ChangedClonePtr(other);
+                ChangePtrToClone(other);
             }
         }
 

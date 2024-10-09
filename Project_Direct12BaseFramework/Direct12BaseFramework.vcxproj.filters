@@ -180,6 +180,9 @@
     <ClInclude Include="..\shareds\engines\headers\RendererComponent.h">
       <Filter>Engine\Component</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\graphic_config.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">

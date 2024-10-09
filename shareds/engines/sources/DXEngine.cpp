@@ -109,11 +109,13 @@ namespace dxe
 	void Engine::Release()
 	{
 		// Static Line에 엔진 제거
-		Engine::CloseWindow();
+		CloseWindow();
 
 		if (this->_hWndAccelerator != nullptr)
 			DestroyAcceleratorTable(this->_hWndAccelerator);
-		
+
+        this->_engineQuitFlag = true;
+
 		if(_engineMainThread != nullptr)
 			_engineMainThread->request_stop();
 		_engineMainThread.release();
@@ -127,16 +129,18 @@ namespace dxe
 
 		return this->shared_from_this();
 	}
-	
-	std::shared_ptr<Engine> Engine::BaseInitialize()
+
+    std::shared_ptr<Engine> Engine::EngineInit()
 	{
 		this->_engineStartClock = std::chrono::steady_clock::now();
 		this->_engineInputDispatcher = std::make_unique<InputDispatcher>(this->shared_from_this());
 		this->input = std::make_unique<Input>();
+        this->graphic = std::make_shared<GraphicManager>();
 
-		Engine::AppendEngine(this->shared_from_this());
-
+		AppendEngine(this->shared_from_this());
 		DebugInit();
+
+        this->_engineQuitFlag = false;
 
 		this->_engineMainThread = std::make_unique<std::jthread>(std::bind(&Engine::ThreadExecute, this, std::placeholders::_1));
 		this->_engineMainThread->detach();
@@ -144,17 +148,19 @@ namespace dxe
 		return this->shared_from_this();
 	}
 
-	std::shared_ptr<Engine> Engine::Initialize()
+	std::shared_ptr<Engine> Engine::VisualInit()
 	{
 		// Static Line에 엔진 추가
-		Engine::OpenWindow();
+		OpenWindow();
+        graphic->Init();
 
 		return this->shared_from_this();
 	}
 
 	void Engine::ThreadExecute(std::stop_token token)
 	{
-		InputEvent _event;
+        //이후 동작해야할 Init를 무시하고 실행되는걸 방지.
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		try
 		{
 			auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
@@ -162,24 +168,31 @@ namespace dxe
 			{
 				auto currentFrameStartTime = std::chrono::steady_clock::now();
 
-				auto limitDeltaTimeValue = 0.333;
-				this->deltaTime = std::min(std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count() / (double)1000000, limitDeltaTimeValue);
-				this->deltaTimeLimit = this->deltaTime >= limitDeltaTimeValue;
-				this->currentFrame = 1 / deltaTime;
+				this->deltaTime = std::min(std::chrono::duration_cast<std::chrono::microseconds>(currentFrameStartTime - prevTime).count() / 1000000.0, deltaTimeLimitValue);
+				this->deltaTimeLimit = this->deltaTime >= this->deltaTimeLimitValue;
+				this->currentFrame = 1.0 / this->deltaTime;
 
 				UpdateTitleName(std::to_wstring(std::format("{} ({}:{:0.2f})", std::to_string(_titleName), "Fps", this->currentFrame)));
 
+                // -- Input 동작
+                InputEvent _event;
 				input->DataBeginUpdate();
 				while (this->_engineInputDispatcher->_inputDispatcher.try_pop(_event)) { // Input 등록
 					input->DataUpdate(_event);
-				}
 
-				DebugUpdate();
+                    if (_event.type == InputType::Event && _event.event.isQuit)
+                        Quit();
+				}
+				DebugPipeline();
 
 
 				auto logicPipelineStartTime = std::chrono::steady_clock::now();
 				LogicPipeline();
 				auto logicPipelineEndTime = std::chrono::steady_clock::now();
+
+                if (this->_engineQuitFlag)
+                    break;
+
 				auto renderingPipelineStartTime = logicPipelineEndTime;
 				RenderingPipeline();
 				auto renderingPipelineEndTime = std::chrono::steady_clock::now();
@@ -203,13 +216,16 @@ namespace dxe
 					}
 				}
 			}
+
+
 		}
 		catch (const std::exception& e)
 		{
 			Debug::log << "예외 발생: "<< std::format("Engine : {}, thread : {}", std::to_string(_titleName), GetCurrentThreadId())<<"\n" << e.what() << "\n";
+            Debug::log.Call();
 			std::this_thread::sleep_for(std::chrono::seconds(5));
-			DeleteEngine(this->shared_from_this());
 		}
+        DeleteEngine(this->shared_from_this());
 	}
 
 	void Engine::OpenWindow()
@@ -308,11 +324,18 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		{
 			this->DisableWindow();
 			DestroyWindow(this->_hWnd);
+            this->graphic->Release();
 			this->isOpenWindow = false;
 			this->_hWnd = nullptr;
 		}
 	}
-	void Engine::EnableWindow()
+
+    void Engine::Quit()
+    {
+        this->_engineQuitFlag = true;
+    }
+
+    void Engine::EnableWindow()
 	{
 		if (this->isOpenWindow && !this->isActiveWindow)
 		{
@@ -343,8 +366,6 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			ShowWindow(this->_hWnd, SW_HIDE);
 			this->isActiveWindow = false;
 		}
-		else
-			Debug::log << "wnd 열 수 없음.\n";
 	}
 
 	DirectX::SimpleMath::Viewport* Engine::GetWindowRect()
@@ -529,7 +550,11 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			this->CloseWindow();
 			break;
 		case WM_DESTROY:
-			DeleteEngine(this->shared_from_this()); // 창 파괴시 엔진 제거
+            
+            //this->Quit();
+            eventDesc.type = InputType::Event;
+            eventDesc.event.isQuit = true;
+			//DeleteEngine(this->shared_from_this()); // 창 파괴시 엔진 제거
 			break;
 		case WM_SETFOCUS:
 			break;

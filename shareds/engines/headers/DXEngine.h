@@ -14,6 +14,8 @@
 #include <SceneManager.h>
 #include <Vertex.h>
 
+#include "GraphicManager.h"
+
 
 namespace dxe
 {
@@ -62,17 +64,23 @@ namespace dxe
 		bool isOpenWindow = false;
 		bool isActiveWindow = false;
 
+	public:
+        std::shared_ptr<GraphicManager> graphic;
+
 	public: //Engine Field
 		std::chrono::time_point<std::chrono::steady_clock> _engineStartClock{};
 		std::unique_ptr<std::jthread> _engineMainThread{nullptr};
 		std::unique_ptr<InputDispatcher> _engineInputDispatcher;
 		std::unique_ptr<Input> input;
 
+        bool _engineQuitFlag = false;
+
 		bool isFrameLock = true;
 		double targetFrame = 144;
 		double currentFrame = 144;
 		double deltaTime = 0.016;
 		bool deltaTimeLimit = false;
+        double deltaTimeLimitValue = 0.33333;
 
 		static HINSTANCE SetWindowHInstance(HINSTANCE hInstance) { return Engine::_processInstance = hInstance; }
 		HWND SetWindowHWnd(HWND hWnd) { return _hWnd = hWnd; }
@@ -85,6 +93,8 @@ namespace dxe
 		void EnableWindow();
 		void DisableWindow();
 		void CloseWindow();
+
+        void Quit();
 
 		static LRESULT __stdcall WindowStaticCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		virtual void WindowLocalCallback(WinEvent& winEvent);
@@ -100,9 +110,8 @@ namespace dxe
 		virtual ~Engine();
 
 		virtual void ThreadExecute(std::stop_token token);
-		std::shared_ptr<Engine> BaseInitialize();
-
-		virtual std::shared_ptr<Engine> Initialize();
+        virtual std::shared_ptr<Engine> EngineInit();
+		virtual std::shared_ptr<Engine> VisualInit();
 		virtual std::shared_ptr<Engine> Reset();
 		virtual void Release();
 
@@ -112,7 +121,7 @@ namespace dxe
 
 	public:
 		virtual void DebugInit();
-		virtual void DebugUpdate();
+		virtual void DebugPipeline();
 		std::vector<DebugCommand> _debugCommandList;
 		bool _debugCommandMode = false;
 	};

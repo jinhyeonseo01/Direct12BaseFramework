@@ -15,6 +15,8 @@ Debug::Console Debug::log = {};
 
 namespace Debug
 {
+    int Console::debugDeltaTime = 10;
+
 	Console::Console()
 	{
 		

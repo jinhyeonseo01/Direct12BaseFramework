@@ -86,7 +86,7 @@ void Engine::DebugInit()
 	_debugCommandList.push_back(command);
 }
 
-void Engine::DebugUpdate()
+void Engine::DebugPipeline()
 {
 	auto engine = GetEngine(_mainEngineIndex);
 	auto scene = SceneManager::_currentScene;
@@ -99,7 +99,7 @@ void Engine::DebugUpdate()
 		while (_debugCommandMode)
 		{
 			Debug::log << "ют╥б : ";
-			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			std::this_thread::sleep_for(std::chrono::milliseconds(Debug::Console::debugDeltaTime * 2));
 			std::string command;
 			std::vector<std::wstring> args;
 			Debug::log >> command;
