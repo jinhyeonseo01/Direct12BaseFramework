@@ -19,6 +19,11 @@ namespace dxe
         std::vector<ComPtr<IDXGIOutput4>> _outputList; // ╦П╢оем
 
     public:
+        ComPtr<ID3D12CommandAllocator> _commandAllocator;
+        ComPtr<ID3D12CommandQueue> _commandQueue;
+        ComPtr<ID3D12GraphicsCommandList4> _commandList;
+
+    public:
         bool _isRelease = false;
     public:
 
@@ -28,8 +33,10 @@ namespace dxe
         void Release();
 
         void CreateAdapterAndOutputs();
+        void CreateSwapChain();
         void CreateFactory();
         void CreateDevice();
+        void CreateCommandQueueListAlloc();
 
         GraphicManager();
         virtual ~GraphicManager();

@@ -17,13 +17,19 @@ void GraphicManager::Init()
     CreateFactory();
     CreateAdapterAndOutputs();
     CreateDevice();
+    CreateCommandQueueListAlloc();
+    // 여기까진 정적
+
+    Refresh();
 
     _isRelease = false;
 }
 
 void GraphicManager::Refresh()
 {
-
+    //리소스 힙 디스크립트 힙
+    CreateSwapChain();
+    //뷰 생성
 }
 
 void GraphicManager::Release()
@@ -55,8 +61,14 @@ void GraphicManager::CreateAdapterAndOutputs()
 
     for(int index = 0; _factory->EnumAdapters1(index, ComToPtr(adapter1)) != DXGI_ERROR_NOT_FOUND;++index)
     {
-        if(DXSuccess(adapter1->QueryInterface(ComToIDPtr(adapter3))))
+        DXGI_ADAPTER_DESC2 adapterDesc;
+        if (DXSuccess(adapter1->QueryInterface(ComToIDPtr(adapter3))))
+        {
+            adapter3->GetDesc2(&adapterDesc);
+            if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) // 소프트웨어로 연결된 디바이스면 쳐내는거 같음. 그래픽카드 같은 하드웨어만
+                continue;
             _adapterList.push_back(adapter3);
+        }
     }
     
 
@@ -70,6 +82,11 @@ void GraphicManager::CreateAdapterAndOutputs()
     }
 }
 
+void GraphicManager::CreateSwapChain()
+{
+
+}
+
 void GraphicManager::CreateFactory()
 {
     DXAssert(CreateDXGIFactory1(ComToIDPtr(_factory)));
@@ -78,14 +95,42 @@ void GraphicManager::CreateFactory()
 void GraphicManager::CreateDevice()
 {
     ComPtr<IDXGIAdapter1> selectAdapter = _adapterList.size() == 0 ? nullptr : _adapterList[0];
-    ComPtr<ID3D12Device1> d;
-    DXAssert(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_11_0, ComToIDPtr(d)));
-    DXAssert(d->QueryInterface(ComToIDPtr(_device)));
+    ComPtr<ID3D12Device1> selectDevice;
+    DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_12_0, ComToIDPtr(selectDevice)));
+    if ((!selectDevice) && (!DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_11_0, ComToIDPtr(selectDevice)))))
+        throw std::exception("Direct 12를 지원하지 않는 그래픽 어뎁터");
+
+    DXAssert(selectDevice->QueryInterface(ComToIDPtr(_device)));
+
+    D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS d3dMsaaQualityLevels;
+    d3dMsaaQualityLevels.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    d3dMsaaQualityLevels.SampleCount = 4;
+    d3dMsaaQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
+    d3dMsaaQualityLevels.NumQualityLevels = 0;
     
 }
 
+void GraphicManager::CreateCommandQueueListAlloc()
+{
+    D3D12_COMMAND_LIST_TYPE commandType = D3D12_COMMAND_LIST_TYPE_DIRECT;
+
+    D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {}; //memset 0이랑 같은 효과
+    commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    commandQueueDesc.Type = commandType;
+    commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; // D3D12_COMMAND_QUEUE_PRIORITY_High로 두는게 좋지 않을까?
+    commandQueueDesc.NodeMask = 0; // 기억상 여러 어뎁터를 활용할때 쓰던걸로 기억함.
+
+    DXAssert(_device->CreateCommandQueue(ComToPtr(commandQueueDesc), ComToIDPtr(_commandQueue)));
+    DXAssert(_device->CreateCommandAllocator(commandType, ComToIDPtr(_commandAllocator)));
+    DXAssert(_device->CreateCommandList(0, commandType, _commandAllocator.Get(), nullptr, ComToIDPtr(_commandList)));
+    _commandList->Close();
+    
+}
+
+
 GraphicManager::GraphicManager()
 {
+
 }
 
 GraphicManager::~GraphicManager()
