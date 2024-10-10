@@ -152,7 +152,10 @@ namespace dxe
 	{
 		// Static Line에 엔진 추가
 		OpenWindow();
-        graphic->Init();
+        graphic->_engine = this->shared_from_this();
+        graphic->setting = GetWindowHWnd();
+        GetWindowRect()
+	    graphic->Init();
 
 		return this->shared_from_this();
 	}
@@ -290,13 +293,27 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			// 테두리 없음 WS_POPUP | WS_VISIBLE // 이걸로 안되면 WS_POPUP
 			// 전체화면 WS_POPUP | WS_MAXIMIZE | WS_VISIBLE // 근데 이거 사이즈 안맞으면 축소당함.
 #pragma endregion
+
+            int windowSettingFlag = WS_OVERLAPPED;
+            switch (graphic->setting.windowType)
+            {
+            case WindowType::Windows:
+                windowSettingFlag = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE;
+                break;
+            case WindowType::FullScreen_Noborder:
+                windowSettingFlag = WS_POPUP | WS_VISIBLE;
+                break;
+            case WindowType::FullScreen:
+                windowSettingFlag = WS_POPUP | WS_MAXIMIZE | WS_VISIBLE;
+                    break;
+            }
+            
 			HWND hWnd = CreateWindowW(_handleName.data(), _titleName.data(),
-				WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE,
-				this->_windowRect.x, this->_windowRect.y,
-				this->_windowRect.width, this->_windowRect.height, //CW_USEDEFAULT //this->_windowRect.width, this->_windowRect.height
+                windowSettingFlag,
+                graphic->setting.screenSize.x, graphic->setting.screenSize.y,
+                graphic->setting.screenSize.width, graphic->setting.screenSize.height, //CW_USEDEFAULT //this->_windowRect.width, this->_windowRect.height
 				nullptr, nullptr,
 				Engine::_processInstance, nullptr);
-			
 			for(auto& speckey : globalSpecialKey)
 				_hWndACCELs.push_back(speckey);
 			_hWndACCELs.push_back(ACCEL{ FVIRTKEY | FCONTROL, 'N', 1 });

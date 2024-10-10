@@ -183,6 +183,9 @@
     <ClInclude Include="..\shareds\constants\headers\graphic_config.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\GraphicSetting.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -307,6 +310,12 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp">
       <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\constants\sources\graphic_config.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\GraphicSetting.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

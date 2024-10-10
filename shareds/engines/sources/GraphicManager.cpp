@@ -14,6 +14,8 @@ void GraphicManager::Init()
     //OutputDebugString
 #endif
 
+    graphic->setting.hWnd
+
     CreateFactory();
     CreateAdapterAndOutputs();
     CreateDevice();
@@ -102,12 +104,21 @@ void GraphicManager::CreateDevice()
 
     DXAssert(selectDevice->QueryInterface(ComToIDPtr(_device)));
 
-    D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS d3dMsaaQualityLevels;
-    d3dMsaaQualityLevels.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    d3dMsaaQualityLevels.SampleCount = 4;
-    d3dMsaaQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
-    d3dMsaaQualityLevels.NumQualityLevels = 0;
-    
+    // MSAA Áö¿øÇÔ?
+    D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msaaQualityLevel;
+    msaaQualityLevel.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    msaaQualityLevel.SampleCount = 4;
+    msaaQualityLevel.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
+    msaaQualityLevel.NumQualityLevels = 0;
+    DXSuccess(_device->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &msaaQualityLevel, sizeof(D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS)));
+
+    setting.msaaSupportAble = msaaQualityLevel.NumQualityLevels > 1;
+    setting.msaaSupportMaxLevel = msaaQualityLevel.NumQualityLevels;
+
+    //hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)&m_pd3dFence);
+    //for (UINT i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
+
+    //m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 void GraphicManager::CreateCommandQueueListAlloc()

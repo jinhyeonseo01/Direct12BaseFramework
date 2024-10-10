@@ -2,12 +2,15 @@
 
 #include <stdafx.h>
 
+#include "GraphicSetting.h"
+
 namespace dxe
 {
     class GraphicManager : public std::enable_shared_from_this<GraphicManager>
     {
     public:
         static GraphicManager* instance;
+        GraphicSetting setting;
 
         std::weak_ptr<Engine> _engine;
 
@@ -22,6 +25,8 @@ namespace dxe
         ComPtr<ID3D12CommandAllocator> _commandAllocator;
         ComPtr<ID3D12CommandQueue> _commandQueue;
         ComPtr<ID3D12GraphicsCommandList4> _commandList;
+
+    public:
 
     public:
         bool _isRelease = false;
