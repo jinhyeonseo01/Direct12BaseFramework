@@ -43,6 +43,8 @@ namespace dxe
         void CreateDevice();
         void CreateCommandQueueListAlloc();
 
+        void SetScreenSize(Viewport viewInfo);
+
         GraphicManager();
         virtual ~GraphicManager();
     };

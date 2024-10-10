@@ -138,6 +138,11 @@ void GraphicManager::CreateCommandQueueListAlloc()
     
 }
 
+void GraphicManager::SetScreenSize(Viewport viewInfo)
+{
+    setting.screenSize = viewInfo;
+}
+
 
 GraphicManager::GraphicManager()
 {

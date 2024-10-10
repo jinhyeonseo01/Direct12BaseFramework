@@ -124,6 +124,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 void Initialize(HINSTANCE hInstance)
 {
     timeBeginPeriod(1);
+    SetPriorityClass(GetCurrentProcess(),REALTIME_PRIORITY_CLASS);
     Debug::Console::CreateConsole(0,0,600,900,true);
     dxe::Engine::SetWindowHInstance(hInstance);
     dxe::Engine::_processStartClock = std::chrono::steady_clock::now();

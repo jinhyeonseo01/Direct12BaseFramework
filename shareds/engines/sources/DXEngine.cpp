@@ -144,7 +144,8 @@ namespace dxe
 
 		this->_engineMainThread = std::make_unique<std::jthread>(std::bind(&Engine::ThreadExecute, this, std::placeholders::_1));
 		this->_engineMainThread->detach();
-
+        this->_engineMainThread->native_handle();
+        SetThreadPriority(this->_engineMainThread->native_handle(), THREAD_PRIORITY_TIME_CRITICAL);
 		return this->shared_from_this();
 	}
 
@@ -154,7 +155,6 @@ namespace dxe
 		OpenWindow();
         graphic->_engine = this->shared_from_this();
         graphic->setting = GetWindowHWnd();
-        GetWindowRect()
 	    graphic->Init();
 
 		return this->shared_from_this();
