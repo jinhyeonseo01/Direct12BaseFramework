@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "GraphicManager.h"
+
+#include "DXEngine.h"
 #include "graphic_config.h"
 
 
@@ -13,8 +15,6 @@ void GraphicManager::Init()
     }
     //OutputDebugString
 #endif
-
-    graphic->setting.hWnd
 
     CreateFactory();
     CreateAdapterAndOutputs();
@@ -86,6 +86,67 @@ void GraphicManager::CreateAdapterAndOutputs()
 
 void GraphicManager::CreateSwapChain()
 {
+    BOOL bFullScreenState = FALSE;
+    //m_pdxgiSwapChain->GetFullscreenState(&bFullScreenState, NULL);
+    //m_pdxgiSwapChain->SetFullscreenState(!bFullScreenState, NULL);
+
+
+    dxgiSwapChainDesc.Scaling = DXGI_SCALING_NONE;
+    dxgiSwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+#ifdef _WITH_ONLY_RESIZE_BACKBUFFERS
+    dxgiSwapChainDesc.Flags = 0;
+#else
+    dxgiSwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+#endif
+
+
+
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+    {
+        swapChainDesc.Width = setting.screenSize.width;
+        swapChainDesc.Height = setting.screenSize.height;
+        swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+        //msaa rendering
+        swapChainDesc.SampleDesc.Count = 1;//아니면 이 안에서 더 작게
+        swapChainDesc.SampleDesc.Quality = 0;
+        if (setting.aaActive && setting.aaType == AAType::MSAA)
+        {
+            swapChainDesc.SampleDesc.Count = setting.msaaSupportMaxLevel;//아니면 이 안에서 더 작게
+            swapChainDesc.SampleDesc.Quality = setting.msaaSupportMaxLevel - 1;
+        }
+
+        //swapChainDesc.BufferDesc.RefreshRate.Numerator = m_uiRefreshRate;
+        //swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+        swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 해당 버퍼를 렌더타겟 용도로 쓰겠다
+        swapChainDesc.BufferCount = setting.swapChain_BufferCount;
+
+        swapChainDesc.Scaling = DXGI_SCALING_NONE;
+        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//flip 방식에
+        swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+        //DXGI_ALPHA_MODE_IGNORE 알파 폐기
+        //DXGI_ALPHA_MODE_UNSPECIFIED 알파안씀
+        swapChainDesc.Flags = 
+            DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH |
+            DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING; // 화면 테더링. 현상 허용하는거인듯. 모니터랑 주사율 안맞을때 쓴다나봄. 이거 안하면 vsync켜짐
+    }
+
+    DEVMODEW dm;
+    dm.dmSize = sizeof(DEVMODEW);
+    EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0);
+
+    DXGI_SWAP_CHAIN_FULLSCREEN_DESC dxgiSwapChainFullScreenDesc = {};
+    dxgiSwapChainFullScreenDesc.RefreshRate.Numerator = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+    dxgiSwapChainFullScreenDesc.RefreshRate.Denominator = 1;
+    dxgiSwapChainFullScreenDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    dxgiSwapChainFullScreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+    dxgiSwapChainFullScreenDesc.Windowed = setting.windowType == WindowType::FullScreen;
+
+    ComPtr<IDXGISwapChain1> swapChain1 = nullptr;
+    DXAssert(_factory->CreateSwapChainForHwnd(_cmdQueue.Get(), _hwnd, &swapChainDesc, &dxgiSwapChainFullScreenDesc, nullptr, &swapChain1));
+    DXAssert(swapChain1->QueryInterface(ComToIDPtr(_swapChain)));
+
+    int m_nSwapChainBufferIndex = _swapChain->GetCurrentBackBufferIndex();
 
 }
 

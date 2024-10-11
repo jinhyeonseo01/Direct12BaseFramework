@@ -31,6 +31,15 @@ namespace dxe
 
 
     public:
+        
+        int swapChain_BufferCount = 2;
+        int CBV_REGISTER_COUNT = 5;
+        int SRV_REGISTER_COUNT = 5;
+        int REGISTER_COUNT = 10; // 위에 두개 합친거
+        
+
+
+    public:
         //디바이스 지원 목록
         bool msaaSupportAble = false;
         int msaaSupportMaxLevel = 1;
