@@ -163,6 +163,7 @@
     <ClInclude Include="..\shareds\constants\headers\pch.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_ext.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
+    <ClInclude Include="..\shareds\constants\headers\Timer.h" />
     <ClInclude Include="..\shareds\engines\headers\Bone.h" />
     <ClInclude Include="..\shareds\engines\headers\Camera.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h" />
+    <ClInclude Include="..\shareds\engines\headers\SoundManager.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
     <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
@@ -207,6 +209,7 @@
     <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_ext.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
+    <ClCompile Include="..\shareds\constants\sources\Timer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Bone.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Camera.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
@@ -233,6 +236,7 @@
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Texture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Vertex.cpp" />

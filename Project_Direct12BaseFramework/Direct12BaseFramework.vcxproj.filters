@@ -184,6 +184,12 @@
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\GraphicSetting.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\SoundManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\Timer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -315,6 +321,12 @@
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\GraphicSetting.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\constants\sources\Timer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

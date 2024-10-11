@@ -15,7 +15,7 @@ void GraphicManager::Init()
 #ifdef _DEBUG
     {
         ComPtr<ID3D12Debug6> _d3dDebug;
-        DXSuccess(D3D12GetDebugInterface(ComToIDPtr(_d3dDebug)));
+        DXSuccess(D3D12GetDebugInterface(ComPtrIDAddr(_d3dDebug)));
         _d3dDebug->EnableDebugLayer();
     }
     //OutputDebugString
@@ -36,7 +36,7 @@ void GraphicManager::Init()
 void GraphicManager::Refresh()
 {
     //리소스 힙 디스크립트 힙
-
+    RefreshSwapChain();
     //뷰 생성
 }
 
@@ -47,7 +47,7 @@ void GraphicManager::Release()
 #ifdef _DEBUG
         {
             ComPtr<IDXGIDebug1> _d3dDebug;
-            DXSuccess(DXGIGetDebugInterface1(0, ComToIDPtr(_d3dDebug)));
+            DXSuccess(DXGIGetDebugInterface1(0, ComPtrIDAddr(_d3dDebug)));
             _d3dDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
         }
 #endif
@@ -58,7 +58,7 @@ void GraphicManager::Release()
 void GraphicManager::CreateAdapterAndOutputs()
 {
 #ifdef _DEBUG
-    DXSuccess(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, ComToIDPtr(_factory)));
+    DXSuccess(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, ComPtrIDAddr(_factory)));
 #else
     DXSuccess(CreateDXGIFactory2(0, ComIDPtr(_factory)));
 #endif
@@ -68,10 +68,10 @@ void GraphicManager::CreateAdapterAndOutputs()
     ComPtr<IDXGIOutput4> output4;
 
     int maxMemory = -1;
-    for(int index = 0; _factory->EnumAdapters1(index, ComToPtr(adapter1)) != DXGI_ERROR_NOT_FOUND;++index)
+    for(int index = 0; _factory->EnumAdapters1(index, ComPtrAddr(adapter1)) != DXGI_ERROR_NOT_FOUND;++index)
     {
         DXGI_ADAPTER_DESC2 adapterDesc;
-        if (DXSuccess(adapter1->QueryInterface(ComToIDPtr(adapter3))))
+        if (DXSuccess(adapter1->QueryInterface(ComPtrIDAddr(adapter3))))
         {
             adapter3->GetDesc2(&adapterDesc);
             if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) // 소프트웨어로 연결된 디바이스면 쳐내는거 같음. 그래픽카드 같은 하드웨어만
@@ -79,7 +79,7 @@ void GraphicManager::CreateAdapterAndOutputs()
             _adapterList.push_back(adapter3);
             if (adapterDesc.DedicatedVideoMemory > maxMemory) {
                 bestAdapterIndex = index;
-                maxMemory = adapterDesc.DedicatedVideoMemory;
+                maxMemory = static_cast<int>(adapterDesc.DedicatedVideoMemory);
             }
 
         }
@@ -88,9 +88,9 @@ void GraphicManager::CreateAdapterAndOutputs()
 
     for (int i = 0; i < _adapterList.size(); i++)
     {
-        for (int index = 0; _adapterList[i]->EnumOutputs(index, ComToPtr(output)) != DXGI_ERROR_NOT_FOUND; ++index)
+        for (int index = 0; _adapterList[i]->EnumOutputs(index, ComPtrAddr(output)) != DXGI_ERROR_NOT_FOUND; ++index)
         {
-            if (DXSuccess(output->QueryInterface(ComToIDPtr(output4))))
+            if (DXSuccess(output->QueryInterface(ComPtrIDAddr(output4))))
                 _outputList.push_back(output4);
         }
     }
@@ -143,7 +143,11 @@ void GraphicManager::CreateSwapChain()
 
     ComPtr<IDXGISwapChain1> swapChain1 = nullptr;
     DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc, &swapChainFullDesc, nullptr, &swapChain1));
-    DXAssert(swapChain1->QueryInterface(ComToIDPtr(_swapChain)));
+    DXAssert(swapChain1->QueryInterface(ComPtrIDAddr(_swapChain)));
+    _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
+    for(int i=0;i<setting.swapChain_BufferCount;i++)
+        _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
+
 
     int m_nSwapChainBufferIndex = _swapChain->GetCurrentBackBufferIndex();
 
@@ -153,10 +157,18 @@ void GraphicManager::RefreshSwapChain()
 {
     _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, NULL);
 
+    DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
+    _swapChain->GetDesc1(&dxgiSwapChainDesc);
+    _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width, setting.screenInfo.height, dxgiSwapChainDesc.Format, dxgiSwapChainDesc.Flags);
+    _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
+    for (int i = 0; i < setting.swapChain_BufferCount; i++)
+        _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
+
+
     DXGI_MODE_DESC dxgiDesc1;
     dxgiDesc1.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    dxgiDesc1.Width = m_nWndClientWidth;
-    dxgiDesc1.Height = m_nWndClientHeight;
+    dxgiDesc1.Width = setting.screenInfo.width;
+    dxgiDesc1.Height = setting.screenInfo.height;
 
     DEVMODEW moniterSetting;
     moniterSetting.dmSize = sizeof(DEVMODEW);
@@ -167,34 +179,30 @@ void GraphicManager::RefreshSwapChain()
     dxgiDesc1.RefreshRate.Denominator = 1;
     dxgiDesc1.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     dxgiDesc1.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    
     _swapChain->ResizeTarget(&dxgiDesc1);
 
-    for (int i = 0; i < m_nSwapChainBuffers; i++) if (m_ppd3dSwapChainBackBuffers[i]) m_ppd3dSwapChainBackBuffers[i]->Release();
 
-    DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
-    _swapChain->GetDesc1(&dxgiSwapChainDesc);
-    _swapChain->ResizeBuffers(m_nSwapChainBuffers, m_nWndClientWidth, m_nWndClientHeight, dxgiSwapChainDesc.BufferDesc.Format, dxgiSwapChainDesc.Flags);
-
-    m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+    //m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 }
 
 
 
 void GraphicManager::CreateFactory()
 {
-    DXAssert(CreateDXGIFactory1(ComToIDPtr(_factory)));
+    DXAssert(CreateDXGIFactory1(ComPtrIDAddr(_factory)));
 }
 
 void GraphicManager::CreateDevice()
 {
     ComPtr<IDXGIAdapter1> selectAdapter = _adapterList.size() == 0 ? nullptr : _adapterList[0];
+    if (bestAdapterIndex != -1)
+        selectAdapter = _adapterList[bestAdapterIndex];
     ComPtr<ID3D12Device1> selectDevice;
-    DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_12_0, ComToIDPtr(selectDevice)));
-    if ((!selectDevice) && (!DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_11_0, ComToIDPtr(selectDevice)))))
+    DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_12_0, ComPtrIDAddr(selectDevice)));
+    if ((!selectDevice) && (!DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_11_0, ComPtrIDAddr(selectDevice)))))
         throw std::exception("Direct 12를 지원하지 않는 그래픽 어뎁터");
 
-    DXAssert(selectDevice->QueryInterface(ComToIDPtr(_device)));
+    DXAssert(selectDevice->QueryInterface(ComPtrIDAddr(_device)));
 
     // MSAA 지원함?
     D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msaaQualityLevel;
@@ -223,11 +231,35 @@ void GraphicManager::CreateCommandQueueListAlloc()
     commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; // D3D12_COMMAND_QUEUE_PRIORITY_High로 두는게 좋지 않을까?
     commandQueueDesc.NodeMask = 0; // 기억상 여러 어뎁터를 활용할때 쓰던걸로 기억함.
 
-    DXAssert(_device->CreateCommandQueue(ComToPtr(commandQueueDesc), ComToIDPtr(_commandQueue)));
-    DXAssert(_device->CreateCommandAllocator(commandType, ComToIDPtr(_commandAllocator)));
-    DXAssert(_device->CreateCommandList(0, commandType, _commandAllocator.Get(), nullptr, ComToIDPtr(_commandList)));
-    _commandList->Close();
-    
+    DXAssert(_device->CreateCommandQueue(ComPtrAddr(commandQueueDesc), ComPtrIDAddr(_commandQueue)));
+
+    for (int i = 0; i < 3; i++)
+    {
+        ComPtr<ID3D12CommandAllocator> commandAllocator;
+        ComPtr<ID3D12GraphicsCommandList> commandList;
+        ComPtr<ID3D12GraphicsCommandList4> commandList4;
+
+        DXAssert(_device->CreateCommandAllocator(commandType, ComPtrIDAddr(commandAllocator)));
+        DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr, ComPtrIDAddr(commandList)));
+        DXAssert(commandList->QueryInterface(ComPtrIDAddr(commandList4)));
+        commandList4->Close();
+
+        _commandAllocators.push_back(commandAllocator);
+        _commandLists.push_back(commandList4);
+    }
+    {
+        ComPtr<ID3D12CommandAllocator> commandAllocator;
+        ComPtr<ID3D12GraphicsCommandList> commandList;
+        ComPtr<ID3D12GraphicsCommandList4> commandList4;
+
+        DXAssert(_device->CreateCommandAllocator(commandType, ComPtrIDAddr(commandAllocator)));
+        DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr, ComPtrIDAddr(commandList)));
+        DXAssert(commandList->QueryInterface(ComPtrIDAddr(commandList4)));
+        commandList4->Close();
+
+        _resourceCommandAllocator = commandAllocator;
+        _resourceCommandList = commandList4;
+    }
 }
 
 void GraphicManager::SetScreenInfo(Viewport viewInfo)

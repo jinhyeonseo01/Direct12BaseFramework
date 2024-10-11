@@ -133,6 +133,22 @@
 #include "imgui_internal.h"
 
 
+
+//fmod
+#ifdef _DEBUG
+#pragma comment(lib, "fmodL_vc.lib")
+#pragma comment(lib, "fmodstudioL_vc.lib")
+#else
+#pragma comment(lib, "fmod_vc.lib")
+#pragma comment(lib, "fmodstudio_vc.lib")
+#endif
+
+
+#include "fmod/fmod.hpp"
+#include "fmod/fmod_studio.hpp"
+#include "fmod/fmod_errors.h"
+#include "fmod/fmod_dsp.h"
+
 #include <SDKDDKVer.h>
 
 #include <class_define.h>

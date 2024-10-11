@@ -30,9 +30,15 @@ namespace dxe
         std::vector<ComPtr<IDXGIOutput4>> _outputList; // ╦П╢оем
 
     public:
-        ComPtr<ID3D12CommandAllocator> _commandAllocator;
         ComPtr<ID3D12CommandQueue> _commandQueue;
-        ComPtr<ID3D12GraphicsCommandList4> _commandList;
+        std::vector<ComPtr<ID3D12CommandAllocator>> _commandAllocators;
+        std::vector<ComPtr<ID3D12GraphicsCommandList4>> _commandLists;
+
+        ComPtr<ID3D12CommandAllocator> _resourceCommandAllocator;
+        ComPtr<ID3D12GraphicsCommandList4> _resourceCommandList;
+
+    public:
+        std::vector<ComPtr<ID3D12Resource2>> _swapChainBuffers_Res;
 
     public:
 

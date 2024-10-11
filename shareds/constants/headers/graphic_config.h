@@ -3,9 +3,9 @@
 
 #include "debug_console.h"
 
-#define ComToIDPtr(type) IID_PPV_ARGS(&type)
-#define ComToPtr(type) (&type)
-#define ComToVoidPtr(type) (void**)(&type)
+#define ComPtrIDAddr(type) IID_PPV_ARGS(&type)
+#define ComPtrAddr(type) (&type)
+#define ComPtrVoid(type) (void**)(&type)
 
 
 std::array<wchar_t, 1000> errorTextBuf;
