@@ -58,7 +58,7 @@ namespace dxe
 		std::wstring _iconPath{ L"configs/Icons/MainIcon.ico"};
 		std::wstring _iconSmallPath{ L"configs/Icons/SmallIcon.ico" };
 
-		DirectX::SimpleMath::Viewport _windowRect;
+		DirectX::SimpleMath::Viewport _windowRect = Viewport(0,0,1920,1080);
 		bool _windowFullScreen = false;
 
 		bool isOpenWindow = false;
@@ -99,8 +99,8 @@ namespace dxe
 		static LRESULT __stdcall WindowStaticCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		virtual void WindowLocalCallback(WinEvent& winEvent);
 
-		DirectX::SimpleMath::Viewport* GetWindowRect();
-		DirectX::SimpleMath::Viewport* SetWindowRect(DirectX::SimpleMath::Viewport& windowRect);
+        DirectX::SimpleMath::Viewport GetWindowRect();
+        DirectX::SimpleMath::Viewport SetWindowRect(const DirectX::SimpleMath::Viewport& windowRect);
 		
 
 		// Engine Setting ----------------------------------------------------

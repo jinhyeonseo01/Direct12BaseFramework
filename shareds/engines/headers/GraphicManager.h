@@ -11,13 +11,21 @@ namespace dxe
     public:
         static GraphicManager* instance;
         GraphicSetting setting;
-
         std::weak_ptr<Engine> _engine;
+        HWND hWnd;
+
+        void SetHwnd(const HWND& hwnd);
+
+    public: // Direct
+
+        bool _refrashReserve = false;//예약
+
 
         ComPtr<IDXGIFactory4> _factory;
         ComPtr<ID3D12Device4> _device;
         ComPtr<IDXGISwapChain3> _swapChain;
 
+        int bestAdapterIndex = -1;
         std::vector<ComPtr<IDXGIAdapter3>> _adapterList; // 그래픽카드
         std::vector<ComPtr<IDXGIOutput4>> _outputList; // 모니터
 
@@ -43,7 +51,11 @@ namespace dxe
         void CreateDevice();
         void CreateCommandQueueListAlloc();
 
-        void SetScreenSize(Viewport viewInfo);
+
+        void RefreshSwapChain();
+
+
+        void SetScreenInfo(Viewport viewInfo);
 
         GraphicManager();
         virtual ~GraphicManager();

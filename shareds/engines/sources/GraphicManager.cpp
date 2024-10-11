@@ -5,6 +5,11 @@
 #include "graphic_config.h"
 
 
+void GraphicManager::SetHwnd(const HWND& hwnd)
+{
+    this->hWnd = hwnd;
+}
+
 void GraphicManager::Init()
 {
 #ifdef _DEBUG
@@ -20,6 +25,7 @@ void GraphicManager::Init()
     CreateAdapterAndOutputs();
     CreateDevice();
     CreateCommandQueueListAlloc();
+    CreateSwapChain();
     // 여기까진 정적
 
     Refresh();
@@ -30,7 +36,7 @@ void GraphicManager::Init()
 void GraphicManager::Refresh()
 {
     //리소스 힙 디스크립트 힙
-    CreateSwapChain();
+
     //뷰 생성
 }
 
@@ -61,6 +67,7 @@ void GraphicManager::CreateAdapterAndOutputs()
     ComPtr<IDXGIOutput> output;
     ComPtr<IDXGIOutput4> output4;
 
+    int maxMemory = -1;
     for(int index = 0; _factory->EnumAdapters1(index, ComToPtr(adapter1)) != DXGI_ERROR_NOT_FOUND;++index)
     {
         DXGI_ADAPTER_DESC2 adapterDesc;
@@ -70,9 +77,14 @@ void GraphicManager::CreateAdapterAndOutputs()
             if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) // 소프트웨어로 연결된 디바이스면 쳐내는거 같음. 그래픽카드 같은 하드웨어만
                 continue;
             _adapterList.push_back(adapter3);
+            if (adapterDesc.DedicatedVideoMemory > maxMemory) {
+                bestAdapterIndex = index;
+                maxMemory = adapterDesc.DedicatedVideoMemory;
+            }
+
         }
     }
-    
+    Debug::log << maxMemory << "\n";
 
     for (int i = 0; i < _adapterList.size(); i++)
     {
@@ -86,25 +98,10 @@ void GraphicManager::CreateAdapterAndOutputs()
 
 void GraphicManager::CreateSwapChain()
 {
-    BOOL bFullScreenState = FALSE;
-    //m_pdxgiSwapChain->GetFullscreenState(&bFullScreenState, NULL);
-    //m_pdxgiSwapChain->SetFullscreenState(!bFullScreenState, NULL);
-
-
-    dxgiSwapChainDesc.Scaling = DXGI_SCALING_NONE;
-    dxgiSwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-#ifdef _WITH_ONLY_RESIZE_BACKBUFFERS
-    dxgiSwapChainDesc.Flags = 0;
-#else
-    dxgiSwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-#endif
-
-
-
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     {
-        swapChainDesc.Width = setting.screenSize.width;
-        swapChainDesc.Height = setting.screenSize.height;
+        swapChainDesc.Width = setting.screenInfo.width;
+        swapChainDesc.Height = setting.screenInfo.height;
         swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
         //msaa rendering
@@ -116,8 +113,6 @@ void GraphicManager::CreateSwapChain()
             swapChainDesc.SampleDesc.Quality = setting.msaaSupportMaxLevel - 1;
         }
 
-        //swapChainDesc.BufferDesc.RefreshRate.Numerator = m_uiRefreshRate;
-        //swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 해당 버퍼를 렌더타겟 용도로 쓰겠다
         swapChainDesc.BufferCount = setting.swapChain_BufferCount;
 
@@ -131,24 +126,60 @@ void GraphicManager::CreateSwapChain()
             DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING; // 화면 테더링. 현상 허용하는거인듯. 모니터랑 주사율 안맞을때 쓴다나봄. 이거 안하면 vsync켜짐
     }
 
-    DEVMODEW dm;
-    dm.dmSize = sizeof(DEVMODEW);
-    EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0);
+    DXGI_SWAP_CHAIN_FULLSCREEN_DESC swapChainFullDesc = {};
+    {
+        DEVMODEW dm;
+        dm.dmSize = sizeof(DEVMODEW);
+        EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0);
 
-    DXGI_SWAP_CHAIN_FULLSCREEN_DESC dxgiSwapChainFullScreenDesc = {};
-    dxgiSwapChainFullScreenDesc.RefreshRate.Numerator = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
-    dxgiSwapChainFullScreenDesc.RefreshRate.Denominator = 1;
-    dxgiSwapChainFullScreenDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    dxgiSwapChainFullScreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-    dxgiSwapChainFullScreenDesc.Windowed = setting.windowType == WindowType::FullScreen;
+        swapChainFullDesc.RefreshRate.Numerator = 60;
+        if(_engine.lock())
+        swapChainFullDesc.RefreshRate.Numerator = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+        swapChainFullDesc.RefreshRate.Denominator = 1;
+        swapChainFullDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+        swapChainFullDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+        swapChainFullDesc.Windowed = setting.windowType == WindowType::FullScreen;
+    }
 
     ComPtr<IDXGISwapChain1> swapChain1 = nullptr;
-    DXAssert(_factory->CreateSwapChainForHwnd(_cmdQueue.Get(), _hwnd, &swapChainDesc, &dxgiSwapChainFullScreenDesc, nullptr, &swapChain1));
+    DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc, &swapChainFullDesc, nullptr, &swapChain1));
     DXAssert(swapChain1->QueryInterface(ComToIDPtr(_swapChain)));
 
     int m_nSwapChainBufferIndex = _swapChain->GetCurrentBackBufferIndex();
 
 }
+
+void GraphicManager::RefreshSwapChain()
+{
+    _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, NULL);
+
+    DXGI_MODE_DESC dxgiDesc1;
+    dxgiDesc1.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    dxgiDesc1.Width = m_nWndClientWidth;
+    dxgiDesc1.Height = m_nWndClientHeight;
+
+    DEVMODEW moniterSetting;
+    moniterSetting.dmSize = sizeof(DEVMODEW);
+    EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &moniterSetting, 0);
+    dxgiDesc1.RefreshRate.Numerator = 60;
+    if (_engine.lock())
+        dxgiDesc1.RefreshRate.Numerator = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : moniterSetting.dmDisplayFrequency;
+    dxgiDesc1.RefreshRate.Denominator = 1;
+    dxgiDesc1.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+    dxgiDesc1.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    
+    _swapChain->ResizeTarget(&dxgiDesc1);
+
+    for (int i = 0; i < m_nSwapChainBuffers; i++) if (m_ppd3dSwapChainBackBuffers[i]) m_ppd3dSwapChainBackBuffers[i]->Release();
+
+    DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
+    _swapChain->GetDesc1(&dxgiSwapChainDesc);
+    _swapChain->ResizeBuffers(m_nSwapChainBuffers, m_nWndClientWidth, m_nWndClientHeight, dxgiSwapChainDesc.BufferDesc.Format, dxgiSwapChainDesc.Flags);
+
+    m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+}
+
+
 
 void GraphicManager::CreateFactory()
 {
@@ -199,9 +230,13 @@ void GraphicManager::CreateCommandQueueListAlloc()
     
 }
 
-void GraphicManager::SetScreenSize(Viewport viewInfo)
+void GraphicManager::SetScreenInfo(Viewport viewInfo)
 {
-    setting.screenSize = viewInfo;
+    if( setting.screenInfo.width != viewInfo.width ||
+        setting.screenInfo.height != viewInfo.height)
+        _refrashReserve = true;
+
+    setting.screenInfo = viewInfo;
 }
 
 

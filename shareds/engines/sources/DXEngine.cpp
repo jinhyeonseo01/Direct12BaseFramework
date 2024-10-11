@@ -154,7 +154,8 @@ namespace dxe
 		// Static Line에 엔진 추가
 		OpenWindow();
         graphic->_engine = this->shared_from_this();
-        graphic->setting = GetWindowHWnd();
+        graphic->SetHwnd(GetWindowHWnd());
+        graphic->SetScreenInfo(GetWindowRect());
 	    graphic->Init();
 
 		return this->shared_from_this();
@@ -310,8 +311,8 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
             
 			HWND hWnd = CreateWindowW(_handleName.data(), _titleName.data(),
                 windowSettingFlag,
-                graphic->setting.screenSize.x, graphic->setting.screenSize.y,
-                graphic->setting.screenSize.width, graphic->setting.screenSize.height, //CW_USEDEFAULT //this->_windowRect.width, this->_windowRect.height
+                graphic->setting.screenInfo.x, graphic->setting.screenInfo.y,
+                graphic->setting.screenInfo.width, graphic->setting.screenInfo.height, //CW_USEDEFAULT //this->_windowRect.width, this->_windowRect.height
 				nullptr, nullptr,
 				Engine::_processInstance, nullptr);
 			for(auto& speckey : globalSpecialKey)
@@ -385,13 +386,15 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		}
 	}
 
-	DirectX::SimpleMath::Viewport* Engine::GetWindowRect()
+    DirectX::SimpleMath::Viewport Engine::GetWindowRect()
 	{
-		return &(this->_windowRect);
+		return (this->_windowRect);
 	}
-	DirectX::SimpleMath::Viewport* Engine::SetWindowRect(DirectX::SimpleMath::Viewport& windowRect)
+
+    DirectX::SimpleMath::Viewport Engine::SetWindowRect(const DirectX::SimpleMath::Viewport& windowRect)
 	{
 		this->_windowRect = windowRect;
+	    this->graphic->SetScreenInfo(windowRect);
 		return this->GetWindowRect();
 	}
 
@@ -453,9 +456,9 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			case WM_SHOWWINDOW: //이건 말그대로 보이는지 여부
 			case WM_GETMINMAXINFO: //창 크기 최소/최대화 요청
 			case WM_SIZE:
+            case WM_MOVE:
 			case WM_DISPLAYCHANGE: // 바탕화면 해상도 변경 / 모니터 변경
 			case WM_COMMAND:
-			case WM_MOVE:
 			case WM_CLOSE:
 			case WM_DESTROY:
 			case WM_SETFOCUS:
@@ -503,7 +506,6 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			
 			int wmId = LOWORD(wParam);
 			int wmEvent = HIWORD(wParam);
-			Debug::log << "특수 등록키";
 
 			if (wmId == 0)
 				break;
@@ -548,6 +550,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 	{
 		InputEvent eventDesc;
 		std::memset(&eventDesc, 0, sizeof(InputEvent));
+        eventDesc.type = InputType::Event;
 
 		switch (winEvent.message)
 		{
@@ -555,13 +558,29 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 			break;
 		case WM_GETMINMAXINFO: //창 크기 최소/최대화 요청
 			break;
-		case WM_SIZE:
-			break;
+        case WM_SIZE:
+        {
+            UINT width = LOWORD(winEvent.lParam);
+            UINT height = HIWORD(winEvent.lParam);
+            auto rect = GetWindowRect();
+            rect.width = width;
+            rect.height = height;
+            graphic->SetScreenInfo(rect);
+            break;
+        }
+        case WM_MOVE:
+        {
+            UINT x = LOWORD(winEvent.lParam);
+            UINT y = HIWORD(winEvent.lParam);
+            auto rect = GetWindowRect();
+            rect.x = x;
+            rect.y = y;
+            graphic->SetScreenInfo(rect);
+            break;
+        }
 		case WM_DISPLAYCHANGE: // 바탕화면 해상도 변경 / 모니터 변경
 			break;
 		case WM_COMMAND:
-			break;
-		case WM_MOVE:
 			break;
 		case WM_CLOSE:
 			this->CloseWindow();

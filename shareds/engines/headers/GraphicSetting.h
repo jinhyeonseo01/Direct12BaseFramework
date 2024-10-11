@@ -22,12 +22,11 @@ namespace dxe
         //전체화면, 테두리 없음, 창모드
         //msaa enable
         //msaa level
-        HWND hWnd;
 
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
         WindowType windowType = WindowType::Windows;
-        Viewport screenSize = Viewport(0,0,1920,1080);
+        Viewport screenInfo = Viewport(0,0,1920,1080);
 
 
     public:
