@@ -24,6 +24,9 @@ namespace dxe
         ComPtr<IDXGIFactory4> _factory;
         ComPtr<ID3D12Device4> _device;
         ComPtr<IDXGISwapChain3> _swapChain;
+        ComPtr<ID3D12Fence> _fences;
+        HANDLE _fenceEvent;
+        //std::vector<ComPtr<ID3D12Fence>> _swapChainFences;
 
         int bestAdapterIndex = -1;
         std::vector<ComPtr<IDXGIAdapter3>> _adapterList; // 그래픽카드
@@ -39,6 +42,10 @@ namespace dxe
 
     public:
         std::vector<ComPtr<ID3D12Resource2>> _swapChainBuffers_Res;
+        int _swapChainIndex = 0;
+
+
+        int _fenceValue = 0;
 
     public:
 
@@ -55,11 +62,15 @@ namespace dxe
         void CreateSwapChain();
         void CreateFactory();
         void CreateDevice();
+        void CreateFences();
+        void CreateRenderTargetViews();
         void CreateCommandQueueListAlloc();
 
 
         void RefreshSwapChain();
 
+        void WaitSync();
+        void SetResource();
 
         void SetScreenInfo(Viewport viewInfo);
 

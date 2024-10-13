@@ -12,6 +12,8 @@ void GraphicManager::SetHwnd(const HWND& hwnd)
 
 void GraphicManager::Init()
 {
+    if (instance == nullptr)
+        instance = this;
 #ifdef _DEBUG
     {
         ComPtr<ID3D12Debug6> _d3dDebug;
@@ -37,6 +39,8 @@ void GraphicManager::Refresh()
 {
     //府家胶 赛 叼胶农赋飘 赛
     RefreshSwapChain();
+    CreateFences();
+    CreateRenderTargetViews();
     //轰 积己
 }
 
@@ -128,13 +132,14 @@ void GraphicManager::CreateSwapChain()
 
     DXGI_SWAP_CHAIN_FULLSCREEN_DESC swapChainFullDesc = {};
     {
-        DEVMODEW dm;
+        DEVMODEW dm = {};
         dm.dmSize = sizeof(DEVMODEW);
-        EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0);
+        int frequency = 60;
+        if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0))
+            if (_engine.lock())
+                frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
 
-        swapChainFullDesc.RefreshRate.Numerator = 60;
-        if(_engine.lock())
-        swapChainFullDesc.RefreshRate.Numerator = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+        swapChainFullDesc.RefreshRate.Numerator = frequency;
         swapChainFullDesc.RefreshRate.Denominator = 1;
         swapChainFullDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
         swapChainFullDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
@@ -142,20 +147,19 @@ void GraphicManager::CreateSwapChain()
     }
 
     ComPtr<IDXGISwapChain1> swapChain1 = nullptr;
-    DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc, &swapChainFullDesc, nullptr, &swapChain1));
+    DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc, swapChainFullDesc.Windowed ? &swapChainFullDesc : nullptr, nullptr, &swapChain1));
     DXAssert(swapChain1->QueryInterface(ComPtrIDAddr(_swapChain)));
     _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
     for(int i=0;i<setting.swapChain_BufferCount;i++)
         _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
 
-
-    int m_nSwapChainBufferIndex = _swapChain->GetCurrentBackBufferIndex();
+    _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
 
 }
 
 void GraphicManager::RefreshSwapChain()
 {
-    _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, NULL);
+    _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, nullptr);
 
     DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
     _swapChain->GetDesc1(&dxgiSwapChainDesc);
@@ -170,21 +174,47 @@ void GraphicManager::RefreshSwapChain()
     dxgiDesc1.Width = setting.screenInfo.width;
     dxgiDesc1.Height = setting.screenInfo.height;
 
-    DEVMODEW moniterSetting;
-    moniterSetting.dmSize = sizeof(DEVMODEW);
-    EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &moniterSetting, 0);
-    dxgiDesc1.RefreshRate.Numerator = 60;
-    if (_engine.lock())
-        dxgiDesc1.RefreshRate.Numerator = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : moniterSetting.dmDisplayFrequency;
+    DEVMODEW dm = {};
+    dm.dmSize = sizeof(DEVMODEW);
+    int frequency = 60;
+    if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0))
+        if (_engine.lock())
+            frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+
+    dxgiDesc1.RefreshRate.Numerator = frequency;
     dxgiDesc1.RefreshRate.Denominator = 1;
-    dxgiDesc1.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     dxgiDesc1.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    dxgiDesc1.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     _swapChain->ResizeTarget(&dxgiDesc1);
 
-
-    //m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+    _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
 }
 
+void GraphicManager::WaitSync()
+{
+    _fenceValue++;
+    _commandQueue->Signal(_fences.Get(), _fenceValue);
+
+    if (_fences->GetCompletedValue() < _fenceValue)
+    {
+        _fences->SetEventOnCompletion(_fenceValue, _fenceEvent);
+
+        ::WaitForSingleObject(_fenceEvent, INFINITE);
+    }
+}
+
+void GraphicManager::SetResource()
+{
+    _resourceCommandList->Close();
+
+    ID3D12CommandList* cmdListArr[] = { _resourceCommandList.Get() };
+    _commandQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
+
+    WaitSync(); //Gpu俊霸 累诀 该变 第俊 Lock 八
+
+    _resourceCommandAllocator.Reset();
+    _resourceCommandList->Reset(_resourceCommandAllocator.Get(), nullptr);
+}
 
 
 void GraphicManager::CreateFactory()
@@ -215,10 +245,17 @@ void GraphicManager::CreateDevice()
     setting.msaaSupportAble = msaaQualityLevel.NumQualityLevels > 1;
     setting.msaaSupportMaxLevel = msaaQualityLevel.NumQualityLevels;
 
-    //hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), (void**)&m_pd3dFence);
-    //for (UINT i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
+}
 
-    //m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+void GraphicManager::CreateFences()
+{
+    //_swapChainFences.resize(_swapChainBuffers_Res.size());
+    //for(int i=0;i< _swapChainFences.size();i++)
+    {
+        DXAssert(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, ComPtrIDAddr(_fences)));
+        _fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+    }
+    
 }
 
 void GraphicManager::CreateCommandQueueListAlloc()
@@ -260,6 +297,50 @@ void GraphicManager::CreateCommandQueueListAlloc()
         _resourceCommandAllocator = commandAllocator;
         _resourceCommandList = commandList4;
     }
+}
+
+
+void GraphicManager::CreateRenderTargetViews()
+{
+    /*
+     *
+     *	D3D12_RESOURCE_DESC d3dResourceDesc;
+	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	d3dResourceDesc.Alignment = 0;
+	d3dResourceDesc.Width = m_nWndClientWidth;
+	d3dResourceDesc.Height = m_nWndClientHeight;
+	d3dResourceDesc.DepthOrArraySize = 1;
+	d3dResourceDesc.MipLevels = 1;
+	d3dResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	d3dResourceDesc.SampleDesc.Count = (m_bMsaa4xEnable) ? 4 : 1;
+	d3dResourceDesc.SampleDesc.Quality = (m_bMsaa4xEnable) ? (m_nMsaa4xQualityLevels - 1) : 0;
+	d3dResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	d3dResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_HEAP_PROPERTIES d3dHeapProperties;
+	::ZeroMemory(&d3dHeapProperties, sizeof(D3D12_HEAP_PROPERTIES));
+	d3dHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+	d3dHeapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	d3dHeapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	d3dHeapProperties.CreationNodeMask = 1;
+	d3dHeapProperties.VisibleNodeMask = 1;
+
+	D3D12_CLEAR_VALUE d3dClearValue;
+	d3dClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	d3dClearValue.DepthStencil.Depth = 1.0f;
+	d3dClearValue.DepthStencil.Stencil = 0;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	m_pd3dDevice->CreateCommittedResource(&d3dHeapProperties, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &d3dClearValue, __uuidof(ID3D12Resource), (void **)&m_pd3dDepthStencilBuffer);
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDesc;
+	::ZeroMemory(&d3dDepthStencilViewDesc, sizeof(D3D12_DEPTH_STENCIL_VIEW_DESC));
+	d3dDepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	d3dDepthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	d3dDepthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, &d3dDepthStencilViewDesc, d3dDsvCPUDescriptorHandle);
+     **/
 }
 
 void GraphicManager::SetScreenInfo(Viewport viewInfo)

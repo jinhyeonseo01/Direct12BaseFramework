@@ -25,7 +25,7 @@ namespace dxe
 
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
-        WindowType windowType = WindowType::Windows;
+        WindowType windowType = WindowType::FullScreen;
         Viewport screenInfo = Viewport(0,0,1920,1080);
 
 

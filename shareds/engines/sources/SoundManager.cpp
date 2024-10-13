@@ -22,13 +22,30 @@ void SoundManager::Release()
 {
 }
 
-std::shared_ptr<FMOD::Sound> SoundManager::LoadSound(int id, const std::string& path)
+std::shared_ptr<FMOD::Sound> SoundManager::LoadSound(const std::wstring& id, const std::string& path)
 {
+    FMOD::Sound* sound;
+    //FMOD_LOOP_OFF
+    //FMOD_CREATESOUNDEXINFO create sound info
+    _system->createSound(path.c_str(), FMOD_3D, 0, &sound);
+    std::shared_ptr<FMOD::Sound> soundPtr = std::shared_ptr<FMOD::Sound>(sound);
+
+    _soundTable.insert(std::make_pair(id, soundPtr));
+    return soundPtr;
 }
 
-std::shared_ptr<FMOD::Sound> SoundManager::GetSound(int id)
+bool SoundManager::ContainsId(std::wstring id)
 {
+    return _soundTable.contains(id);
+}
 
+std::shared_ptr<FMOD::Sound> SoundManager::GetSound(const std::wstring& id)
+{
+    std::shared_ptr<FMOD::Sound> sound;
+    if(_soundTable.contains(id))
+        sound = _soundTable[id];
+
+    return sound;
 }
 
 std::shared_ptr<FMOD::Channel> SoundManager::PlaySoundSFX(std::shared_ptr<FMOD::Sound> sound, bool isPlayNow)

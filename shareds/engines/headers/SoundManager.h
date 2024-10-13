@@ -23,12 +23,14 @@ namespace dxe
         void Init();
         void Release();
 
+        std::unordered_map<std::wstring, std::shared_ptr<FMOD::Sound>> _soundTable;
+
         std::shared_ptr<FMOD::System> _system;
         std::shared_ptr<FMOD::ChannelGroup> _channelGroup;
 
 
-        std::shared_ptr<FMOD::Sound> LoadSound(int id, const std::string& path);
-        std::shared_ptr<FMOD::Sound> GetSound(int id);
+        std::shared_ptr<FMOD::Sound> LoadSound(std::wstring id, const std::string& path);
+        std::shared_ptr<FMOD::Sound> GetSound(std::wstring id);
         std::shared_ptr<FMOD::Channel> PlaySoundSFX(std::shared_ptr<FMOD::Sound> sound, bool isPlayNow = true);
         std::shared_ptr<FMOD::Channel> PlaySoundBGM(std::shared_ptr<FMOD::Sound> sound, bool isPlayNow = true);
         /// @brief °¨¼è ¼³Á¤

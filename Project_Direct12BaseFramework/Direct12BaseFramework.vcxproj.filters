@@ -187,10 +187,10 @@
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\SoundManager.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\constants\headers\Timer.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Constant\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -324,10 +324,10 @@
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\Timer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Constant\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
