@@ -29,8 +29,9 @@ namespace dxe
         std::shared_ptr<FMOD::ChannelGroup> _channelGroup;
 
 
-        std::shared_ptr<FMOD::Sound> LoadSound(std::wstring id, const std::string& path);
-        std::shared_ptr<FMOD::Sound> GetSound(std::wstring id);
+        std::shared_ptr<FMOD::Sound> LoadSound(const std::wstring& id, const std::string& path);
+        bool ContainsId(std::wstring id);
+        std::shared_ptr<FMOD::Sound> GetSound(const std::wstring& id);
         std::shared_ptr<FMOD::Channel> PlaySoundSFX(std::shared_ptr<FMOD::Sound> sound, bool isPlayNow = true);
         std::shared_ptr<FMOD::Channel> PlaySoundBGM(std::shared_ptr<FMOD::Sound> sound, bool isPlayNow = true);
         /// @brief °¨¼è ¼³Á¤
