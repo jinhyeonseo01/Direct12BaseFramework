@@ -27,7 +27,8 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
         resourceStates = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-        optimizedClearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
+
+        optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
         pOptimizedClearValue = &optimizedClearValue;
     }
     else if (state == ResourceState::RTV)
@@ -159,7 +160,14 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_dsvHeap)));
 
         D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = _dsvHeap->GetCPUDescriptorHandleForHeapStart();
-        device->CreateDepthStencilView(_resource.Get(), nullptr, hDSVHandle);
+
+
+        D3D12_DEPTH_STENCIL_VIEW_DESC DSVDesc = {};
+        DSVDesc.Format = format;
+        DSVDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+        DSVDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+        device->CreateDepthStencilView(_resource.Get(), &DSVDesc, hDSVHandle);
     }
 
     else if (_state == ResourceState::RTV)

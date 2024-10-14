@@ -3,6 +3,7 @@
 
 #include "DXEngine.h"
 #include "graphic_config.h"
+#include "Texture.h"
 
 
 void GraphicManager::SetHwnd(const HWND& hwnd)
@@ -393,6 +394,12 @@ void GraphicManager::CreateRenderTargetViews()
 
 	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, &d3dDepthStencilViewDesc, d3dDsvCPUDescriptorHandle);
      **/
+
+
+    std::shared_ptr<Texture> _depthStencil = Texture::Create( DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
+        setting.screenInfo.width, setting.screenInfo.height,
+        CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
 }
 
 void GraphicManager::SetScreenInfo(Viewport viewInfo)
