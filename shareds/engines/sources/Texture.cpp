@@ -42,6 +42,7 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
     else if (state == ResourceState::RTVSRV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+        //모든 쉐이더에서 쓸 수 있음을 의미함
         resourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
         float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
@@ -159,15 +160,14 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         heapDesc.NodeMask = 0;
         DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_dsvHeap)));
 
-        D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = _dsvHeap->GetCPUDescriptorHandleForHeapStart();
-
+        D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle = _dsvHeap->GetCPUDescriptorHandleForHeapStart();
 
         D3D12_DEPTH_STENCIL_VIEW_DESC DSVDesc = {};
         DSVDesc.Format = format;
         DSVDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
         DSVDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-        device->CreateDepthStencilView(_resource.Get(), &DSVDesc, hDSVHandle);
+        device->CreateDepthStencilView(_resource.Get(), &DSVDesc, DSVHandle);
     }
 
     else if (_state == ResourceState::RTV)
@@ -195,6 +195,8 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
         device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
+
+
 
         GraphicManager::instance->TextureDescriptorHandleAlloc(&_SRVCPUHandle);
 

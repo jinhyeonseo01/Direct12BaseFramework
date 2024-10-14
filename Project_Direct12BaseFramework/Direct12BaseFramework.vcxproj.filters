@@ -192,6 +192,9 @@
     <ClInclude Include="..\shareds\constants\headers\Timer.h">
       <Filter>Constant\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="RenderTargetGroup.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -328,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\Timer.cpp">
       <Filter>Constant\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTargetGroup.cpp">
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
