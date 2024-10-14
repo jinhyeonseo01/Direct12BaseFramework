@@ -5,25 +5,82 @@
 #include "GraphicManager.h"
 #include "graphic_config.h"
 
-void Texture::Load(const std::wstring& path)
+std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
+    const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
 {
-    //상혁님 코드 참조
-    std::wstring ext = std::filesystem::path(path).extension();
+    auto texture = std::make_shared<Texture>();
     auto device = GraphicManager::instance->_device;
 
-    if (ext == L".dds" || ext == L".DDS")
-        ::LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, nullptr, _image);
-    else if (ext == L".tga" || ext == L".TGA")
-        ::LoadFromTGAFile(path.c_str(), nullptr, _image);
-    else // png, jpg, jpeg, bmp
-        ::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, _image);
+    texture->_state = state;
 
-    DXAssert(CreateTexture(device.Get(), _image.GetMetadata(), &_resource));
+    texture->_clearColor[0] = clearColor.x;
+    texture->_clearColor[1] = clearColor.y;
+    texture->_clearColor[2] = clearColor.z;
+    texture->_clearColor[3] = clearColor.w;
+
+    D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
+    D3D12_CLEAR_VALUE optimizedClearValue = {};
+    D3D12_RESOURCE_STATES resourceStates = D3D12_RESOURCE_STATE_COMMON;
+    D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr; // Optimized clear value pointer
+
+    if (state == ResourceState::DSV)
+    {
+        desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+        resourceStates = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+        optimizedClearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
+        pOptimizedClearValue = &optimizedClearValue;
+    }
+    else if (state == ResourceState::RTV)
+    {
+        desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+        resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
+        optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
+        pOptimizedClearValue = &optimizedClearValue;
+    }
+    else if (state == ResourceState::RTVSRV)
+    {
+        desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+        resourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
+        float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
+        optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
+        pOptimizedClearValue = &optimizedClearValue;
+    }
+
+    DXAssert(device->CreateCommittedResource(
+        &heapProperty,
+        heapFlags,
+        &desc,
+        resourceStates,
+        pOptimizedClearValue,
+        ComPtrIDAddr(texture->_resource)));
+
+    texture->CreateFromResource(texture->_resource, format);
+
+    return texture;
+}
+
+std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
+{
+    //상혁님 코드 참조
+    auto texture = std::make_shared<Texture>();
+    auto device = GraphicManager::instance->_device;
+
+    std::wstring ext = std::filesystem::path(path).extension();
+
+    if (ext == L".dds" || ext == L".DDS")
+        ::LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, nullptr, texture->_image);
+    else if (ext == L".tga" || ext == L".TGA")
+        ::LoadFromTGAFile(path.c_str(), nullptr, texture->_image);
+    else // png, jpg, jpeg, bmp
+        ::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
+
+    DXAssert(CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
 
     std::vector<D3D12_SUBRESOURCE_DATA> subResources;
-    DXAssert(PrepareUpload(device.Get(), _image.GetImages(), _image.GetImageCount(), _image.GetMetadata(), subResources));
+    DXAssert(PrepareUpload(device.Get(), texture->_image.GetImages(), texture->_image.GetImageCount(), texture->_image.GetMetadata(), subResources));
 
-    int bufferSize = ::GetRequiredIntermediateSize(_resource.Get(), 0, static_cast<uint32_t>(subResources.size()));
+    int bufferSize = ::GetRequiredIntermediateSize(texture->_resource.Get(), 0, static_cast<uint32_t>(subResources.size()));
 
     ComPtr<ID3D12Resource> textureUploadHeap;
     DXAssert(device->CreateCommittedResource(
@@ -41,25 +98,25 @@ void Texture::Load(const std::wstring& path)
         &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
         D3D12_HEAP_FLAG_NONE,
         &CD3DX12_RESOURCE_DESC::Tex2D(
-            _image.GetMetadata().format,
-            _image.GetMetadata().width,
-            _image.GetMetadata().height,
-            _image.GetMetadata().arraySize,
-            _image.GetMetadata().mipLevels),
+            texture->_image.GetMetadata().format,
+            texture->_image.GetMetadata().width,
+            texture->_image.GetMetadata().height,
+            texture->_image.GetMetadata().arraySize,
+            texture->_image.GetMetadata().mipLevels),
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        ComPtrIDAddr(_resource)));
+        ComPtrIDAddr(texture->_resource)));
 
 
     // 리소스 배리어: 복사 작업 전
     //리소스 배리어를 통해 상태를 복사 대기상태로
     GraphicManager::instance->_resourceCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-        _resource.Get(),
+        texture->_resource.Get(),
         D3D12_RESOURCE_STATE_GENERIC_READ,  // 초기 상태에서
         D3D12_RESOURCE_STATE_COPY_DEST));   // 복사 대상으로 전환
     //메모리 복사
     ::UpdateSubresources(GraphicManager::instance->_resourceCommandList.Get(),
-        _resource.Get(),
+        texture->_resource.Get(),
         textureUploadHeap.Get(),
         0, 0,
         static_cast<unsigned int>(subResources.size()),
@@ -67,37 +124,80 @@ void Texture::Load(const std::wstring& path)
     //메모리 복사
     // 리소스 배리어: 복사 작업 후 쉐이더 리소스로 세팅
     GraphicManager::instance->_resourceCommandList.Get()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
-        _resource.Get(),
+        texture->_resource.Get(),
         D3D12_RESOURCE_STATE_COPY_DEST,  // 복사 대상에서
         D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));  // 원하는 최종 상태로 전환
 
     GraphicManager::instance->SetResource();
 
 
-    auto heapSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-    srvHeapDesc.NumDescriptors = heapsize;
-    srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
+    texture->_SRVCPUHandle = GraphicManager::instance->TextureDescriptorHandleAlloc();
+    
+    D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+    SRVDesc.Format = texture->_image.GetMetadata().format;
+    SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // D3D12_SRV_DIMENSION_TEXTURECUBE
+    SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    SRVDesc.TextureCube.MipLevels = texture->_image.GetMetadata().mipLevels;
+    SRVDesc.TextureCube.MostDetailedMip = 0;
+    SRVDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
-    HRESULT hr = device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap));
+    device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRVCPUHandle);
+}
 
-    D3D12_CPU_DESCRIPTOR_HANDLE TextureHeap::AllocDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE * handle)
+void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format)
+{
+    auto device = GraphicManager::instance->_device;
+    _resource = resource;
+
+    if (_state == ResourceState::DSV)
     {
-        assert(_currentIndex < _heapSize);
+        D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+        heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+        heapDesc.NumDescriptors = 1;
+        heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        heapDesc.NodeMask = 0;
+        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_dsvHeap)));
 
-        int32 index = Alloc();
+        D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = _dsvHeap->GetCPUDescriptorHandleForHeapStart();
+        device->CreateDepthStencilView(_resource.Get(), nullptr, hDSVHandle);
+    }
 
-        if (index == -1) {
-            throw std::runtime_error("No free descriptor handles available");
-        }
+    else if (_state == ResourceState::RTV)
+    {
+        D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+        heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+        heapDesc.NumDescriptors = 1;
+        heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        heapDesc.NodeMask = 0;
+        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_rtvHeap)));
 
-        CD3DX12_CPU_DESCRIPTOR_HANDLE DescriptorHandle(_srvHeap->GetCPUDescriptorHandleForHeapStart(), index, _offset);
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
+        device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
+    }
 
-        *handle = DescriptorHandle;
-        _currentIndex++;
 
-        return *handle;
+    else if (_state == ResourceState::RTVSRV)
+    {
+        D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+        heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+        heapDesc.NumDescriptors = 1;
+        heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        heapDesc.NodeMask = 0;
+        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_rtvHeap)));
+
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
+        device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
+
+        GraphicManager::instance->TextureDescriptorHandleAlloc(&_SRVCPUHandle);
+
+        D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+        srvDesc.Format = format;
+        srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+        srvDesc.Texture2D.MipLevels = 1;
+
+        device->CreateShaderResourceView(_resource.Get(), &srvDesc, _SRVCPUHandle);
+
     }
 
 }

@@ -39,7 +39,7 @@ namespace dxe
 
         ComPtr<ID3D12CommandAllocator> _resourceCommandAllocator;
         ComPtr<ID3D12GraphicsCommandList4> _resourceCommandList;
-
+        
     public:
         std::vector<ComPtr<ID3D12Resource2>> _swapChainBuffers_Res;
         int _swapChainIndex = 0;
@@ -47,7 +47,16 @@ namespace dxe
 
         int _fenceValue = 0;
 
-    public:
+    public://DescriptorHeap
+        int _textureDescriptorSize = 0;
+        int _textureDescriptorHeapCount = 0;
+        int _textureDescriptorHeapIndex = 0;
+        std::vector<bool> _textureDescriptorHeapAllocator;
+        ComPtr<ID3D12DescriptorHeap> _textureDescriptorHeap;
+
+        uint32_t TextureIndexAlloc();
+        D3D12_CPU_DESCRIPTOR_HANDLE TextureDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle = nullptr);
+        void TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
 
     public:
         bool _isRelease = false;
@@ -65,7 +74,8 @@ namespace dxe
         void CreateFences();
         void CreateRenderTargetViews();
         void CreateCommandQueueListAlloc();
-
+        void CreateDescriptorHeap();
+        void CreateTextureHeap();
 
         void RefreshSwapChain();
 
@@ -73,6 +83,10 @@ namespace dxe
         void SetResource();
 
         void SetScreenInfo(Viewport viewInfo);
+
+
+
+
 
         GraphicManager();
         virtual ~GraphicManager();

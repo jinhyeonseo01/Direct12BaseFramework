@@ -10,6 +10,37 @@ void GraphicManager::SetHwnd(const HWND& hwnd)
     this->hWnd = hwnd;
 }
 
+uint32_t GraphicManager::TextureIndexAlloc()
+{
+    for (int i = 0; i < _textureDescriptorHeapAllocator.size(); ++i)
+    {
+        if (!_textureDescriptorHeapAllocator[i])
+        {
+            _textureDescriptorHeapAllocator[i] = true;
+            return i;
+        }
+    }
+    return -1;  // No available slots
+}
+D3D12_CPU_DESCRIPTOR_HANDLE GraphicManager::TextureDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle)
+{
+    unsigned int index = TextureIndexAlloc();
+    assert(index != -1);
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE DescriptorHandle(_textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), index, _textureDescriptorSize);
+    if(handle != nullptr)
+        *handle = DescriptorHandle;
+    return DescriptorHandle;
+}
+
+void GraphicManager::TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle)
+{
+    D3D12_CPU_DESCRIPTOR_HANDLE start = _textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    uint32_t index = (uint32_t)(handle.ptr - start.ptr) / _textureDescriptorSize;
+    assert(index >= 0);
+    _textureDescriptorHeapAllocator[index] = false;
+}
+
 void GraphicManager::Init()
 {
     if (instance == nullptr)
@@ -28,6 +59,7 @@ void GraphicManager::Init()
     CreateDevice();
     CreateCommandQueueListAlloc();
     CreateSwapChain();
+    CreateDescriptorHeap();
     // 여기까진 정적
 
     Refresh();
@@ -297,6 +329,26 @@ void GraphicManager::CreateCommandQueueListAlloc()
         _resourceCommandAllocator = commandAllocator;
         _resourceCommandList = commandList4;
     }
+}
+
+void GraphicManager::CreateDescriptorHeap()
+{
+    CreateTextureHeap();
+}
+
+void GraphicManager::CreateTextureHeap()
+{
+    _textureDescriptorHeapCount = 2048;
+    _textureDescriptorSize = _device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+    _textureDescriptorHeapAllocator.resize(_textureDescriptorHeapCount, false);
+
+    D3D12_DESCRIPTOR_HEAP_DESC SRV_HeapDesc = {};
+    SRV_HeapDesc.NumDescriptors = _textureDescriptorHeapCount;
+    SRV_HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    SRV_HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
+
+    DXAssert(_device->CreateDescriptorHeap(&SRV_HeapDesc, IID_PPV_ARGS(&_textureDescriptorHeap)));
 }
 
 

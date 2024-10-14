@@ -2,7 +2,15 @@
 #include <stdafx.h>
 #include <string>
 
-class Texture
+enum class ResourceState
+{
+    RTV,
+    DSV,
+    SRV,
+    RTVSRV,
+};
+
+class Texture : public std::enable_shared_from_this<Texture>
 {
 
 public:
@@ -15,7 +23,12 @@ public:
     ResourceState					_state = ResourceState::SRV;
     ScratchImage			 		_image;
     ComPtr<ID3D12Resource>			_resource;
-    void Load(const std::wstring& path);
+
+    static std::shared_ptr<Texture> Create(DXGI_FORMAT format, uint32_t width, uint32_t height, const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor = Vector4(1,1,1,1));
+    static std::shared_ptr<Texture> Load(const std::wstring& path);
+
+
+    void CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format);
 
 
     ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
