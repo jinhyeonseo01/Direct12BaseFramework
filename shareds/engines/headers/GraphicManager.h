@@ -85,8 +85,13 @@ namespace dxe
         void SetScreenInfo(Viewport viewInfo);
 
 
+        ComPtr<ID3D12GraphicsCommandList4> GetResourceCommandList();
+        ComPtr<ID3D12CommandAllocator> GetResourceCommandAllocator();
 
-
+        ComPtr<ID3D12GraphicsCommandList4> GetCommandList();
+        ComPtr<ID3D12CommandAllocator> GetCommandAllocator();
+        ComPtr<ID3D12CommandQueue> GetCommandQueue();
+        int _currentCommandList = 0;
 
         GraphicManager();
         virtual ~GraphicManager();

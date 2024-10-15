@@ -93,7 +93,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
         nullptr,
         IID_PPV_ARGS(textureUploadHeap.GetAddressOf())));
 
-
+    auto resourceCommandList = GraphicManager::instance->GetResourceCommandList();
 
     // 텍스쳐용 리소스 생성
     DXAssert(device->CreateCommittedResource(
@@ -112,12 +112,12 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
 
     // 리소스 배리어: 복사 작업 전
     //리소스 배리어를 통해 상태를 복사 대기상태로
-    GraphicManager::instance->_resourceCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+    resourceCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
         texture->_resource.Get(),
         D3D12_RESOURCE_STATE_GENERIC_READ,  // 초기 상태에서
         D3D12_RESOURCE_STATE_COPY_DEST));   // 복사 대상으로 전환
     //메모리 복사
-    ::UpdateSubresources(GraphicManager::instance->_resourceCommandList.Get(),
+    ::UpdateSubresources(resourceCommandList.Get(),
         texture->_resource.Get(),
         textureUploadHeap.Get(),
         0, 0,
@@ -125,7 +125,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
         subResources.data());
     //메모리 복사
     // 리소스 배리어: 복사 작업 후 쉐이더 리소스로 세팅
-    GraphicManager::instance->_resourceCommandList.Get()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+    resourceCommandList.Get()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
         texture->_resource.Get(),
         D3D12_RESOURCE_STATE_COPY_DEST,  // 복사 대상에서
         D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));  // 원하는 최종 상태로 전환

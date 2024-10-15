@@ -238,15 +238,16 @@ void GraphicManager::WaitSync()
 
 void GraphicManager::SetResource()
 {
-    _resourceCommandList->Close();
+    auto resourceCommandList = GetResourceCommandList();
+    resourceCommandList->Close();
 
-    ID3D12CommandList* cmdListArr[] = { _resourceCommandList.Get() };
-    _commandQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
+    std::array<ID3D12CommandList*, 1> commandListArray{ resourceCommandList.Get() };
+    GetCommandQueue()->ExecuteCommandLists(commandListArray.size(), commandListArray.data());
 
     WaitSync(); //Gpu에게 작업 맡긴 뒤에 Lock 검
 
-    _resourceCommandAllocator.Reset();
-    _resourceCommandList->Reset(_resourceCommandAllocator.Get(), nullptr);
+    resourceCommandList.Reset();
+    resourceCommandList->Reset(GetResourceCommandAllocator().Get(), nullptr);
 }
 
 
@@ -303,6 +304,7 @@ void GraphicManager::CreateCommandQueueListAlloc()
 
     DXAssert(_device->CreateCommandQueue(ComPtrAddr(commandQueueDesc), ComPtrIDAddr(_commandQueue)));
 
+    
     for (int i = 0; i < 3; i++)
     {
         ComPtr<ID3D12CommandAllocator> commandAllocator;
@@ -409,6 +411,31 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
         _refrashReserve = true;
 
     setting.screenInfo = viewInfo;
+}
+
+ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetResourceCommandList()
+{
+    return _resourceCommandList;
+}
+
+ComPtr<ID3D12CommandAllocator> GraphicManager::GetResourceCommandAllocator()
+{
+    return _resourceCommandAllocator;
+}
+
+ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetCommandList()
+{
+    return _commandLists[_currentCommandList];
+}
+
+ComPtr<ID3D12CommandAllocator> GraphicManager::GetCommandAllocator()
+{
+    return _commandAllocators[_currentCommandList];
+}
+
+ComPtr<ID3D12CommandQueue> GraphicManager::GetCommandQueue()
+{
+    return _commandQueue;
 }
 
 
