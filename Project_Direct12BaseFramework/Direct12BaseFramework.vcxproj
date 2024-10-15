@@ -184,6 +184,7 @@
     <ClInclude Include="..\shareds\engines\headers\MeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\Model.h" />
     <ClInclude Include="..\shareds\engines\headers\RendererComponent.h" />
+    <ClInclude Include="..\shareds\engines\headers\RenderTarget.h" />
     <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h" />
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="..\shareds\engines\sources\MeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Model.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\RenderTarget.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />

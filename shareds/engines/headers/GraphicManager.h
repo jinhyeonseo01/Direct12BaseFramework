@@ -3,6 +3,7 @@
 #include <stdafx.h>
 
 #include "GraphicSetting.h"
+#include "Texture.h"
 
 namespace dxe
 {
@@ -42,6 +43,7 @@ namespace dxe
         
     public:
         std::vector<ComPtr<ID3D12Resource2>> _swapChainBuffers_Res;
+        std::vector<std::shared_ptr<Texture>> _swapChainRT;
         int _swapChainIndex = 0;
 
 

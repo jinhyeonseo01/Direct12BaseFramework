@@ -42,11 +42,11 @@ void RenderTargetGroup::Create(std::vector<std::shared_ptr<Texture>>& renderTarg
             unsigned int tempSrcSize = 1;
             device->CreateRenderTargetView(_renderTargetTextureList[i]->GetResource().Get(),
                 &_renderTargetTextureList[i]->_RTV_ViewDesc, currentHandle);
+            auto currentSrcHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_renderTargetTextureList[i]->GetRTV()->GetCPUDescriptorHandleForHeapStart(), j, size);
             device->CopyDescriptors(
                 1, &currentHandle, &tempDstSize,
-                1, 
-                &_renderTargetTextureList[i]->GetRTV()->GetCPUDescriptorHandleForHeapStart() + j *
-                size, &tempSrcSize,
+                1, &currentSrcHandle
+                , &tempSrcSize,
                 D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
             

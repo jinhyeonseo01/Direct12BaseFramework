@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Texture.h"
-#include <filesystem>
 
 #include "GraphicManager.h"
 #include "graphic_config.h"
@@ -87,6 +86,8 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         ::LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, nullptr, texture->_image);
     else if (ext == L".tga" || ext == L".TGA")
         ::LoadFromTGAFile(path.c_str(), nullptr, texture->_image);
+    else if (ext == L".hdr" || ext == L".HDR")
+        ::LoadFromHDRFile(path.c_str(), nullptr, texture->_image);
     else // png, jpg, jpeg, bmp
         ::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
 
@@ -107,7 +108,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         texture->_image = std::move(mipmapImage);
     }
 
-    DXAssert(CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
+    DXAssert(::CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
 
     std::vector<D3D12_SUBRESOURCE_DATA> subResources;
     DXAssert(PrepareUpload(device.Get(), texture->_image.GetImages(), texture->_image.GetImageCount(), texture->_image.GetMetadata(), subResources));
@@ -115,37 +116,57 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     int bufferSize = ::GetRequiredIntermediateSize(texture->_resource.Get(), 0, static_cast<uint32_t>(subResources.size()));
 
     ComPtr<ID3D12Resource> textureUploadHeap;
+
+    D3D12_HEAP_PROPERTIES uploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+    // 2. CD3DX12_RESOURCE_DESC::Buffer의 인스턴스를 명시적으로 생성
+    D3D12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+
+    // 3. CreateCommittedResource 호출 시 명시적으로 생성한 lvalue들을 넘겨줌
     DXAssert(device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), // 업로드 힙
+        &uploadHeapProperties,       // 업로드 힙
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
+        &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ, // 읽기 상태로 전환
-        nullptr,
-        IID_PPV_ARGS(textureUploadHeap.GetAddressOf())));
+        nullptr, // clear value가 없으므로 null
+        IID_PPV_ARGS(textureUploadHeap.GetAddressOf())
+    ));
 
     auto resourceCommandList = GraphicManager::instance->GetResourceCommandList();
 
     // 텍스쳐용 리소스 생성
+    D3D12_HEAP_PROPERTIES heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+
+    // 2. 텍스처의 메타데이터 추출
+    const auto& metadata = texture->_image.GetMetadata();
+
+    // 3. CD3DX12_RESOURCE_DESC::Tex2D의 인스턴스를 명시적으로 생성
+    D3D12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+        metadata.format,
+        metadata.width,
+        metadata.height,
+        metadata.arraySize,
+        metadata.mipLevels
+    );
+
+    // 4. CreateCommittedResource 호출 시 인스턴스를 넘겨줌
     DXAssert(device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        &heapProperties,
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Tex2D(
-            texture->_image.GetMetadata().format,
-            texture->_image.GetMetadata().width,
-            texture->_image.GetMetadata().height,
-            texture->_image.GetMetadata().arraySize,
-            texture->_image.GetMetadata().mipLevels),
+        &resourceDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        ComPtrIDAddr(texture->_resource)));
+        nullptr, // clear value가 없으므로 null
+        IID_PPV_ARGS(texture->_resource.GetAddressOf())
+    ));
 
 
     // 리소스 배리어: 복사 작업 전
     //리소스 배리어를 통해 상태를 복사 대기상태로
-    resourceCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+    auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
         texture->_resource.Get(),
         D3D12_RESOURCE_STATE_GENERIC_READ,  // 초기 상태에서
-        D3D12_RESOURCE_STATE_COPY_DEST));   // 복사 대상으로 전환
+        D3D12_RESOURCE_STATE_COPY_DEST);
+    resourceCommandList->ResourceBarrier(1, &barrier);   // 복사 대상으로 전환
     //메모리 복사
     ::UpdateSubresources(resourceCommandList.Get(),
         texture->_resource.Get(),
@@ -155,10 +176,11 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         subResources.data());
     //메모리 복사
     // 리소스 배리어: 복사 작업 후 쉐이더 리소스로 세팅
-    resourceCommandList.Get()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+    barrier = CD3DX12_RESOURCE_BARRIER::Transition(
         texture->_resource.Get(),
         D3D12_RESOURCE_STATE_COPY_DEST,  // 복사 대상에서
-        D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE));  // 원하는 최종 상태로 전환
+        D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+    resourceCommandList.Get()->ResourceBarrier(1, &barrier);  // 원하는 최종 상태로 전환
 
     GraphicManager::instance->SetResource();
 
@@ -176,6 +198,8 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     texture->_SRV_ViewDesc = SRVDesc;
 
     device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
+
+    return texture;
 }
 
 void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format)

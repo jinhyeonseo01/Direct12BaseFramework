@@ -3,8 +3,12 @@
 
 #include "DXEngine.h"
 #include "graphic_config.h"
+#include "RenderTargetGroup.h"
 #include "Texture.h"
 
+
+
+GraphicManager* GraphicManager::instance = nullptr;
 
 
 void GraphicManager::SetHwnd(const HWND& hwnd)
@@ -99,7 +103,7 @@ void GraphicManager::CreateAdapterAndOutputs()
 #ifdef _DEBUG
     DXSuccess(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, ComPtrIDAddr(_factory)));
 #else
-    DXSuccess(CreateDXGIFactory2(0, ComIDPtr(_factory)));
+    DXSuccess(CreateDXGIFactory2(0, ComPtrIDAddr(_factory)));
 #endif
     ComPtr<IDXGIAdapter1> adapter1;
     ComPtr<IDXGIAdapter3> adapter3;
@@ -359,24 +363,29 @@ void GraphicManager::CreateTextureHeap()
 
 void GraphicManager::CreateRenderTargetViews()
 {
+    std::shared_ptr<Texture> depthStencilTexture = std::make_shared<Texture>();
+    depthStencilTexture->Create(DXGI_FORMAT_D32_FLOAT_S8X24_UINT, setting.screenInfo.width, setting.screenInfo.height,
+        CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
 
     // SwapChain Group
     {
-        std::vector<std::shared_ptr<Texture>> RenderTargetList;
-        RenderTargetList.resize(_swapChainBuffers_Res.size());
+        std::vector<std::shared_ptr<Texture>> renderTargetTextureList;
+        renderTargetTextureList.resize(_swapChainBuffers_Res.size());
 
-        for (uint32_t i = 0; i < RenderTargetList.size(); ++i)
+        for (uint32_t i = 0; i < renderTargetTextureList.size(); ++i)
         {
             ComPtr<ID3D12Resource> resource = _swapChainBuffers_Res[i];
-            RenderTargetList[i] = std::make_shared<Texture>();
-            RenderTargetList[i]->SetState(ResourceState::RTV);
-            RenderTargetList[i]->SetClearColor(Vector4(1, 1, 1, 1));
-            RenderTargetList[i]->CreateFromResource(resource, DXGI_FORMAT_R8G8B8A8_UNORM);
+            renderTargetTextureList[i] = std::make_shared<Texture>();
+            renderTargetTextureList[i]->SetState(ResourceState::RTV);
+            renderTargetTextureList[i]->SetClearColor(Vector4(0.5, 0.5, 1, 1));
+            renderTargetTextureList[i]->CreateFromResource(resource, DXGI_FORMAT_R8G8B8A8_UNORM);
         }
-        std::make_shared<RenderTargetGroup>()
-        _rtGroups[static_cast<uint8>(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)] = std::make_shared<RenderTargetGroup>();
-        _rtGroups[static_cast<uint8>(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)]->SetViewPort(WINDOW_WIDTH, WINDOW_HEIGHT);
-        _rtGroups[static_cast<uint8>(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)]->Create(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN, RenderTargetList, dsTexture1);
+        this->_swapChainRT = renderTargetTextureList;
+
+        std::shared_ptr<RenderTargetGroup> rtGroup = std::make_shared<RenderTargetGroup>();
+        rtGroup->Create(renderTargetTextureList, depthStencilTexture);
+        rtGroup->SetViewport(setting.screenInfo.width, setting.screenInfo.height);
     }
 
 
@@ -397,7 +406,8 @@ void GraphicManager::ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESO
     ComPtr<ID3D12GraphicsCommandList4> list = GetCommandList();
     if (isResource)
         list = GetResourceCommandList();
-    list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), before, after));
+    auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), before, after);
+    list->ResourceBarrier(1, &barrier);
 }
 
 ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetResourceCommandList()

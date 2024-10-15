@@ -36,6 +36,7 @@
 #include <functional>
 #include <format>
 #include <unordered_map>
+#include <filesystem>
 
 #include <malloc.h>
 #include <memory.h>
@@ -106,7 +107,10 @@
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 
+#include <wrl/client.h>
+
 #include <DirectXTex.h>
+#include <DirectXTex.inl>
 
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")

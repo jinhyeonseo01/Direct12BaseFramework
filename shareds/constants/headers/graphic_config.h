@@ -8,7 +8,7 @@
 #define ComPtrVoid(type) (void**)(&type)
 
 
-std::array<wchar_t, 1000> errorTextBuf;
+extern std::array<wchar_t, 1000> errorTextBuf;
 
 inline bool DXSuccess(const HRESULT& result)
 {

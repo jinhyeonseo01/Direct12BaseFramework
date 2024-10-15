@@ -20,7 +20,7 @@ public:
     ComPtr<ID3D12DescriptorHeap> GetDSV() { return _DSV_DescHeap; }
     D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandle() { return _SRV_CPUHandle; }
     float* GetClearColor() { return _clearColor; }
-    float* SetClearColor(Vector4 clearColor)
+    void SetClearColor(Vector4 clearColor)
     {
         _clearColor[0] = clearColor.x;
         _clearColor[1] = clearColor.y;
