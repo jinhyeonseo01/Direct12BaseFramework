@@ -65,10 +65,28 @@ void RenderTargetGroup::ResourceBarrier(D3D12_RESOURCE_STATES before, D3D12_RESO
 
 void RenderTargetGroup::OMSetRenderTargets(uint32_t count, uint32_t offset)
 {
+    auto commandList = GraphicManager::instance->GetCommandList();
+    if (_renderTargetHandleList.size() != 0)
+    {
+        commandList->RSSetViewports(1, &_viewport);
+        commandList->RSSetScissorRects(1, &_rect);
+
+        commandList->OMSetRenderTargets(count, &_renderTargetHandleList[offset],
+            _renderTargetHandleList.size() != 0/*다중*/, &_depthStencilHandle);
+    }
 }
 
 void RenderTargetGroup::OMSetRenderTargets()
 {
+    auto commandList = GraphicManager::instance->GetCommandList();
+    if(_renderTargetHandleList.size() != 0)
+    {
+        commandList->RSSetViewports(1, &_viewport);
+        commandList->RSSetScissorRects(1, &_rect);
+
+        commandList->OMSetRenderTargets(_renderTargetHandleList.size(), &_renderTargetHandleList[0],
+            _renderTargetHandleList.size() != 0/*다중*/, &_depthStencilHandle);
+    }
 }
 
 void RenderTargetGroup::ClearRenderTargetView(uint32_t index)

@@ -184,6 +184,7 @@
     <ClInclude Include="..\shareds\engines\headers\MeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\Model.h" />
     <ClInclude Include="..\shareds\engines\headers\RendererComponent.h" />
+    <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h" />
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
@@ -194,7 +195,6 @@
     <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
     <ClInclude Include="..\shareds\engines\headers\Vertex.h" />
-    <ClInclude Include="RenderTargetGroup.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp" />
@@ -232,6 +232,7 @@
     <ClCompile Include="..\shareds\engines\sources\MeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Model.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
@@ -242,7 +243,6 @@
     <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Vertex.cpp" />
     <ClCompile Include="Direct12BaseFramework.cpp" />
-    <ClCompile Include="RenderTargetGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc" />

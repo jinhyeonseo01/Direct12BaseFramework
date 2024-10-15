@@ -192,7 +192,7 @@
     <ClInclude Include="..\shareds\constants\headers\Timer.h">
       <Filter>Constant\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTargetGroup.h">
+    <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -332,7 +332,7 @@
     <ClCompile Include="..\shareds\constants\sources\Timer.cpp">
       <Filter>Constant\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTargetGroup.cpp">
+    <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

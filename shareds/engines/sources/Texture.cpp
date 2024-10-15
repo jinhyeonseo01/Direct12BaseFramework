@@ -17,18 +17,19 @@ Texture::~Texture()
 
 }
 
+void Texture::SetState(ResourceState state)
+{
+    _state = state;
+}
+
 std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
                                          const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
 {
     auto texture = std::make_shared<Texture>();
     auto device = GraphicManager::instance->_device;
 
-    texture->_state = state;
-
-    texture->_clearColor[0] = clearColor.x;
-    texture->_clearColor[1] = clearColor.y;
-    texture->_clearColor[2] = clearColor.z;
-    texture->_clearColor[3] = clearColor.w;
+    texture->SetState(state);
+    texture->SetClearColor(clearColor);
 
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
     D3D12_CLEAR_VALUE optimizedClearValue = {};
@@ -74,7 +75,7 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
     return texture;
 }
 
-std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
+std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipMap)
 {
     //상혁님 코드 참조
     auto texture = std::make_shared<Texture>();
@@ -88,6 +89,23 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
         ::LoadFromTGAFile(path.c_str(), nullptr, texture->_image);
     else // png, jpg, jpeg, bmp
         ::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
+
+    if (!(ext == L".dds" || ext == L".DDS") && createMipMap)
+    {
+        ScratchImage mipmapImage;
+        //TEX_FILTER_LINEAR 보간
+        //TEX_FILTER_CUBIC 3차보간
+        //TEX_FILTER_FANT 가우시안 비등방성 보간
+        //TEX_FILTER_POINT
+        GenerateMipMaps(
+            texture->_image.GetImages(),          // 소스 이미지 배열
+            texture->_image.GetImageCount(),      // 소스 이미지 개수
+            texture->_image.GetMetadata(),        // 소스 이미지 메타데이터
+            TEX_FILTER_CUBIC, // 필터 옵션 (기본값 사용)
+            0, mipmapImage);
+        texture->_image.Release();
+        texture->_image = std::move(mipmapImage);
+    }
 
     DXAssert(CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
 

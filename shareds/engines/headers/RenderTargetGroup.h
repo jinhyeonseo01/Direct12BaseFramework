@@ -5,9 +5,11 @@
 
 namespace dxe
 {
+
     class RenderTargetGroup : public std::enable_shared_from_this<RenderTargetGroup>
     {
     public:
+        int order = 0;
         RenderTargetGroup();
         virtual ~RenderTargetGroup();
         std::vector<std::shared_ptr<Texture>> _renderTargetTextureList;
