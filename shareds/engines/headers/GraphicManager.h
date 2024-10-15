@@ -84,6 +84,8 @@ namespace dxe
 
         void SetScreenInfo(Viewport viewInfo);
 
+        void ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after, bool isResource = false);
+
 
         ComPtr<ID3D12GraphicsCommandList4> GetResourceCommandList();
         ComPtr<ID3D12CommandAllocator> GetResourceCommandAllocator();
@@ -91,6 +93,7 @@ namespace dxe
         ComPtr<ID3D12GraphicsCommandList4> GetCommandList();
         ComPtr<ID3D12CommandAllocator> GetCommandAllocator();
         ComPtr<ID3D12CommandQueue> GetCommandQueue();
+
         int _currentCommandList = 0;
 
         GraphicManager();

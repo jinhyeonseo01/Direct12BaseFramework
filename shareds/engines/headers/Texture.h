@@ -12,12 +12,13 @@ enum class ResourceState
 
 class Texture : public std::enable_shared_from_this<Texture>
 {
-
 public:
+    Texture();
+    virtual ~Texture();
     ComPtr<ID3D12Resource> GetResource() { return _resource; }
-    ComPtr<ID3D12DescriptorHeap> GetRTV() { return _rtvHeap; }
-    ComPtr<ID3D12DescriptorHeap> GetDSV() { return _dsvHeap; }
-    D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandle() { return _SRVCPUHandle; }
+    ComPtr<ID3D12DescriptorHeap> GetRTV() { return _RTV_DescHeap; }
+    ComPtr<ID3D12DescriptorHeap> GetDSV() { return _DSV_DescHeap; }
+    D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandle() { return _SRV_CPUHandle; }
     float* GetClearColor() { return _clearColor; }
 
     ResourceState					_state = ResourceState::SRV;
@@ -30,11 +31,25 @@ public:
 
     void CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format);
 
+    union
+    {
+        ComPtr<ID3D12DescriptorHeap>	_RTV_DescHeap;
+        ComPtr<ID3D12DescriptorHeap>	_DSV_DescHeap;
+    };
+    D3D12_CPU_DESCRIPTOR_HANDLE		_SRV_CPUHandle{};
 
-    ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
-    ComPtr<ID3D12DescriptorHeap>	_dsvHeap;
+    union
+    {
+        D3D12_RENDER_TARGET_VIEW_DESC	    _RTV_ViewDesc;
+        D3D12_DEPTH_STENCIL_VIEW_DESC	    _DSV_ViewDesc;
+    };
 
-    D3D12_CPU_DESCRIPTOR_HANDLE		_SRVCPUHandle{};
+    union
+    {
+        D3D12_SHADER_RESOURCE_VIEW_DESC	    _SRV_ViewDesc;
+        D3D12_CONSTANT_BUFFER_VIEW_DESC	    _CBV_ViewDesc;
+        D3D12_UNORDERED_ACCESS_VIEW_DESC	_UAV_ViewDesc;
+    };
 
     float _clearColor[4];
 };

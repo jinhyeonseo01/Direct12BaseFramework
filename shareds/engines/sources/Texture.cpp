@@ -5,8 +5,20 @@
 #include "GraphicManager.h"
 #include "graphic_config.h"
 
+
+
+Texture::Texture()
+{
+
+}
+
+Texture::~Texture()
+{
+
+}
+
 std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
-    const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
+                                         const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
 {
     auto texture = std::make_shared<Texture>();
     auto device = GraphicManager::instance->_device;
@@ -133,7 +145,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
     GraphicManager::instance->SetResource();
 
 
-    texture->_SRVCPUHandle = GraphicManager::instance->TextureDescriptorHandleAlloc();
+    texture->_SRV_CPUHandle = GraphicManager::instance->TextureDescriptorHandleAlloc();
     
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
     SRVDesc.Format = texture->_image.GetMetadata().format;
@@ -143,7 +155,9 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path)
     SRVDesc.TextureCube.MostDetailedMip = 0;
     SRVDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
-    device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRVCPUHandle);
+    texture->_SRV_ViewDesc = SRVDesc;
+
+    device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
 }
 
 void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format)
@@ -158,14 +172,15 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         heapDesc.NumDescriptors = 1;
         heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
         heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_dsvHeap)));
+        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_DSV_DescHeap)));
 
-        D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle = _dsvHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle = _DSV_DescHeap->GetCPUDescriptorHandleForHeapStart();
 
         D3D12_DEPTH_STENCIL_VIEW_DESC DSVDesc = {};
         DSVDesc.Format = format;
         DSVDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
         DSVDesc.Flags = D3D12_DSV_FLAG_NONE;
+        _DSV_ViewDesc = DSVDesc;
 
         device->CreateDepthStencilView(_resource.Get(), &DSVDesc, DSVHandle);
     }
@@ -177,10 +192,12 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         heapDesc.NumDescriptors = 1;
         heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
         heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_rtvHeap)));
+        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_RTV_DescHeap)));
 
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
-        device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
+        _RTV_ViewDesc = RTVDesc;
+        device->CreateRenderTargetView(_resource.Get(), &_RTV_ViewDesc, rtvHeapBegin);
     }
 
 
@@ -191,22 +208,25 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         heapDesc.NumDescriptors = 1;
         heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
         heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_rtvHeap)));
+        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_RTV_DescHeap)));
 
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
-        device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
+        D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
+        _RTV_ViewDesc = RTVDesc;
+        device->CreateRenderTargetView(_resource.Get(), &_RTV_ViewDesc, rtvHeapBegin);
 
 
 
-        GraphicManager::instance->TextureDescriptorHandleAlloc(&_SRVCPUHandle);
+        GraphicManager::instance->TextureDescriptorHandleAlloc(&_SRV_CPUHandle);
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
         srvDesc.Texture2D.MipLevels = 1;
+        _SRV_ViewDesc = srvDesc;
 
-        device->CreateShaderResourceView(_resource.Get(), &srvDesc, _SRVCPUHandle);
+        device->CreateShaderResourceView(_resource.Get(), &_SRV_ViewDesc, _SRV_CPUHandle);
 
     }
 

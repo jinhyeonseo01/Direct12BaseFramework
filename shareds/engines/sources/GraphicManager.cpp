@@ -413,6 +413,15 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
     setting.screenInfo = viewInfo;
 }
 
+void GraphicManager::ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before,
+    D3D12_RESOURCE_STATES after, bool isResource)
+{
+    ComPtr<ID3D12GraphicsCommandList4> list = GetCommandList();
+    if (isResource)
+        list = GetResourceCommandList();
+    list->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), before, after));
+}
+
 ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetResourceCommandList()
 {
     return _resourceCommandList;
