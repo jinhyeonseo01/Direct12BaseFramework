@@ -114,6 +114,15 @@ void Engine::DebugPipeline()
 			}
 		}
 	}
+    if(engine->input->GetKeyUp(KeyCode::F11))
+    {
+        if (graphic->setting.windowType != WindowType::FullScreen)
+            graphic->setting.windowType = WindowType::FullScreen;
+        else if (graphic->setting.windowType == WindowType::FullScreen)
+            graphic->setting.windowType = WindowType::Windows;
+        SetWindowRect(Viewport(0, 0, 1920, 1080));
+        graphic->_refrashReserve = true;
+    }
 }
 
 bool DebugCommand::operator==(const std::string& command) const

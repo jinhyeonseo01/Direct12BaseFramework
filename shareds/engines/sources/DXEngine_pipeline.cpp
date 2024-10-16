@@ -156,14 +156,10 @@ void Engine::RenderingPipeline()
 	std::shared_ptr<Scene>& scene = SceneManager::_currentScene;
 	std::vector<std::shared_ptr<GameObject>>& gameObjects = scene->_gameObjectList;
 
-
+    //if (false)
 	{
-        graphic->ResourceBarrier(graphic->_swapChainRT[graphic->_swapChainIndex]->GetResource(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+        graphic->RenderPrepare();
 
-	    auto list = graphic->GetCommandList();
-	    auto allocator = graphic->GetCommandAllocator();
-        allocator.Reset();
-	    list->Reset(allocator.Get(), nullptr);
 	}
 
 
@@ -177,27 +173,9 @@ void Engine::RenderingPipeline()
 		//GetAcrive -> prevRendering
 	}
 
+    //if(false)
 	{
-        graphic->ResourceBarrier(graphic->_swapChainRT[graphic->_swapChainIndex]->GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
-        auto currentCommandList = graphic->GetCommandList();
-        ID3D12CommandList* commandListArray[] = { currentCommandList.Get() };
-        graphic->GetCommandQueue()->ExecuteCommandLists(_countof(commandListArray), commandListArray);
-	    graphic->_swapChain->Present(1, 0); // vsync를 사용하며 기본
-        /*
-         SyncInterval (UINT):
-
-        0: VSync 없이 즉시 프레임 표시 (티어링 발생 가능).
-        1: 한 번의 VSync 대기 후 프레임 표시 (일반적인 VSync 사용).
-        n (n > 1): n번의 VSync 주기 후 프레임 표시 (프레임 레이트 제한)
-
-        DXGI_PRESENT_NONE (0): 기본값
-        DXGI_PRESENT_ALLOW_TEARING  비동기 프레젠테이션, 틸링(Tearing)을 허용, DXGI 1.3
-        DXGI_PRESENT_RESTART 전체 프레임 시퀀스를 초기화
-        DXGI_PRESENT_TEST 프레임을 실제로 표시하지 않고 프레젠테이션이 가능한지 테스트
-         **/
-        graphic->WaitSync();
-        graphic->_swapChainIndex = graphic->_swapChain->GetCurrentBackBufferIndex();
+        graphic->RenderFinish();
 	}
 
 }

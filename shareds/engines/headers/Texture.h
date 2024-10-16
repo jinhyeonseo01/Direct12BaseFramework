@@ -39,11 +39,9 @@ public:
 
     void CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format);
 
-    union
-    {
-        ComPtr<ID3D12DescriptorHeap>	_RTV_DescHeap;
-        ComPtr<ID3D12DescriptorHeap>	_DSV_DescHeap;
-    };
+
+    ComPtr<ID3D12DescriptorHeap>	_RTV_DescHeap;
+    ComPtr<ID3D12DescriptorHeap>	_DSV_DescHeap;
     D3D12_CPU_DESCRIPTOR_HANDLE		_SRV_CPUHandle{};
 
     union

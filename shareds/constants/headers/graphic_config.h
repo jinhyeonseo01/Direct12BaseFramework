@@ -3,7 +3,7 @@
 
 #include "debug_console.h"
 
-#define ComPtrIDAddr(type) IID_PPV_ARGS(&type)
+#define ComPtrIDAddr(type) IID_PPV_ARGS(type.GetAddressOf())
 #define ComPtrAddr(type) (&type)
 #define ComPtrVoid(type) (void**)(&type)
 

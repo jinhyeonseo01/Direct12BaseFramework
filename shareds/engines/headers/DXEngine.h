@@ -112,6 +112,7 @@ namespace dxe
 		virtual void ThreadExecute(std::stop_token token);
         virtual std::shared_ptr<Engine> EngineInit();
 		virtual std::shared_ptr<Engine> VisualInit();
+        virtual void EngineRun();
 		virtual std::shared_ptr<Engine> Reset();
 		virtual void Release();
 

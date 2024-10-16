@@ -120,7 +120,7 @@ namespace dxe
 			_engineMainThread->request_stop();
 		_engineMainThread.release();
 
-		Debug::log << std::format("엔진 {} 릴리즈", std::to_string(_titleName)) << "\n";
+		Debug::log << std::format("엔진 종료 (이름:{})", std::to_string(_titleName)) << "\n";
 	}
 
 	std::shared_ptr<Engine> Engine::Reset()
@@ -142,10 +142,6 @@ namespace dxe
 
         this->_engineQuitFlag = false;
 
-		this->_engineMainThread = std::make_unique<std::jthread>(std::bind(&Engine::ThreadExecute, this, std::placeholders::_1));
-		this->_engineMainThread->detach();
-        this->_engineMainThread->native_handle();
-        SetThreadPriority(this->_engineMainThread->native_handle(), THREAD_PRIORITY_TIME_CRITICAL);
 		return this->shared_from_this();
 	}
 
@@ -154,17 +150,23 @@ namespace dxe
 		// Static Line에 엔진 추가
 		OpenWindow();
         graphic->_engine = this->shared_from_this();
-        graphic->SetHwnd(GetWindowHWnd());
+        graphic->SetHWnd(GetWindowHWnd());
         graphic->SetScreenInfo(GetWindowRect());
 	    graphic->Init();
 
 		return this->shared_from_this();
 	}
 
-	void Engine::ThreadExecute(std::stop_token token)
+    void Engine::EngineRun()
+    {
+        this->_engineMainThread = std::make_unique<std::jthread>(std::bind(&Engine::ThreadExecute, this, std::placeholders::_1));
+        this->_engineMainThread->detach();
+        SetThreadPriority(this->_engineMainThread->native_handle(), THREAD_PRIORITY_TIME_CRITICAL);
+    }
+
+    void Engine::ThreadExecute(std::stop_token token)
 	{
         //이후 동작해야할 Init를 무시하고 실행되는걸 방지.
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		try
 		{
 			auto prevTime = std::chrono::steady_clock::now() - std::chrono::milliseconds(10);
@@ -565,7 +567,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
             auto rect = GetWindowRect();
             rect.width = width;
             rect.height = height;
-            graphic->SetScreenInfo(rect);
+            SetWindowRect(rect);
             break;
         }
         case WM_MOVE:
@@ -575,7 +577,7 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
             auto rect = GetWindowRect();
             rect.x = x;
             rect.y = y;
-            graphic->SetScreenInfo(rect);
+            SetWindowRect(rect);
             break;
         }
 		case WM_DISPLAYCHANGE: // 바탕화면 해상도 변경 / 모니터 변경

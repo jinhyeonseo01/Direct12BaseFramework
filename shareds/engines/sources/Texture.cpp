@@ -42,6 +42,8 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
 
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
         pOptimizedClearValue = &optimizedClearValue;
+
+        texture->_RTV_DescHeap;
     }
     else if (state == ResourceState::RTV)
     {
@@ -108,7 +110,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         texture->_image = std::move(mipmapImage);
     }
 
-    DXAssert(::CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
+    DXAssert(CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
 
     std::vector<D3D12_SUBRESOURCE_DATA> subResources;
     DXAssert(PrepareUpload(device.Get(), texture->_image.GetImages(), texture->_image.GetImageCount(), texture->_image.GetMetadata(), subResources));
@@ -222,6 +224,8 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         DSVDesc.Format = format;
         DSVDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
         DSVDesc.Flags = D3D12_DSV_FLAG_NONE;
+        DSVDesc.Texture2D.MipSlice = 0;
+
         _DSV_ViewDesc = DSVDesc;
 
         device->CreateDepthStencilView(_resource.Get(), &DSVDesc, DSVHandle);
@@ -238,8 +242,13 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
+        RTVDesc.Format = format; // 리소스의 포맷
+        RTVDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 텍스처 2D
+        RTVDesc.Texture2D.MipSlice = 0; // MIP 레벨 0
+        RTVDesc.Texture2D.PlaneSlice = 0; // 평면 슬라이스 0
+
         _RTV_ViewDesc = RTVDesc;
-        device->CreateRenderTargetView(_resource.Get(), &_RTV_ViewDesc, rtvHeapBegin);
+        device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
     }
 
 
@@ -254,6 +263,10 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
+        RTVDesc.Format = format; // 리소스의 포맷
+        RTVDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 텍스처 2D
+        RTVDesc.Texture2D.MipSlice = 0; // MIP 레벨 0
+        RTVDesc.Texture2D.PlaneSlice = 0; // 평면 슬라이스 0
         _RTV_ViewDesc = RTVDesc;
         device->CreateRenderTargetView(_resource.Get(), &_RTV_ViewDesc, rtvHeapBegin);
 

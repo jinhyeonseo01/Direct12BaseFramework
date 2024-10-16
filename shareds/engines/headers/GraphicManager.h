@@ -3,6 +3,7 @@
 #include <stdafx.h>
 
 #include "GraphicSetting.h"
+#include "RenderTargetGroup.h"
 #include "Texture.h"
 
 namespace dxe
@@ -15,7 +16,7 @@ namespace dxe
         std::weak_ptr<Engine> _engine;
         HWND hWnd;
 
-        void SetHwnd(const HWND& hwnd);
+        void SetHWnd(const HWND& hWnd);
 
     public: // Direct
 
@@ -25,9 +26,11 @@ namespace dxe
         ComPtr<IDXGIFactory4> _factory;
         ComPtr<ID3D12Device4> _device;
         ComPtr<IDXGISwapChain3> _swapChain;
-        ComPtr<ID3D12Fence> _fences;
+
+        ComPtr<ID3D12Fence> _fence;
         HANDLE _fenceEvent;
-        //std::vector<ComPtr<ID3D12Fence>> _swapChainFences;
+        int _fenceValue = 0;
+
 
         int bestAdapterIndex = -1;
         std::vector<ComPtr<IDXGIAdapter3>> _adapterList; // 그래픽카드
@@ -35,19 +38,24 @@ namespace dxe
 
     public:
         ComPtr<ID3D12CommandQueue> _commandQueue;
+
+        int commandListCount = 4;
         std::vector<ComPtr<ID3D12CommandAllocator>> _commandAllocators;
         std::vector<ComPtr<ID3D12GraphicsCommandList4>> _commandLists;
+        std::vector<ComPtr<ID3D12Fence>> _commandListFences;
+        std::vector<HANDLE> _commandListFenceEvents;
+        std::vector<int> _commandListFenceValue;
+
 
         ComPtr<ID3D12CommandAllocator> _resourceCommandAllocator;
         ComPtr<ID3D12GraphicsCommandList4> _resourceCommandList;
         
     public:
-        std::vector<ComPtr<ID3D12Resource2>> _swapChainBuffers_Res;
+        std::vector<ComPtr<ID3D12Resource>> _swapChainBuffers_Res;
         std::vector<std::shared_ptr<Texture>> _swapChainRT;
         int _swapChainIndex = 0;
 
-
-        int _fenceValue = 0;
+        std::unordered_map<, std::shared_ptr<RenderTargetGroup>> _renderTargetGroupList;
 
     public://DescriptorHeap
         int _textureDescriptorSize = 0;
@@ -71,32 +79,49 @@ namespace dxe
 
         void CreateAdapterAndOutputs();
         void CreateSwapChain();
+        void ExecuteCurrentCommand();
+        void SwapChainExecute();
         void CreateFactory();
         void CreateDevice();
         void CreateFences();
-        void CreateRenderTargetViews();
+        void RefreshRenderTargetGroups();
         void CreateCommandQueueListAlloc();
         void CreateDescriptorHeap();
         void CreateTextureHeap();
 
         void RefreshSwapChain();
+        void RefreshRequest();
 
         void WaitSync();
         void SetResource();
+
+        void FanceAppend(int index);
+        void FanceWaitSync(int index);
+
+
+        void ChangeNextCommand();
+        void ClearCurrentCommand();
+        void FinishAndExecuteCurrentCommand();
+        void FinishCurrentCommand();
 
         void SetScreenInfo(Viewport viewInfo);
 
         void ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after, bool isResource = false);
 
+        // 렌더링 준비
+        void RenderPrepare();
+        // 렌더링 마무리
+        void RenderFinish();
+
 
         ComPtr<ID3D12GraphicsCommandList4> GetResourceCommandList();
         ComPtr<ID3D12CommandAllocator> GetResourceCommandAllocator();
 
-        ComPtr<ID3D12GraphicsCommandList4> GetCommandList();
-        ComPtr<ID3D12CommandAllocator> GetCommandAllocator();
+        ComPtr<ID3D12GraphicsCommandList4> GetCurrentCommandList();
+        ComPtr<ID3D12CommandAllocator> GetCurrentCommandAllocator();
         ComPtr<ID3D12CommandQueue> GetCommandQueue();
 
-        int _currentCommandList = 0;
+        int _currentCommandListIndex = 0;
 
         GraphicManager();
         virtual ~GraphicManager();

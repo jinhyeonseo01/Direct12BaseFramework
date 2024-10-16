@@ -25,8 +25,9 @@ namespace dxe
 
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
-        WindowType windowType = WindowType::FullScreen;
+        WindowType windowType = WindowType::Windows;
         Viewport screenInfo = Viewport(0,0,1920,1080);
+        DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 
     public:

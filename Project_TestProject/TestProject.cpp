@@ -99,6 +99,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             engine->SetHandleName(L"main");
             engine->EngineInit();
             engine->VisualInit();
+            engine->EngineRun();
             engine = nullptr;
         }
 

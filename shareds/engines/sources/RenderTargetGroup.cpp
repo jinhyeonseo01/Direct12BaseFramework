@@ -20,8 +20,8 @@ void RenderTargetGroup::Create(std::vector<std::shared_ptr<Texture>>& renderTarg
     D3D12_DESCRIPTOR_HEAP_DESC _renderTaretGroupHeapDesc = {};
     _renderTaretGroupHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     int totalNumDesc = 0;
-    for (auto& texture : renderTargetList)
-        totalNumDesc += texture->GetDSV()->GetDesc().NumDescriptors;
+    for (auto& texture : _renderTargetTextureList)
+        totalNumDesc += texture->GetRTV()->GetDesc().NumDescriptors;
     _renderTaretGroupHeapDesc.NumDescriptors = totalNumDesc;
     _renderTaretGroupHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     _renderTaretGroupHeapDesc.NodeMask = 0;
@@ -34,7 +34,7 @@ void RenderTargetGroup::Create(std::vector<std::shared_ptr<Texture>>& renderTarg
 
     for(int i=0;i< _renderTargetTextureList.size();i++)
     {
-        int currentCount = _renderTargetTextureList[i]->GetDSV()->GetDesc().NumDescriptors;
+        int currentCount = _renderTargetTextureList[i]->GetRTV()->GetDesc().NumDescriptors;
         for(int j=0;j< currentCount;j++)
         {
             CD3DX12_CPU_DESCRIPTOR_HANDLE currentHandle(RTOffsetPtr, i + j, size);
@@ -65,7 +65,7 @@ void RenderTargetGroup::ResourceBarrier(D3D12_RESOURCE_STATES before, D3D12_RESO
 
 void RenderTargetGroup::OMSetRenderTargets(uint32_t count, uint32_t offset)
 {
-    auto commandList = GraphicManager::instance->GetCommandList();
+    auto commandList = GraphicManager::instance->GetCurrentCommandList();
     if (_renderTargetHandleList.size() != 0)
     {
         commandList->RSSetViewports(1, &_viewport);
@@ -78,7 +78,7 @@ void RenderTargetGroup::OMSetRenderTargets(uint32_t count, uint32_t offset)
 
 void RenderTargetGroup::OMSetRenderTargets()
 {
-    auto commandList = GraphicManager::instance->GetCommandList();
+    auto commandList = GraphicManager::instance->GetCurrentCommandList();
     if(_renderTargetHandleList.size() != 0)
     {
         commandList->RSSetViewports(1, &_viewport);
@@ -91,14 +91,14 @@ void RenderTargetGroup::OMSetRenderTargets()
 
 void RenderTargetGroup::ClearRenderTargetView(uint32_t index)
 {
-    auto commandList = GraphicManager::instance->GetCommandList();
+    auto commandList = GraphicManager::instance->GetCurrentCommandList();
     commandList->ClearRenderTargetView(_renderTargetHandleList[index], _renderTargetTextureList[
         _renderTargetHandleToTextureIndexList[index]]->GetClearColor(), 0, nullptr);
 }
 
 void RenderTargetGroup::ClearRenderTargetViews()
 {
-    auto commandList = GraphicManager::instance->GetCommandList();
+    auto commandList = GraphicManager::instance->GetCurrentCommandList();
     for(int i=0;i< _renderTargetHandleList.size();i++) {
         commandList->ClearRenderTargetView(_renderTargetHandleList[i], _renderTargetTextureList[
             _renderTargetHandleToTextureIndexList[i]]->GetClearColor(), 0, nullptr);
@@ -107,7 +107,7 @@ void RenderTargetGroup::ClearRenderTargetViews()
 
 void RenderTargetGroup::ClearDepthStencilView()
 {
-    auto commandList = GraphicManager::instance->GetCommandList();
+    auto commandList = GraphicManager::instance->GetCurrentCommandList();
     commandList->ClearDepthStencilView(_depthStencilHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 

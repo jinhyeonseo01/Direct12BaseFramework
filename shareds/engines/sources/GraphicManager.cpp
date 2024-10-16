@@ -11,9 +11,9 @@
 GraphicManager* GraphicManager::instance = nullptr;
 
 
-void GraphicManager::SetHwnd(const HWND& hwnd)
+void GraphicManager::SetHWnd(const HWND& hWnd)
 {
-    this->hWnd = hwnd;
+    this->hWnd = hWnd;
 }
 
 uint32_t GraphicManager::TextureIndexAlloc()
@@ -78,8 +78,9 @@ void GraphicManager::Refresh()
 {
     //리소스 힙 디스크립트 힙
     RefreshSwapChain();
-    CreateRenderTargetViews();
+    RefreshRenderTargetGroups();
 
+    _refrashReserve = false;
     //뷰 생성
 }
 
@@ -145,7 +146,7 @@ void GraphicManager::CreateSwapChain()
     {
         swapChainDesc.Width = setting.screenInfo.width;
         swapChainDesc.Height = setting.screenInfo.height;
-        swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        swapChainDesc.Format = setting.screenFormat;
 
         //msaa rendering
         swapChainDesc.SampleDesc.Count = 1;//아니면 이 안에서 더 작게
@@ -188,9 +189,13 @@ void GraphicManager::CreateSwapChain()
     ComPtr<IDXGISwapChain1> swapChain1 = nullptr;
     DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc, swapChainFullDesc.Windowed ? &swapChainFullDesc : nullptr, nullptr, &swapChain1));
     DXAssert(swapChain1->QueryInterface(ComPtrIDAddr(_swapChain)));
+
+
     _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
-    for(int i=0;i<setting.swapChain_BufferCount;i++)
+    ComPtr<ID3D12Resource> buffer;
+    for (int i = 0; i < setting.swapChain_BufferCount; i++) {
         _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
+    }
 
     _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
 
@@ -198,45 +203,64 @@ void GraphicManager::CreateSwapChain()
 
 void GraphicManager::RefreshSwapChain()
 {
-    _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, nullptr);
+    BOOL bFullScreenState = FALSE;
+    _swapChain->GetFullscreenState(&bFullScreenState, NULL);
+    Debug::log << bFullScreenState << (int)setting.windowType << "\n";
+    if (bFullScreenState != (setting.windowType == WindowType::FullScreen))
+    {
+        {
+            _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, nullptr);
+        }
 
-    DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
-    _swapChain->GetDesc1(&dxgiSwapChainDesc);
-    _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width, setting.screenInfo.height, dxgiSwapChainDesc.Format, dxgiSwapChainDesc.Flags);
-    _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
-    for (int i = 0; i < setting.swapChain_BufferCount; i++)
-        _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
+        { // 디스플레이의 모드를 바꾸는거
+            DXGI_MODE_DESC dxgiDesc1 = {};
+            DEVMODEW dm = {};
+            dm.dmSize = sizeof(DEVMODEW);
+            int frequency = 60;
+            if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0))
+                if (_engine.lock())
+                    frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+            dxgiDesc1.RefreshRate.Numerator = frequency;
+            dxgiDesc1.RefreshRate.Denominator = 1;
+            dxgiDesc1.Format = setting.screenFormat;
+            dxgiDesc1.Width = setting.screenInfo.width;
+            dxgiDesc1.Height = setting.screenInfo.height;
+            dxgiDesc1.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+            dxgiDesc1.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+            _swapChain->ResizeTarget(&dxgiDesc1); //이건 디스플레이 모드를 바꾸는거임
+        }
 
+        { // 스왑체인의 버퍼를 바꾸는거
+            DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc = {};
+            _swapChainBuffers_Res.clear(); // 증발시키고나서 리사이즈 버퍼
+            _swapChain->GetDesc1(&dxgiSwapChainDesc);
+            _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width, setting.screenInfo.height, setting.screenFormat, dxgiSwapChainDesc.Flags);
+        }
+        WaitSync();
 
-    DXGI_MODE_DESC dxgiDesc1;
-    dxgiDesc1.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    dxgiDesc1.Width = setting.screenInfo.width;
-    dxgiDesc1.Height = setting.screenInfo.height;
+        { //버퍼 재할당
+            _swapChainBuffers_Res.clear();
+            _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
+            for (int i = 0; i < setting.swapChain_BufferCount; i++)
+                _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
+            _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
+        }
+    }
+}
 
-    DEVMODEW dm = {};
-    dm.dmSize = sizeof(DEVMODEW);
-    int frequency = 60;
-    if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0))
-        if (_engine.lock())
-            frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
-
-    dxgiDesc1.RefreshRate.Numerator = frequency;
-    dxgiDesc1.RefreshRate.Denominator = 1;
-    dxgiDesc1.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    dxgiDesc1.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-    _swapChain->ResizeTarget(&dxgiDesc1);
-
-    _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
+void GraphicManager::RefreshRequest()
+{
+    _refrashReserve = true;
 }
 
 void GraphicManager::WaitSync()
 {
     _fenceValue++;
-    _commandQueue->Signal(_fences.Get(), _fenceValue);
+    _commandQueue->Signal(_fence.Get(), _fenceValue);
 
-    if (_fences->GetCompletedValue() < _fenceValue)
+    if (_fence->GetCompletedValue() < _fenceValue)
     {
-        _fences->SetEventOnCompletion(_fenceValue, _fenceEvent);
+        _fence->SetEventOnCompletion(_fenceValue, _fenceEvent);
 
         ::WaitForSingleObject(_fenceEvent, INFINITE);
     }
@@ -252,10 +276,70 @@ void GraphicManager::SetResource()
 
     WaitSync(); //Gpu에게 작업 맡긴 뒤에 Lock 검
 
-    resourceCommandList.Reset();
-    resourceCommandList->Reset(GetResourceCommandAllocator().Get(), nullptr);
+    GetResourceCommandAllocator()->Reset();
+    GetResourceCommandList()->Reset(GetResourceCommandAllocator().Get(), nullptr);
 }
 
+void GraphicManager::FanceAppend(int index)
+{
+    _commandListFenceValue[index] += 1;
+    _commandQueue->Signal(_commandListFences[index].Get(), _commandListFenceValue[index]);
+}
+
+void GraphicManager::FanceWaitSync(int index)
+{
+    if (_commandListFences[index]->GetCompletedValue() < _commandListFenceValue[index])
+    {
+        _commandListFences[index]->SetEventOnCompletion(_commandListFenceValue[index], _commandListFenceEvents[index]);
+        ::WaitForSingleObject(_commandListFenceEvents[index], INFINITE);
+    }
+}
+
+void GraphicManager::ChangeNextCommand()
+{
+    _currentCommandListIndex = (_currentCommandListIndex+1) % _commandLists.size();
+}
+
+void GraphicManager::ClearCurrentCommand()
+{
+    auto list = GetCurrentCommandList();
+    auto allocator = GetCurrentCommandAllocator();
+    // 이번 렌더 주기동안 사용할 list를 마련해주시고용
+    allocator->Reset();
+    list->Reset(allocator.Get(), nullptr);
+}
+
+void GraphicManager::FinishAndExecuteCurrentCommand()
+{
+    FinishCurrentCommand();
+    ExecuteCurrentCommand();
+}
+void GraphicManager::FinishCurrentCommand()
+{
+    GetCurrentCommandList()->Close();
+}
+void GraphicManager::ExecuteCurrentCommand()
+{
+    ID3D12CommandList* commandListArray[] = { GetCurrentCommandList().Get() };
+    _commandQueue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
+}
+void GraphicManager::SwapChainExecute()
+{
+    _swapChain->Present(1, 0); // vsync를 사용하며 기본
+    /*
+     SyncInterval (UINT):
+
+    0: VSync 없이 즉시 프레임 표시 (티어링 발생 가능).
+    1: 한 번의 VSync 대기 후 프레임 표시 (일반적인 VSync 사용).
+    n (n > 1): n번의 VSync 주기 후 프레임 표시 (프레임 레이트 제한)
+
+    DXGI_PRESENT_NONE (0): 기본값
+    DXGI_PRESENT_ALLOW_TEARING  비동기 프레젠테이션, 틸링(Tearing)을 허용, DXGI 1.3
+    DXGI_PRESENT_RESTART 전체 프레임 시퀀스를 초기화
+    DXGI_PRESENT_TEST 프레임을 실제로 표시하지 않고 프레젠테이션이 가능한지 테스트
+     **/
+    _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
+}
 
 void GraphicManager::CreateFactory()
 {
@@ -289,13 +373,28 @@ void GraphicManager::CreateDevice()
 
 void GraphicManager::CreateFences()
 {
-    //_swapChainFences.resize(_swapChainBuffers_Res.size());
-    //for(int i=0;i< _swapChainFences.size();i++)
-    {
-        DXAssert(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, ComPtrIDAddr(_fences)));
+    { // 리소스용
+        DXAssert(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, ComPtrIDAddr(_fence)));
         _fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
     }
-    
+
+    {
+        int size = static_cast<int>(_commandLists.size());
+
+        _commandListFences.clear();
+        _commandListFences.resize(size);
+        _commandListFenceEvents.clear();
+        _commandListFenceEvents.resize(size);
+        _commandListFenceValue.clear();
+        _commandListFenceValue.resize(size);
+
+        for(int i=0;i< size;++i)
+        {
+            DXAssert(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, ComPtrIDAddr(_commandListFences[i])));
+            _commandListFenceEvents[i] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+            _commandListFenceValue[i] = 0;
+        }
+    }
 }
 
 void GraphicManager::CreateCommandQueueListAlloc()
@@ -311,7 +410,7 @@ void GraphicManager::CreateCommandQueueListAlloc()
     DXAssert(_device->CreateCommandQueue(ComPtrAddr(commandQueueDesc), ComPtrIDAddr(_commandQueue)));
 
     
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < commandListCount; i++)
     {
         ComPtr<ID3D12CommandAllocator> commandAllocator;
         ComPtr<ID3D12GraphicsCommandList> commandList;
@@ -325,6 +424,7 @@ void GraphicManager::CreateCommandQueueListAlloc()
         _commandAllocators.push_back(commandAllocator);
         _commandLists.push_back(commandList4);
     }
+
     {
         ComPtr<ID3D12CommandAllocator> commandAllocator;
         ComPtr<ID3D12GraphicsCommandList> commandList;
@@ -361,36 +461,6 @@ void GraphicManager::CreateTextureHeap()
 }
 
 
-void GraphicManager::CreateRenderTargetViews()
-{
-    std::shared_ptr<Texture> depthStencilTexture = std::make_shared<Texture>();
-    depthStencilTexture->Create(DXGI_FORMAT_D32_FLOAT_S8X24_UINT, setting.screenInfo.width, setting.screenInfo.height,
-        CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
-
-    // SwapChain Group
-    {
-        std::vector<std::shared_ptr<Texture>> renderTargetTextureList;
-        renderTargetTextureList.resize(_swapChainBuffers_Res.size());
-
-        for (uint32_t i = 0; i < renderTargetTextureList.size(); ++i)
-        {
-            ComPtr<ID3D12Resource> resource = _swapChainBuffers_Res[i];
-            renderTargetTextureList[i] = std::make_shared<Texture>();
-            renderTargetTextureList[i]->SetState(ResourceState::RTV);
-            renderTargetTextureList[i]->SetClearColor(Vector4(0.5, 0.5, 1, 1));
-            renderTargetTextureList[i]->CreateFromResource(resource, DXGI_FORMAT_R8G8B8A8_UNORM);
-        }
-        this->_swapChainRT = renderTargetTextureList;
-
-        std::shared_ptr<RenderTargetGroup> rtGroup = std::make_shared<RenderTargetGroup>();
-        rtGroup->Create(renderTargetTextureList, depthStencilTexture);
-        rtGroup->SetViewport(setting.screenInfo.width, setting.screenInfo.height);
-    }
-
-
-}
-
 void GraphicManager::SetScreenInfo(Viewport viewInfo)
 {
     if( setting.screenInfo.width != viewInfo.width ||
@@ -403,12 +473,13 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
 void GraphicManager::ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before,
     D3D12_RESOURCE_STATES after, bool isResource)
 {
-    ComPtr<ID3D12GraphicsCommandList4> list = GetCommandList();
+    ComPtr<ID3D12GraphicsCommandList4> list = GetCurrentCommandList();
     if (isResource)
         list = GetResourceCommandList();
     auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), before, after);
     list->ResourceBarrier(1, &barrier);
 }
+
 
 ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetResourceCommandList()
 {
@@ -420,14 +491,14 @@ ComPtr<ID3D12CommandAllocator> GraphicManager::GetResourceCommandAllocator()
     return _resourceCommandAllocator;
 }
 
-ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetCommandList()
+ComPtr<ID3D12GraphicsCommandList4> GraphicManager::GetCurrentCommandList()
 {
-    return _commandLists[_currentCommandList];
+    return _commandLists[_currentCommandListIndex];
 }
 
-ComPtr<ID3D12CommandAllocator> GraphicManager::GetCommandAllocator()
+ComPtr<ID3D12CommandAllocator> GraphicManager::GetCurrentCommandAllocator()
 {
-    return _commandAllocators[_currentCommandList];
+    return _commandAllocators[_currentCommandListIndex];
 }
 
 ComPtr<ID3D12CommandQueue> GraphicManager::GetCommandQueue()
