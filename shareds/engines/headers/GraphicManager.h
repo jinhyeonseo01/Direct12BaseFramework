@@ -20,7 +20,7 @@ namespace dxe
 
     public: // Direct
 
-        bool _refrashReserve = false;//예약
+        bool _refreshReserve = false;//예약
 
 
         ComPtr<IDXGIFactory4> _factory;

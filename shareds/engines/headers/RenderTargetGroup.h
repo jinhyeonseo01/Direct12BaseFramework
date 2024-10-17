@@ -6,6 +6,12 @@
 namespace dxe
 {
 
+    enum class GroupType
+    {
+        SwapChain,
+
+    };
+
     class RenderTargetGroup : public std::enable_shared_from_this<RenderTargetGroup>
     {
     public:

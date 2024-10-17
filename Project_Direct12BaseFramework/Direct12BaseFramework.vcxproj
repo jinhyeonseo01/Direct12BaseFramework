@@ -187,6 +187,7 @@
     <ClInclude Include="..\shareds\engines\headers\RenderTarget.h" />
     <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h" />
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
+    <ClInclude Include="..\shareds\engines\headers\RootSignature.h" />
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="..\shareds\engines\sources\RenderTarget.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\RootSignature.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />

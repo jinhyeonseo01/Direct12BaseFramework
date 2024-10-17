@@ -121,7 +121,7 @@ void Engine::DebugPipeline()
         else if (graphic->setting.windowType == WindowType::FullScreen)
             graphic->setting.windowType = WindowType::Windows;
         SetWindowRect(Viewport(0, 0, 1920, 1080));
-        graphic->_refrashReserve = true;
+        graphic->_refreshReserve = true;
     }
 }
 

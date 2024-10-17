@@ -80,7 +80,7 @@ void GraphicManager::Refresh()
     RefreshSwapChain();
     RefreshRenderTargetGroups();
 
-    _refrashReserve = false;
+    _refreshReserve = false;
     //ºä »ý¼º
 }
 
@@ -250,7 +250,7 @@ void GraphicManager::RefreshSwapChain()
 
 void GraphicManager::RefreshRequest()
 {
-    _refrashReserve = true;
+    _refreshReserve = true;
 }
 
 void GraphicManager::WaitSync()
@@ -465,7 +465,7 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
 {
     if( setting.screenInfo.width != viewInfo.width ||
         setting.screenInfo.height != viewInfo.height)
-        _refrashReserve = true;
+        _refreshReserve = true;
 
     setting.screenInfo = viewInfo;
 }

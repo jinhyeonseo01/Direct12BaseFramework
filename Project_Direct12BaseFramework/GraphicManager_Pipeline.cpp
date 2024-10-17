@@ -37,7 +37,7 @@ void GraphicManager::RefreshRenderTargetGroups()
 
 void GraphicManager::RenderPrepare()
 {
-    if (_refrashReserve)
+    if (_refreshReserve)
         Refresh();
 
     FanceWaitSync(_currentCommandListIndex);
