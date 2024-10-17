@@ -5,7 +5,7 @@
 void GraphicManager::RefreshRenderTargetGroups()
 {
 
-    _renderTargetGroupList.clear();
+    _renderTargetGroupTable.clear();
 
     std::shared_ptr<Texture> depthStencilTexture = Texture::Create(DXGI_FORMAT_D32_FLOAT_S8X24_UINT, setting.screenInfo.width, setting.screenInfo.height,
         CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -30,7 +30,7 @@ void GraphicManager::RefreshRenderTargetGroups()
         rtGroup->Create(renderTargetTextureList, depthStencilTexture);
         rtGroup->SetViewport(setting.screenInfo.width, setting.screenInfo.height);
 
-        this->_renderTargetGroupList.push_back(rtGroup);
+        this->_renderTargetGroupTable.emplace(static_cast<int>(RTGType::SwapChain), rtGroup);
     }
 
 }
@@ -45,8 +45,8 @@ void GraphicManager::RenderPrepare()
     auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
 
     ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-    _renderTargetGroupList->ClearRenderTargetView(_swapChainIndex);
-    _renderTargetGroupList->ClearDepthStencilView();
+    GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(_swapChainIndex);
+    GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
 
     // 여기서 미리 Camera와 환경세팅의 ConstantBuffer를 등록함.
     // 

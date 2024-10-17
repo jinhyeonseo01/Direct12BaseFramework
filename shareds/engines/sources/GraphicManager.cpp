@@ -506,6 +506,13 @@ ComPtr<ID3D12CommandQueue> GraphicManager::GetCommandQueue()
     return _commandQueue;
 }
 
+std::shared_ptr<RenderTargetGroup> GraphicManager::GetRenderTargetGroup(const RTGType& type)
+{
+    if (_renderTargetGroupTable.contains(static_cast<int>(type)))
+        return _renderTargetGroupTable[static_cast<int>(type)];
+    return nullptr;
+}
+
 
 GraphicManager::GraphicManager()
 {

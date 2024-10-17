@@ -5,13 +5,16 @@
 
 namespace dxe
 {
-
-    enum class GroupType
+    enum class RTGType
     {
         SwapChain,
-
+        ShadowCascade,
+        Defferd,
+        Transparent,
+        PostProcessing,
+        GUI
     };
-
+    
     class RenderTargetGroup : public std::enable_shared_from_this<RenderTargetGroup>
     {
     public:

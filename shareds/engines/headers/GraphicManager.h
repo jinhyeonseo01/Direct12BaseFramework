@@ -55,7 +55,7 @@ namespace dxe
         std::vector<std::shared_ptr<Texture>> _swapChainRT;
         int _swapChainIndex = 0;
 
-        std::unordered_map<, std::shared_ptr<RenderTargetGroup>> _renderTargetGroupList;
+        std::unordered_map<int, std::shared_ptr<RenderTargetGroup>> _renderTargetGroupTable;
 
     public://DescriptorHeap
         int _textureDescriptorSize = 0;
@@ -120,6 +120,8 @@ namespace dxe
         ComPtr<ID3D12GraphicsCommandList4> GetCurrentCommandList();
         ComPtr<ID3D12CommandAllocator> GetCurrentCommandAllocator();
         ComPtr<ID3D12CommandQueue> GetCommandQueue();
+
+        std::shared_ptr<RenderTargetGroup> GetRenderTargetGroup(const RTGType& type);
 
         int _currentCommandListIndex = 0;
 
