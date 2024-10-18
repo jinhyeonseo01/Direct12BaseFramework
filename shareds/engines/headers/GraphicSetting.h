@@ -15,6 +15,12 @@ namespace dxe
         FullScreen_Noborder,
         Windows,// 구현 X
     };
+    enum class FrameSync
+    {
+        VSync,
+        GSync,
+        NonSync
+    };
 
     class GraphicSetting
     {
@@ -26,6 +32,7 @@ namespace dxe
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
         WindowType windowType = WindowType::Windows;
+        FrameSync syncType = FrameSync::VSync;
         Viewport screenInfo = Viewport(0,0,1920,1080);
         DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
@@ -43,6 +50,9 @@ namespace dxe
         //디바이스 지원 목록
         bool msaaSupportAble = false;
         int msaaSupportMaxLevel = 1;
+        int maxMonitorFrame = 60;
+        long long int maxGPUMemory = 0;
+        std::wstring GPUAdapterName;
     };
 }
 

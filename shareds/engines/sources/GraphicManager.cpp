@@ -5,6 +5,7 @@
 #include "graphic_config.h"
 #include "RenderTargetGroup.h"
 #include "Texture.h"
+#include "RootSignature.h"
 
 
 
@@ -66,6 +67,7 @@ void GraphicManager::Init()
     CreateCommandQueueListAlloc();
     CreateSwapChain();
     CreateFences();
+    CreateRootSignature();
     CreateDescriptorHeap();
     // 여기까진 정적
 
@@ -77,6 +79,7 @@ void GraphicManager::Init()
 void GraphicManager::Refresh()
 {
     //리소스 힙 디스크립트 힙
+    WaitSync();
     RefreshSwapChain();
     RefreshRenderTargetGroups();
 
@@ -88,6 +91,8 @@ void GraphicManager::Release()
 {
     if (!_isRelease)
     {
+        WaitSync();
+
 #ifdef _DEBUG
         {
             ComPtr<IDXGIDebug1> _d3dDebug;
@@ -95,6 +100,29 @@ void GraphicManager::Release()
             _d3dDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
         }
 #endif
+
+        _rootSignature.reset();
+        _renderTargetGroupTable.clear();
+
+        _swapChainBuffers_Res.clear();
+        _swapChainRT.clear();
+        _factory.Reset();
+        _device.Reset();
+        _swapChain.Reset();
+        _fence.Reset();
+        _adapterList.clear();
+        _outputList.clear();
+        _commandQueue.Reset();
+        _commandAllocators.clear();
+        _commandLists.clear();
+        _commandListFences.clear();
+
+        for (auto& c : _commandListFenceEvents)
+            CloseHandle(c);
+        _commandListFenceEvents.clear();
+
+        _resourceCommandAllocator.Reset();
+        _resourceCommandList.Reset();
     }
     _isRelease = true;
 }
@@ -111,7 +139,7 @@ void GraphicManager::CreateAdapterAndOutputs()
     ComPtr<IDXGIOutput> output;
     ComPtr<IDXGIOutput4> output4;
 
-    int maxMemory = -1;
+    unsigned __int64 maxMemory = 0;
     for(int index = 0; _factory->EnumAdapters1(index, ComPtrAddr(adapter1)) != DXGI_ERROR_NOT_FOUND;++index)
     {
         DXGI_ADAPTER_DESC2 adapterDesc;
@@ -121,15 +149,23 @@ void GraphicManager::CreateAdapterAndOutputs()
             if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) // 소프트웨어로 연결된 디바이스면 쳐내는거 같음. 그래픽카드 같은 하드웨어만
                 continue;
             _adapterList.push_back(adapter3);
-            if (adapterDesc.DedicatedVideoMemory > maxMemory) {
-                bestAdapterIndex = index;
-                maxMemory = static_cast<int>(adapterDesc.DedicatedVideoMemory);
-            }
 
+            unsigned __int64 currentMemory = adapterDesc.DedicatedVideoMemory;
+            if (currentMemory > maxMemory) {
+                bestAdapterIndex = index;
+                setting.maxGPUMemory = static_cast<long long int>(maxMemory = currentMemory);
+                setting.GPUAdapterName = std::wstring(adapterDesc.Description);
+            }
         }
     }
-    Debug::log << maxMemory << "\n";
+    DEVMODEW currentMoniterInfo = {};
+    currentMoniterInfo.dmSize = sizeof(DEVMODEW);
+    if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &currentMoniterInfo, 0))
+        setting.maxMonitorFrame = currentMoniterInfo.dmDisplayFrequency;
 
+    int maxMonitorFrame = 60;
+    int maxGPUMemory = 0;
+    std::wstring GPUAdapterName;
     for (int i = 0; i < _adapterList.size(); i++)
     {
         for (int index = 0; _adapterList[i]->EnumOutputs(index, ComPtrAddr(output)) != DXGI_ERROR_NOT_FOUND; ++index)
@@ -168,16 +204,18 @@ void GraphicManager::CreateSwapChain()
         swapChainDesc.Flags = 
             DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH |
             DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING; // 화면 테더링. 현상 허용하는거인듯. 모니터랑 주사율 안맞을때 쓴다나봄. 이거 안하면 vsync켜짐
+        //DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING
     }
 
     DXGI_SWAP_CHAIN_FULLSCREEN_DESC swapChainFullDesc = {};
     {
-        DEVMODEW dm = {};
-        dm.dmSize = sizeof(DEVMODEW);
+        DEVMODEW currentMonitorSetting = {};
+        currentMonitorSetting.dmSize = sizeof(DEVMODEW);
+        if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &currentMonitorSetting, 0))
+            setting.maxMonitorFrame = currentMonitorSetting.dmDisplayFrequency;
+
         int frequency = 60;
-        if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0))
-            if (_engine.lock())
-                frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+        frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : setting.maxMonitorFrame;
 
         swapChainFullDesc.RefreshRate.Numerator = frequency;
         swapChainFullDesc.RefreshRate.Denominator = 1;
@@ -214,12 +252,14 @@ void GraphicManager::RefreshSwapChain()
 
         { // 디스플레이의 모드를 바꾸는거
             DXGI_MODE_DESC dxgiDesc1 = {};
-            DEVMODEW dm = {};
-            dm.dmSize = sizeof(DEVMODEW);
+            DEVMODEW currentMonitorSetting = {};
+            currentMonitorSetting.dmSize = sizeof(DEVMODEW);
+            if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &currentMonitorSetting, 0))
+                setting.maxMonitorFrame = currentMonitorSetting.dmDisplayFrequency;
+
             int frequency = 60;
-            if (EnumDisplaySettingsExW(NULL, ENUM_CURRENT_SETTINGS, &dm, 0))
-                if (_engine.lock())
-                    frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : dm.dmDisplayFrequency;
+            frequency = _engine.lock()->isFrameLock ? _engine.lock()->targetFrame : setting.maxMonitorFrame;
+
             dxgiDesc1.RefreshRate.Numerator = frequency;
             dxgiDesc1.RefreshRate.Denominator = 1;
             dxgiDesc1.Format = setting.screenFormat;
@@ -232,7 +272,6 @@ void GraphicManager::RefreshSwapChain()
 
         { // 스왑체인의 버퍼를 바꾸는거
             DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc = {};
-            _swapChainBuffers_Res.clear(); // 증발시키고나서 리사이즈 버퍼
             _swapChain->GetDesc1(&dxgiSwapChainDesc);
             _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width, setting.screenInfo.height, setting.screenFormat, dxgiSwapChainDesc.Flags);
         }
@@ -325,7 +364,22 @@ void GraphicManager::ExecuteCurrentCommand()
 }
 void GraphicManager::SwapChainExecute()
 {
-    _swapChain->Present(1, 0); // vsync를 사용하며 기본
+    switch (setting.syncType)
+    {
+    case FrameSync::VSync:
+        _swapChain->Present(1, 0);
+        break;
+    case FrameSync::GSync:
+        _swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+        break;
+    case FrameSync::NonSync:
+        _swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING | DXGI_PRESENT_DO_NOT_WAIT);
+        break;
+    }
+    //_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING); // GSync
+    //_swapChain->Present(1, 0); // VSync
+    //_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING | DXGI_PRESENT_DO_NOT_WAIT); // NonSync
+
     /*
      SyncInterval (UINT):
 
@@ -396,6 +450,7 @@ void GraphicManager::CreateFences()
         }
     }
 }
+
 
 void GraphicManager::CreateCommandQueueListAlloc()
 {

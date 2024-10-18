@@ -198,8 +198,14 @@
     <ClInclude Include="..\shareds\engines\headers\RenderTarget.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\strutil.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\constants\headers\wstrutil.h">
+      <Filter>Constant\Headers</Filter>
+    </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\RootSignature.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -348,7 +354,7 @@
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\RootSignature.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

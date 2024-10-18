@@ -84,6 +84,29 @@ void Engine::DebugInit()
 		scene->Debug();
 		});
 	_debugCommandList.push_back(command);
+
+
+    command.command = "graphic";
+    command.detail = L"그래픽 세팅 보기";
+    command.func = std::function([&](std::vector<std::wstring>& args) {
+        auto engine = GetEngine(_mainEngineIndex);
+        auto scene = SceneManager::_currentScene;
+
+        if (args.size() < 2)
+        {
+            Debug::log << "매개변수가 부족합니다.\n";
+            return;
+        }
+
+        Debug::log << "GPU Name \t : " << graphic->setting.GPUAdapterName << "\n";
+        Debug::log << "GPU Memory \t : " << (graphic->setting.maxGPUMemory / (1024*1024.0)) << "MB\n";
+        Debug::log << "Monitor Max Frame \t : " << graphic->setting.maxMonitorFrame << "\n";
+        Debug::log << "MSAA Support\t : " << graphic->setting.msaaSupportAble << "\n";
+        Debug::log << "Anti Aliasing Enable\t : " << graphic->setting.aaActive << "\n";
+
+        scene->Debug();
+        });
+    _debugCommandList.push_back(command);
 }
 
 void Engine::DebugPipeline()

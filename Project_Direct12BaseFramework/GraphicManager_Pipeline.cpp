@@ -5,7 +5,8 @@
 void GraphicManager::RefreshRenderTargetGroups()
 {
 
-    _renderTargetGroupTable.clear();
+    this->_renderTargetGroupTable.clear();
+    this->_swapChainRT.clear();
 
     std::shared_ptr<Texture> depthStencilTexture = Texture::Create(DXGI_FORMAT_D32_FLOAT_S8X24_UINT, setting.screenInfo.width, setting.screenInfo.height,
         CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -35,33 +36,46 @@ void GraphicManager::RefreshRenderTargetGroups()
 
 }
 
+void GraphicManager::CreateRootSignature()
+{
+    _rootSignature = std::make_shared<RootSignature>();
+    _rootSignature->Init();
+
+}
+
 void GraphicManager::RenderPrepare()
 {
-    if (_refreshReserve)
-        Refresh();
+    if (!_isRelease)
+    {
+        if (_refreshReserve)
+            Refresh();
 
-    FanceWaitSync(_currentCommandListIndex);
-    ClearCurrentCommand();
-    auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
+        FanceWaitSync(_currentCommandListIndex);
+        ClearCurrentCommand();
+        auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
 
-    ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-    GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(_swapChainIndex);
-    GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
+        ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+        GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(_swapChainIndex);
+        GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
 
-    // 여기서 미리 Camera와 환경세팅의 ConstantBuffer를 등록함.
-    // 
+        // 여기서 미리 Camera와 환경세팅의 ConstantBuffer를 등록함.
+        //
+    }
 }
 
 
 
 void GraphicManager::RenderFinish()
 {
-    auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
-    ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    if(!_isRelease)
+    {
+        auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
+        ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-    FinishAndExecuteCurrentCommand();
-    SwapChainExecute();
+        FinishAndExecuteCurrentCommand();
+        SwapChainExecute();
 
-    FanceAppend(_currentCommandListIndex);
-    ChangeNextCommand();
+        FanceAppend(_currentCommandListIndex);
+        ChangeNextCommand();
+    }
 }

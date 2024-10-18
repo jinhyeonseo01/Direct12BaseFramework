@@ -58,6 +58,9 @@
 
 #include <concurrent_queue.h>
 
+#include <strutil.h>
+#include <wstrutil.h>
+
 //fmt
 #include <nlohmann/json.hpp>
 

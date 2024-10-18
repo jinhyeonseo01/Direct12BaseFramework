@@ -53,35 +53,34 @@ namespace Convert
 	inline constexpr bool is_wstringstreamable_v = is_wstringstreamable<std::wstringstream, T>::value;
 
 
-	inline std::wstring to_wstring(const std::string& str, UINT codePage = CP_THREAD_ACP)
+	inline std::wstring to_wstring(const std::string& str, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		if (str.empty())
-			return std::wstring();
-		int required = ::MultiByteToWideChar(codePage, 0, str.data(), (int)str.size(), NULL, 0);
-		//if (0 == required)
-		//	return std::wstring();
+			return {};
+		std::wstring wstr;
+		wstr.resize(MultiByteToWideChar(codePage,
+            0,
+            str.data(),
+            static_cast<int>(str.size()),
+            nullptr,
+            0));
 
-		std::wstring str2;
-		str2.resize(required);
-
-		int converted = ::MultiByteToWideChar(codePage, 0, str.data(), (int)str.size(), str2.data(), (int)str2.capacity());
-		//if (0 == converted)
-		//	return std::wstring();
-		return str2;
+		::MultiByteToWideChar(codePage, 0,
+            str.data(),
+            static_cast<int>(str.size()),
+            &wstr[0],             // 변환된 문자열 버퍼
+            wstr.size()              // 버퍼 크기
+        );
+		return std::move(wstr);
 	}
-	inline std::wstring to_wstring(const char* _first, const char* _end, UINT codePage = CP_THREAD_ACP)
+	inline std::wstring to_wstring(const char* _first, const char* _end, UINT codePage = CP_THREAD_ACP) noexcept
 	{
-		int required = ::MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), NULL, 0);
-		//if (0 == required)
-		//	return std::wstring();
-
+        if (_first == _end)
+            return {};
 		std::wstring str2;
-		str2.resize(required);
-
-		int converted = ::MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), str2.data(), (int)str2.capacity());
-		//if (0 == converted)
-		//	return std::wstring();
-		return str2;
+		str2.resize(MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), NULL, 0));
+		MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), str2.data(), str2.size());
+		return std::move(str2);
 	}
 	inline std::wstring to_wstring(const char* _first, UINT codePage = CP_THREAD_ACP)
 	{

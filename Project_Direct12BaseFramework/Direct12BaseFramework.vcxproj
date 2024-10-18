@@ -163,7 +163,9 @@
     <ClInclude Include="..\shareds\constants\headers\pch.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_ext.h" />
     <ClInclude Include="..\shareds\constants\headers\simple_mesh_LH.h" />
+    <ClInclude Include="..\shareds\constants\headers\strutil.h" />
     <ClInclude Include="..\shareds\constants\headers\Timer.h" />
+    <ClInclude Include="..\shareds\constants\headers\wstrutil.h" />
     <ClInclude Include="..\shareds\engines\headers\Bone.h" />
     <ClInclude Include="..\shareds\engines\headers\Camera.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />

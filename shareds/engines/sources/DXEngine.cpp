@@ -191,13 +191,12 @@ namespace dxe
 				}
 				DebugPipeline();
 
+                if (this->_engineQuitFlag)
+                    break;
 
 				auto logicPipelineStartTime = std::chrono::steady_clock::now();
 				LogicPipeline();
 				auto logicPipelineEndTime = std::chrono::steady_clock::now();
-
-                if (this->_engineQuitFlag)
-                    break;
 
 				auto renderingPipelineStartTime = logicPipelineEndTime;
 				RenderingPipeline();
@@ -343,9 +342,11 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		if (this->isOpenWindow)
 		{
 			this->DisableWindow();
-			DestroyWindow(this->_hWnd);
-            this->graphic->Release();
+		    this->graphic->Release();
+            this->graphic = nullptr;
 			this->isOpenWindow = false;
+
+            DestroyWindow(this->_hWnd);
 			this->_hWnd = nullptr;
 		}
 	}
@@ -585,13 +586,12 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		case WM_COMMAND:
 			break;
 		case WM_CLOSE:
-			this->CloseWindow();
+            eventDesc.type = InputType::Event;
+            eventDesc.event.isQuit = true;
 			break;
 		case WM_DESTROY:
             
             //this->Quit();
-            eventDesc.type = InputType::Event;
-            eventDesc.event.isQuit = true;
 			//DeleteEngine(this->shared_from_this()); // 창 파괴시 엔진 제거
 			break;
 		case WM_SETFOCUS:

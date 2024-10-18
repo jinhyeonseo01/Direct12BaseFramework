@@ -76,9 +76,10 @@ namespace dxe
         bool _engineQuitFlag = false;
 
 		bool isFrameLock = true;
-		double targetFrame = 144;
+		double targetFrame = 240;
 		double currentFrame = 144;
 		double deltaTime = 0.016;
+
 		bool deltaTimeLimit = false;
         double deltaTimeLimitValue = 0.33333;
 

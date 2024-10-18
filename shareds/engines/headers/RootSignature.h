@@ -8,7 +8,7 @@ public:
     RootSignature();
     virtual ~RootSignature();
 
-    virtual Init();
+    virtual void Init();
 
     ComPtr<ID3D12RootSignature> _rootSignature;
 

@@ -8,12 +8,13 @@
 
 Texture::Texture()
 {
-
+    _SRV_CPUHandle.ptr = 0;
 }
 
 Texture::~Texture()
 {
-
+    if(_SRV_CPUHandle.ptr != 0)
+        GraphicManager::instance->TextureDescriptorHandleFree(_SRV_CPUHandle);
 }
 
 void Texture::SetState(ResourceState state)
@@ -42,8 +43,6 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
 
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
         pOptimizedClearValue = &optimizedClearValue;
-
-        texture->_RTV_DescHeap;
     }
     else if (state == ResourceState::RTV)
     {
@@ -69,8 +68,7 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
         &desc,
         resourceStates,
         pOptimizedClearValue,
-        ComPtrIDAddr(texture->_resource)));
-
+        IID_PPV_ARGS(&(texture->_resource)))); //ComPtrIDAddr(texture->_resource)
     texture->CreateFromResource(texture->_resource, format);
 
     return texture;

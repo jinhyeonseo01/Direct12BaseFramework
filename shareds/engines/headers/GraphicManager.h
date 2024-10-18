@@ -4,6 +4,7 @@
 
 #include "GraphicSetting.h"
 #include "RenderTargetGroup.h"
+#include "RootSignature.h"
 #include "Texture.h"
 
 namespace dxe
@@ -46,9 +47,10 @@ namespace dxe
         std::vector<HANDLE> _commandListFenceEvents;
         std::vector<int> _commandListFenceValue;
 
-
         ComPtr<ID3D12CommandAllocator> _resourceCommandAllocator;
         ComPtr<ID3D12GraphicsCommandList4> _resourceCommandList;
+
+        std::shared_ptr<RootSignature> _rootSignature;
         
     public:
         std::vector<ComPtr<ID3D12Resource>> _swapChainBuffers_Res;
@@ -71,7 +73,6 @@ namespace dxe
     public:
         bool _isRelease = false;
     public:
-
         void Init();
         void Refresh();//D3D12GetDebugInterface
 
@@ -84,6 +85,7 @@ namespace dxe
         void CreateFactory();
         void CreateDevice();
         void CreateFences();
+        void CreateRootSignature();
         void RefreshRenderTargetGroups();
         void CreateCommandQueueListAlloc();
         void CreateDescriptorHeap();
