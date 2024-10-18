@@ -82,7 +82,7 @@ namespace Convert
 		MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), str2.data(), str2.size());
 		return std::move(str2);
 	}
-	inline std::wstring to_wstring(const char* _first, UINT codePage = CP_THREAD_ACP)
+	inline std::wstring to_wstring(const char* _first, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int size = std::strlen(_first);
 		int required = ::MultiByteToWideChar(codePage, 0, _first, size, NULL, 0);
@@ -95,11 +95,11 @@ namespace Convert
 		int converted = ::MultiByteToWideChar(codePage, 0, _first, size, str2.data(), (int)str2.capacity());
 		//if (0 == converted)
 		//	return std::wstring();
-		return str2;
+        return std::move(str2);
 	}
 
 
-	inline std::string to_string(const std::wstring& str, UINT codePage = CP_THREAD_ACP)
+	inline std::string to_string(const std::wstring& str, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		if (str.empty())
 			return std::string();
@@ -115,10 +115,10 @@ namespace Convert
 		//if (0 == converted)
 		//	return std::string();
 
-		return str2;
+        return std::move(str2);
 	}
 
-	inline std::string to_string(const wchar_t* _first, const wchar_t* _end, UINT codePage = CP_THREAD_ACP)
+	inline std::string to_string(const wchar_t* _first, const wchar_t* _end, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int required = ::WideCharToMultiByte(codePage, 0, _first, (int)(_end - _first), NULL, 0, NULL, NULL);
 		//if (0 == required)
@@ -131,9 +131,9 @@ namespace Convert
 		//if (0 == converted)
 		//	return std::string();
 
-		return str2;
+        return std::move(str2);
 	}
-	inline std::string to_string(const wchar_t* _first, UINT codePage = CP_THREAD_ACP)
+	inline std::string to_string(const wchar_t* _first, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int size = std::wcslen(_first);
 		int required = ::WideCharToMultiByte(codePage, 0, _first, size, NULL, 0, NULL, NULL);
@@ -147,7 +147,7 @@ namespace Convert
 		//if (0 == converted)
 		//	return std::string();
 
-		return str2;
+        return std::move(str2);
 	}
 }
 
@@ -156,7 +156,7 @@ namespace Convert
 
 namespace std
 {
-	inline std::wstring to_wstring(const std::string& str, UINT codePage = CP_THREAD_ACP)
+	inline std::wstring to_wstring(const std::string& str, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		if (str.empty())
 			return std::wstring();
@@ -170,9 +170,9 @@ namespace std
 		int converted = ::MultiByteToWideChar(codePage, 0, str.data(), (int)str.size(), str2.data(), (int)str2.capacity());
 		//if (0 == converted)
 		//	return std::wstring();
-		return str2;
+        return std::move(str2);
 	}
-	inline std::wstring to_wstring(const char* _first, const char* _end, UINT codePage = CP_THREAD_ACP)
+	inline std::wstring to_wstring(const char* _first, const char* _end, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int required = ::MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), NULL, 0);
 		//if (0 == required)
@@ -184,9 +184,9 @@ namespace std
 		int converted = ::MultiByteToWideChar(codePage, 0, _first, (int)(_end - _first), str2.data(), (int)str2.capacity());
 		//if (0 == converted)
 		//	return std::wstring();
-		return str2;
+        return std::move(str2);;
 	}
-	inline std::wstring to_wstring(const char* _first, UINT codePage = CP_THREAD_ACP)
+	inline std::wstring to_wstring(const char* _first, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int size = std::strlen(_first);
 		int required = ::MultiByteToWideChar(codePage, 0, _first, size, NULL, 0);
@@ -199,11 +199,11 @@ namespace std
 		int converted = ::MultiByteToWideChar(codePage, 0, _first, size, str2.data(), (int)str2.capacity());
 		//if (0 == converted)
 		//	return std::wstring();
-		return str2;
+        return std::move(str2);
 	}
 
 
-	inline std::string to_string(const std::wstring& str, UINT codePage = CP_THREAD_ACP)
+	inline std::string to_string(const std::wstring& str, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		if (str.empty())
 			return std::string();
@@ -219,10 +219,10 @@ namespace std
 		//if (0 == converted)
 		//	return std::string();
 
-		return str2;
+        return std::move(str2);
 	}
 
-	inline std::string to_string(const wchar_t* _first, const wchar_t* _end, UINT codePage = CP_THREAD_ACP)
+	inline std::string to_string(const wchar_t* _first, const wchar_t* _end, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int required = ::WideCharToMultiByte(codePage, 0, _first, (int)(_end - _first), NULL, 0, NULL, NULL);
 		//if (0 == required)
@@ -235,9 +235,9 @@ namespace std
 		//if (0 == converted)
 		//	return std::string();
 
-		return str2;
+        return std::move(str2);
 	}
-	inline std::string to_string(const wchar_t* _first, UINT codePage = CP_THREAD_ACP)
+	inline std::string to_string(const wchar_t* _first, UINT codePage = CP_THREAD_ACP) noexcept
 	{
 		int size = std::wcslen(_first);
 		int required = ::WideCharToMultiByte(codePage, 0, _first, size, NULL, 0, NULL, NULL);
@@ -251,7 +251,7 @@ namespace std
 		//if (0 == converted)
 		//	return std::string();
 
-		return str2;
+        return std::move(str2);
 	}
 
 	template<class T, class Y>
