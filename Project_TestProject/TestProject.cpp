@@ -89,6 +89,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Debug::log << obj1->GetChild(0)->transform->worldPosition() << "\n";
     Debug::log << clone->GetChild(0)->transform->worldPosition() << "\n";
 
+    Shader::Profile(L"../shareds/engines/shaders/forward.hlsl", "VS_Main");
+
     MSG msg{};
     try
     {

@@ -6,6 +6,7 @@
 #include "RenderTargetGroup.h"
 #include "RootSignature.h"
 #include "Texture.h"
+#include "Shader.h"
 
 namespace dxe
 {

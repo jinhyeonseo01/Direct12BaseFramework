@@ -43,6 +43,9 @@
     <Filter Include="Engine\Imgui\core">
       <UniqueIdentifier>{f9e33a03-f6a3-4daf-8b3d-1e958039cf50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\shader">
+      <UniqueIdentifier>{95759722-dea5-4dcc-b807-edad8d82ccc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shareds\constants\headers\convert_math.h">
@@ -208,7 +211,7 @@
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\Shader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -360,7 +363,7 @@
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Shader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -375,5 +378,10 @@
     <Image Include="configs\Icons\small.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\shareds\engines\shaders\forward.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -31,4 +31,5 @@ Scene : Test Scene
 
 [0, 0, 1]
 [1, 0, 0]
+VS_IN
 02
