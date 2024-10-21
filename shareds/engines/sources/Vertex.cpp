@@ -22,6 +22,7 @@ namespace dxe
         position = other.position;
         normal = other.normal;
         tangent = other.tangent;
+        bitangent = other.bitangent;
         color = other.color;
         uvs = other.uvs;
         boneId = other.boneId;
@@ -33,6 +34,7 @@ namespace dxe
         position = other.position;
         normal = other.normal;
         tangent = other.tangent;
+        bitangent = other.bitangent;
         color = other.color;
         uvs = std::move(other.uvs);
         boneId = std::move(other.boneId);
@@ -46,6 +48,7 @@ namespace dxe
         position = other.position;
         normal = other.normal;
         tangent = other.tangent;
+        bitangent = other.bitangent;
         color = other.color;
         uvs = other.uvs;
         boneId = other.boneId;
@@ -60,6 +63,7 @@ namespace dxe
         position = other.position;
         normal = other.normal;
         tangent = other.tangent;
+        bitangent = other.bitangent;
         color = other.color;
         uvs = std::move(other.uvs);
         boneId = std::move(other.boneId);
@@ -95,8 +99,8 @@ namespace dxe
                 std::memcpy(&buffer[offset], &tangent, sizeof(Vector3));
                 offset += 3;
                 break;
-            case VertexProp::binormal:
-                std::memcpy(&buffer[offset], &binormal, sizeof(Vector3));
+            case VertexProp::bitangent:
+                std::memcpy(&buffer[offset], &bitangent, sizeof(Vector3));
                 offset += 3;
                 break;
             case VertexProp::color:
@@ -200,7 +204,7 @@ namespace dxe
             case VertexProp::tangent:
                 byteSize = sizeof(Vector3);
                 break;
-            case VertexProp::binormal:
+            case VertexProp::bitangent:
                 byteSize = sizeof(Vector3);
                 break;
             case VertexProp::color:
@@ -277,6 +281,7 @@ namespace dxe
         }
         info.totalByteSize = byteOffset;
         info.totalSize = offset;
+        info.propCount = static_cast<int>(props.size());
         return info;
     }
 

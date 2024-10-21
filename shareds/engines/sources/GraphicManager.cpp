@@ -73,6 +73,8 @@ void GraphicManager::Init()
 
     Refresh();
 
+    InitShader();
+
     _isRelease = false;
 }
 
@@ -187,10 +189,10 @@ void GraphicManager::CreateSwapChain()
         //msaa rendering
         swapChainDesc.SampleDesc.Count = 1;//아니면 이 안에서 더 작게
         swapChainDesc.SampleDesc.Quality = 0;
-        if (setting.aaActive && setting.aaType == AAType::MSAA)
+        if (setting.GetMSAAActive())
         {
-            swapChainDesc.SampleDesc.Count = setting.msaaSupportMaxLevel;//아니면 이 안에서 더 작게
-            swapChainDesc.SampleDesc.Quality = setting.msaaSupportMaxLevel - 1;
+            swapChainDesc.SampleDesc.Count = setting.GetMSAALevel();//아니면 이 안에서 더 작게
+            swapChainDesc.SampleDesc.Quality = 1;
         }
 
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 해당 버퍼를 렌더타겟 용도로 쓰겠다
@@ -448,6 +450,36 @@ void GraphicManager::CreateFences()
             _commandListFenceEvents[i] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
             _commandListFenceValue[i] = 0;
         }
+    }
+}
+
+void GraphicManager::InitShader()
+{
+    std::vector<VertexProp> props{
+        VertexProp::pos,
+        VertexProp::normal,
+        VertexProp::tangent,
+        VertexProp::color,
+        VertexProp::uv0,
+        VertexProp::uv1,
+        VertexProp::uv2,
+        VertexProp::uv3,
+        VertexProp::uv4,
+        VertexProp::uv5,
+        VertexProp::uv6,
+        VertexProp::uv7,
+        VertexProp::bone_ids,
+        VertexProp::bone_weights,
+        //BLENDWEIGHT
+        //BLENDINDICES
+    };
+    vertexInfo = Vertex::GetSelectorInfo(props);
+
+
+
+    {//Test
+        std::shared_ptr<Shader> shader =  Shader::Load(L"../shareds/engines/shaders/forward.hlsl");
+        shader->Init();
     }
 }
 

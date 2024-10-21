@@ -79,8 +79,49 @@ void Shader::Init()
 {
     auto device = GraphicManager::instance->_device;
 
+    auto vertexSetInfo = GraphicManager::instance->vertexInfo;
+    _inputElementDesc.resize(GraphicManager::instance->vertexInfo.propCount);
+    
+    for(int i=0;i< _inputElementDesc.size();i++)
+    {
+        D3D12_INPUT_ELEMENT_DESC elementDesc;
+        elementDesc.SemanticName = PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str();
+        elementDesc.SemanticIndex = 0;
+        switch (vertexSetInfo.propInfos[i].size) {
+        case 1: elementDesc.Format = DXGI_FORMAT_R32_FLOAT; break;
+        case 2: elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT; break;
+        case 3: elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT; break;
+        case 4: elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+        }
+        elementDesc.InputSlot = 0;
+        elementDesc.AlignedByteOffset = vertexSetInfo.propInfos[i].byteOffset;
+        elementDesc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
+        elementDesc.InstanceDataStepRate = 0;
+        _inputElementDesc[i] = elementDesc;
+    }
+    _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+#if _DEBUG
+    _pipelineDesc.Flags |= D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
+#endif
+
+    _rootSignature = std::make_shared<RootSignature>();
+    _rootSignature->Init();
+
+    _pipelineDesc.pRootSignature = GetRootSignature()->_rootSignature.Get();
+
+    _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size())};
+
     _pipelineDesc.NumRenderTargets = 1;
     _pipelineDesc.RTVFormats[0] = GraphicManager::instance->setting.screenFormat;
+    _pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    
+    _pipelineDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAALevel();
+    _pipelineDesc.SampleDesc.Quality = (GraphicManager::instance->setting.GetMSAAActive() ? 1 : 0);
+
+    _pipelineDesc.DSVFormat = GraphicManager::instance->setting.depthStencilFormat;
+    //_pipelineDesc.
+
+    //Material, Animation, Object, Camera, Scene
 
     //_pipelineState->
 
@@ -106,6 +147,13 @@ void Shader::Init()
         break;
     }
     _pipelineDesc.RasterizerState = resterizerDesc;
+    _pipelineDesc.RasterizerState.MultisampleEnable = GraphicManager::instance->setting.GetMSAAActive();
+    _pipelineDesc.RasterizerState.FrontCounterClockwise = _info._wise == FrontWise::CCW ? TRUE : FALSE;
+    _pipelineDesc.RasterizerState.DepthClipEnable = TRUE; // 깊이값 범위 밖 짤라냄.
+    _pipelineDesc.RasterizerState.AntialiasedLineEnable = _info.cullingType == CullingType::WIREFRAME ? TRUE : FALSE;
+    _pipelineDesc.RasterizerState.DepthBias = 0;
+    _pipelineDesc.RasterizerState.SlopeScaledDepthBias = 0.0f;
+    _pipelineDesc.RasterizerState.DepthBiasClamp = 0.0f;
 
 
 
@@ -120,9 +168,33 @@ void Shader::Init()
     case CompOper::GEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
     case CompOper::Greater: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER; break;
     case CompOper::NotEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
+    case CompOper::Never: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NEVER; break;
     default: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
     }
     depthStencilDesc.DepthWriteMask = _info._zWrite ? D3D12_DEPTH_WRITE_MASK_ZERO : D3D12_DEPTH_WRITE_MASK_ALL;
+
+
+    depthStencilDesc.StencilEnable = _info._stencilTest ? TRUE : FALSE;
+    depthStencilDesc.StencilReadMask = 0xFF;
+    depthStencilDesc.StencilWriteMask = 0xFF;
+
+    depthStencilDesc.FrontFace.StencilFailOp = _info._stencilFailOp;
+    depthStencilDesc.FrontFace.StencilDepthFailOp = _info._stencilDepthFailOp;
+    depthStencilDesc.FrontFace.StencilPassOp = _info._stencilPassOp;
+    switch (_info._stencilComp)
+    {
+    case CompOper::Always: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS; break;
+    case CompOper::Less: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS; break;
+    case CompOper::LEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
+    case CompOper::Equal: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
+    case CompOper::GEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
+    case CompOper::Greater: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER; break;
+    case CompOper::NotEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
+    case CompOper::Never: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER; break;
+    default: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
+    }
+
+    depthStencilDesc.BackFace = depthStencilDesc.FrontFace;
 
     _pipelineDesc.DepthStencilState = depthStencilDesc;
 
@@ -135,20 +207,147 @@ void Shader::Init()
             blendDesc.LogicOpEnable = FALSE;
             if (blendDesc.BlendEnable)
             {
-                blendDesc.BlendEnable = TRUE;
-                blendDesc.LogicOpEnable = TRUE;
-                blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-                blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+                switch (_info._blendType[i])
+                {
+                case BlendType::AlphaBlend:
+                    blendDesc.BlendEnable = TRUE;
+                    blendDesc.LogicOpEnable = FALSE;
+                    blendDesc.LogicOp = D3D12_LOGIC_OP_COPY;
+                    blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+                    blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                    break;
+                case BlendType::Add:
+                    blendDesc.BlendEnable = TRUE;
+                    blendDesc.LogicOpEnable = FALSE;
+                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                    blendDesc.DestBlend = D3D12_BLEND_ONE;
+                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                    break;
+                case BlendType::Multiple:
+                    blendDesc.BlendEnable = TRUE;
+                    blendDesc.LogicOpEnable = FALSE;
+                    blendDesc.SrcBlend = D3D12_BLEND_DEST_COLOR;
+                    blendDesc.DestBlend = D3D12_BLEND_ZERO;
+                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                    break;
+                case BlendType::ColorDodge:
+                    blendDesc.BlendEnable = TRUE;
+                    blendDesc.LogicOpEnable = FALSE;
+                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                    blendDesc.DestBlend = D3D12_BLEND_INV_SRC_COLOR;
+                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                    break;
+                case BlendType::Subtract:
+                    blendDesc.BlendEnable = TRUE;
+                    blendDesc.LogicOpEnable = FALSE;
+                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                    blendDesc.DestBlend = D3D12_BLEND_ONE;
+                    blendDesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+                    break;
+                case BlendType::Screen:
+                    blendDesc.BlendEnable = TRUE;
+                    blendDesc.LogicOpEnable = FALSE;
+                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                    blendDesc.DestBlend = D3D12_BLEND_INV_DEST_COLOR;
+                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                    break;
+                }
             }
             else
             {
+                blendDesc.BlendEnable = FALSE;
+                blendDesc.LogicOpEnable = FALSE;
+                blendDesc.LogicOp = D3D12_LOGIC_OP_COPY;
                 blendDesc.SrcBlend = D3D12_BLEND_ONE;
                 blendDesc.DestBlend = D3D12_BLEND_ZERO;
             }
         }
     }
 
+    _pipelineDesc.VS = _shaderCodeTable["vs"]->_shaderByteCode;
+    _pipelineDesc.PS = _shaderCodeTable["ps"]->_shaderByteCode;
+
     device->CreateGraphicsPipelineState(&_pipelineDesc, ComPtrIDAddr(_pipelineState));
+
+    Debug::log << "쉐이더 생성 완료\n";
+
+
+    {
+        ID3D12ShaderReflection* pReflector = nullptr;
+        HRESULT hr = D3DReflect(_shaderCodeTable["vs"]->_shaderByteCode.pShaderBytecode, _shaderCodeTable["vs"]->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, (void**)&pReflector);
+
+        if (SUCCEEDED(hr)) {
+            D3D12_SHADER_DESC shaderDesc;
+            pReflector->GetDesc(&shaderDesc);
+            Debug::log << "Number of constant buffers: " << shaderDesc.ConstantBuffers << "\n";
+            // 상수 버퍼(CB)의 레지스터 정보를 읽어오기
+            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
+                ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
+                D3D12_SHADER_BUFFER_DESC bufferDesc;
+                pConstantBuffer->GetDesc(&bufferDesc);
+                Debug::log << "Constant Buffer " << i << ": " << bufferDesc.Name
+                    << ", Variables: " << bufferDesc.Variables
+                    << ", Size: " << bufferDesc.Size << "\n";
+
+                for (UINT j = 0; j < bufferDesc.Variables; j++) {
+                    ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
+                    D3D12_SHADER_VARIABLE_DESC varDesc;
+                    pVar->GetDesc(&varDesc);
+                    Debug::log << "  Variable " << j << ": " << varDesc.Name
+                        << ", StartOffset: " << varDesc.StartOffset
+                        << ", Size: " << varDesc.Size << "\n";
+                }
+            }
+
+
+            for (UINT i = 0; i < shaderDesc.BoundResources; i++) {
+                D3D12_SHADER_INPUT_BIND_DESC bindDesc;
+                pReflector->GetResourceBindingDesc(i, &bindDesc);
+                Debug::log << "Resource " << i << ": " << bindDesc.Name
+                    << ", Type: " << bindDesc.Type
+                    << ", BindPoint: " << bindDesc.BindPoint << "\n";
+            }
+        }
+    }
+    {
+        ID3D12ShaderReflection* pReflector = nullptr;
+        HRESULT hr = D3DReflect(_shaderCodeTable["ps"]->_shaderByteCode.pShaderBytecode, _shaderCodeTable["ps"]->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, (void**)&pReflector);
+
+        if (SUCCEEDED(hr)) {
+            D3D12_SHADER_DESC shaderDesc;
+            pReflector->GetDesc(&shaderDesc);
+            Debug::log << "Number of constant buffers: " << shaderDesc.ConstantBuffers << "\n";
+            // 상수 버퍼(CB)의 레지스터 정보를 읽어오기
+            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
+                ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
+                D3D12_SHADER_BUFFER_DESC bufferDesc;
+                pConstantBuffer->GetDesc(&bufferDesc);
+                Debug::log << "Constant Buffer " << i << ": " << bufferDesc.Name
+                    << ", Variables: " << bufferDesc.Variables
+                    << ", Size: " << bufferDesc.Size << "\n";
+
+                for (UINT j = 0; j < bufferDesc.Variables; j++) {
+                    ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
+                    D3D12_SHADER_VARIABLE_DESC varDesc;
+                    pVar->GetDesc(&varDesc);
+                    Debug::log << "  Variable " << j << ": " << varDesc.Name
+                        << ", StartOffset: " << varDesc.StartOffset
+                        << ", Size: " << varDesc.Size << "\n";
+                }
+            }
+
+
+            for (UINT i = 0; i < shaderDesc.BoundResources; i++) {
+                D3D12_SHADER_INPUT_BIND_DESC bindDesc;
+                pReflector->GetResourceBindingDesc(i, &bindDesc);
+                Debug::log << "Resource " << i << ": " << bindDesc.Name
+                    << ", Type: " << bindDesc.Type
+                    << ", BindPoint: " << bindDesc.BindPoint << "\n";
+            }
+        }
+    }
+
 }
 
 void Shader::SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command)
@@ -172,23 +371,55 @@ void Shader::Profile(std::wstring path, std::string startPoint)
     }
 
     {
-        auto findInputStructLineIter = std::find_if(shaderText.begin(), shaderText.end(), [&](const std::string& line) {
+        auto findStartIter = std::find_if(shaderText.begin(), shaderText.end(), [&](const std::string& line) {
             return str::contains(line, startPoint);
             });
-        if (findInputStructLineIter == shaderText.end())
+        if (findStartIter == shaderText.end())
         {
             Debug::log << "쉐이더 분석 실패 : " << path << " 진입점이 없음.\n";
             return;
         }
-        auto temp = str::split(*findInputStructLineIter, "(")[1];
+        auto temp = str::split(*findStartIter, "(")[1];
         str::trim(temp);
-        auto InputStruct = str::split(temp, " ")[0];
+        auto inputStruct = str::split(temp, " ")[0];
 
-        Debug::log << InputStruct << "\n";
-        auto findInputStructLineIter = std::find_if(shaderText.begin(), shaderText.end(), [&](const std::string& line) {
-            return str::contains(line, InputStruct) && str::contains(line, "struct");
-            });
+        {
+            auto findInputStructLineIter = std::find_if(shaderText.begin(), shaderText.end(), [&](const std::string& line) {
+                return str::contains(line, inputStruct) && str::contains(line, "struct");
+                });
+            if (findInputStructLineIter == shaderText.end())
+            {
+                Debug::log << "쉐이더 분석 실패 : " << path << " Struct가 없음.\n";
+                return;
+            }
+            ShaderCodeInfo codeInfo;
+            codeInfo._structData.emplace("vertexData", std::unordered_map<std::string, std::string>{});
+            while (true)
+            {
+                if (str::contains(*findInputStructLineIter, "}"))
+                    break;
 
+                if (str::contains(*findInputStructLineIter, ":"))
+                {
+                    auto contexts = str::split(*findInputStructLineIter, ":");
+                    auto leftContext = contexts[0];
+                    str::trim(leftContext);
+                    auto rightContext = contexts[1];
+                    str::trim(rightContext);
+                    auto names = str::split(leftContext, " ");
+                    auto name = names[names.size() - 1];
+                    auto type = names[names.size() - 2];
+                    auto attris = str::split(rightContext, ";");
+                    auto attri = attris[attris.size() - 1];
+                    str::trim(name);
+                    str::trim(type);
+                    str::trim(attri);
+
+
+                }
+            }
+            codeInfo._structData;
+        }
     }
 }
 
@@ -203,10 +434,10 @@ std::shared_ptr<Shader> Shader::Load(std::wstring path)
     };
     auto shader = std::make_shared<Shader>();
 
-    auto shaderCode = Load(path, "VS_Main", "vs", shaderMacro);
-    shader->_shaderCodeTable.emplace(shaderCode->type, shaderCode);
+    auto shaderVS = Load(path, "VS_Main", "vs", shaderMacro);
+    shader->_shaderCodeTable.emplace(shaderVS->type, shaderVS);
     auto shaderPS = Load(path, "PS_Main", "ps", shaderMacro);
-    shader->_shaderCodeTable.emplace(shaderCode->type, shaderCode);
+    shader->_shaderCodeTable.emplace(shaderPS->type, shaderPS);
     return shader;
 }
 

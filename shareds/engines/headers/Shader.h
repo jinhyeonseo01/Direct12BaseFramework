@@ -13,7 +13,8 @@ namespace dxe
         GEqual,
         Greater,
         NotEqual,
-        Always
+        Always,
+        Never
     };
     enum class CullingType
     {
@@ -29,6 +30,29 @@ namespace dxe
         Transparent,
         Geometry
     };
+    enum class FrontWise
+    {
+        CW,
+        CCW
+    };
+    enum class BlendType
+    {
+        AlphaBlend, //FinalColor = SrcColor * SrcAlpha + DestColor * (1 - SrcAlpha)
+        Add, //FinalColor = SrcColor + DestColor
+        Multiple, //FinalColor = SrcColor * DestColor
+        ColorDodge, //FinalColor = DestColor / (1 - SrcColor)
+        Subtract, //FinalColor = DestColor - SrcColor
+        Screen, // FinalColor = 1 - (1 - SrcColor) * (1 - DestColor)
+    };
+
+    class ShaderCodeInfo
+    {
+    public:
+        std::string _VSStructName;
+        std::string _PSStructName;
+
+        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> _structData;
+    };
 
     class ShaderInfo
     {
@@ -38,10 +62,17 @@ namespace dxe
         CompOper _zComp = CompOper::LEqual;
         bool _stencilTest = false;
         int _stencilIndex = 0;
-        CompOper _stencilComp = CompOper::LEqual;
+        CompOper _stencilComp = CompOper::Always;
+        D3D12_STENCIL_OP _stencilFailOp = D3D12_STENCIL_OP_KEEP;
+        D3D12_STENCIL_OP _stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+        D3D12_STENCIL_OP _stencilPassOp = D3D12_STENCIL_OP_KEEP;
+
         CullingType cullingType;
 
+        FrontWise _wise = FrontWise::CW;
+
         uint8_t _blendTargetMask = 0b00000001;
+        BlendType _blendType[8] = { BlendType::AlphaBlend };
 
         /*
         BlendType _blendType;
@@ -51,7 +82,6 @@ namespace dxe
 
         int _renderQueue = 2000;
         RenderQueueType _renderQueueType = RenderQueueType::Opaque;
-
     };
 
     class ShaderCode
@@ -70,11 +100,14 @@ namespace dxe
         std::shared_ptr<RootSignature> GetRootSignature();
 
         std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
+        ShaderInfo _info;
+    public:
 
         ComPtr<ID3D12PipelineState>			_pipelineState;
         D3D12_GRAPHICS_PIPELINE_STATE_DESC  _pipelineDesc = {};
+        std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc;
 
-        ShaderInfo _info;
+
 
         void Init();
         void SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command);

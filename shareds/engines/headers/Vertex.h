@@ -6,10 +6,10 @@ namespace dxe
 {
     enum class VertexProp
     {
-        pos,
+        pos = 0,
         normal,
         tangent,
-        binormal,
+        bitangent,
         color,
         uv,
         uv0,
@@ -30,16 +30,44 @@ namespace dxe
         bone_w1,
         bone_w2,
         bone_w3,
+        COUNT
+    };
+
+    const std::array<std::string, static_cast<size_t>(VertexProp::COUNT)> PropNameStrings = {
+        "POSITION",
+        "NORMAL",
+        "TANGENT",
+        "BITANGENT",
+        "COLOR",
+        "TEXCOORD0",
+        "TEXCOORD0",
+        "TEXCOORD1",
+        "TEXCOORD2",
+        "TEXCOORD3",
+        "TEXCOORD4",
+        "TEXCOORD5",
+        "TEXCOORD6",
+        "TEXCOORD7",
+        "BONE_IDs",
+        "BONE_ID0",
+        "BONE_ID1",
+        "BONE_ID2",
+        "BONE_ID3",
+        "BONE_Ws",
+        "BONE_W0",
+        "BONE_W1",
+        "BONE_W2",
+        "BONE_W3"
     };
 
 
     typedef struct VertexPropInfo
     {
     public:
-        int size;
-        int byteSize;
-        int offset;
-        int byteOffset;
+        int size = 0;
+        int byteSize = 0;
+        int offset = 0;
+        int byteOffset = 0;
         VertexProp prop;
     };
     class SelectorInfo
@@ -55,14 +83,14 @@ namespace dxe
 	class Vertex
 	{
 	public:
-		Vector3 position;
-		Vector3 normal;
-		Vector3 tangent;
-        Vector3 binormal;
-		Vector4 color;
-		std::vector<Vector3> uvs;
-		Vector4 boneId;
-        Vector4 boneWeight;
+		Vector3 position = Vector3(0,0,0);
+		Vector3 normal = Vector3(0, 0, 1);
+		Vector3 tangent = Vector3(0, 1, 0);
+        Vector3 bitangent = Vector3(0, 0, 0);
+		Vector4 color = Vector4(1, 1, 0, 1);
+        std::vector<Vector3> uvs{ 8 };
+		Vector4 boneId = Vector4(0, 0, 0, 0);
+        Vector4 boneWeight = Vector4(0, 0, 0, 0);
 
 
 		Vertex();

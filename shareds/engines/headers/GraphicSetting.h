@@ -31,10 +31,13 @@ namespace dxe
 
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
+        int msaaLevel = 2;
+
         WindowType windowType = WindowType::Windows;
         FrameSync syncType = FrameSync::VSync;
         Viewport screenInfo = Viewport(0,0,1920,1080);
         DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
 
 
     public:
@@ -45,6 +48,8 @@ namespace dxe
         int REGISTER_COUNT = 10; // 위에 두개 합친거
         
 
+        int GetMSAALevel();
+        BOOL GetMSAAActive();
 
     public:
         //디바이스 지원 목록

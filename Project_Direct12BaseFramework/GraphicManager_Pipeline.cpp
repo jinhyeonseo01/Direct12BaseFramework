@@ -8,7 +8,7 @@ void GraphicManager::RefreshRenderTargetGroups()
     this->_renderTargetGroupTable.clear();
     this->_swapChainRT.clear();
 
-    std::shared_ptr<Texture> depthStencilTexture = Texture::Create(DXGI_FORMAT_D32_FLOAT_S8X24_UINT, setting.screenInfo.width, setting.screenInfo.height,
+    std::shared_ptr<Texture> depthStencilTexture = Texture::Create(setting.depthStencilFormat, setting.screenInfo.width, setting.screenInfo.height,
         CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
         D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
 

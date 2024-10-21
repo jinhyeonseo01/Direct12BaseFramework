@@ -7,6 +7,7 @@
 #include "RootSignature.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Vertex.h"
 
 namespace dxe
 {
@@ -50,9 +51,10 @@ namespace dxe
 
         ComPtr<ID3D12CommandAllocator> _resourceCommandAllocator;
         ComPtr<ID3D12GraphicsCommandList4> _resourceCommandList;
+        int _currentCommandListIndex = 0;
 
         std::shared_ptr<RootSignature> _rootSignature;
-        
+
     public:
         std::vector<ComPtr<ID3D12Resource>> _swapChainBuffers_Res;
         std::vector<std::shared_ptr<Texture>> _swapChainRT;
@@ -71,6 +73,9 @@ namespace dxe
         D3D12_CPU_DESCRIPTOR_HANDLE TextureDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle = nullptr);
         void TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
 
+        public:
+            SelectorInfo vertexInfo{};
+
     public:
         bool _isRelease = false;
     public:
@@ -86,6 +91,7 @@ namespace dxe
         void CreateFactory();
         void CreateDevice();
         void CreateFences();
+        void InitShader();
         void CreateRootSignature();
         void RefreshRenderTargetGroups();
         void CreateCommandQueueListAlloc();
@@ -125,8 +131,6 @@ namespace dxe
         ComPtr<ID3D12CommandQueue> GetCommandQueue();
 
         std::shared_ptr<RenderTargetGroup> GetRenderTargetGroup(const RTGType& type);
-
-        int _currentCommandListIndex = 0;
 
         GraphicManager();
         virtual ~GraphicManager();
