@@ -192,6 +192,7 @@
     <ClInclude Include="..\shareds\engines\headers\RootSignature.h" />
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
+    <ClInclude Include="..\shareds\engines\headers\Shader.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\SoundManager.h" />
@@ -242,6 +243,7 @@
     <ClCompile Include="..\shareds\engines\sources\RootSignature.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Shader.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp" />

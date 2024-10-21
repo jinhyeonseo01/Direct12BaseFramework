@@ -32,7 +32,7 @@ namespace dxe
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
         WindowType windowType = WindowType::Windows;
-        FrameSync syncType = FrameSync::VSync;
+        FrameSync syncType = FrameSync::GSync;
         Viewport screenInfo = Viewport(0,0,1920,1080);
         DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
