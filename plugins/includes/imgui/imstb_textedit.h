@@ -49,7 +49,7 @@
 //   1.5  (2014-09-10) add support for secondary keys for OS X
 //   1.4  (2014-08-17) fix signed/unsigned warnings
 //   1.3  (2014-06-19) fix mouse clicking to round to nearest char boundary
-//   1.2  (2014-05-27) fix some RAD types that had crept into the new code
+//   1.2  (2014-05-27) fix some RAD elementTypes that had crept into the new code
 //   1.1  (2013-12-15) move-by-word (requires STB_TEXTEDIT_IS_SPACE )
 //   1.0  (2012-07-26) improve documentation, initial public release
 //   0.3  (2012-02-24) bugfixes, single-line mode; insert mode
@@ -84,16 +84,16 @@
 //   separately).
 //
 //   To compile in this mode, you must define STB_TEXTEDIT_CHARTYPE to a
-//   primitive type that defines a single character (e.g. char, wchar_t, etc).
+//   primitive shaderType that defines a single character (e.g. char, wchar_t, etc).
 //
 //   To save space or increase undo-ability, you can optionally define the
 //   following things that are used by the undo system:
 //
-//      STB_TEXTEDIT_POSITIONTYPE         small int type encoding a valid cursor position
+//      STB_TEXTEDIT_POSITIONTYPE         small int shaderType encoding a valid cursor position
 //      STB_TEXTEDIT_UNDOSTATECOUNT       the number of undo states to allow
 //      STB_TEXTEDIT_UNDOCHARCOUNT        the number of characters to store in the undo _shaderPrecompiledBuffer
 //
-//   If you don't define these, they are set to permissive types and
+//   If you don't define these, they are set to permissive elementTypes and
 //   moderate sizes. The undo system does no memory allocations, so
 //   it grows STB_TexteditState by the worst-case storage which is (in bytes):
 //
@@ -120,14 +120,14 @@
 //
 // Symbols that must be the same in header-file and implementation mode:
 //
-//     STB_TEXTEDIT_CHARTYPE             the character type
-//     STB_TEXTEDIT_POSITIONTYPE         small type that is a valid cursor position
+//     STB_TEXTEDIT_CHARTYPE             the character shaderType
+//     STB_TEXTEDIT_POSITIONTYPE         small shaderType that is a valid cursor position
 //     STB_TEXTEDIT_UNDOSTATECOUNT       the number of undo states to allow
 //     STB_TEXTEDIT_UNDOCHARCOUNT        the number of characters to store in the undo _shaderPrecompiledBuffer
 //
 // Symbols you must define for implementation mode:
 //
-//    STB_TEXTEDIT_STRING               the type of object representing a string being edited,
+//    STB_TEXTEDIT_STRING               the shaderType of object representing a string being edited,
 //                                      typically this is a wrapper object with other data you need
 //
 //    STB_TEXTEDIT_STRINGLEN(obj)       the length of the string (ideally O(1))
@@ -138,7 +138,7 @@
 //                                        starting at character #n (i.e. accounts for kerning
 //                                        with previous char)
 //    STB_TEXTEDIT_KEYTOTEXT(k)         maps a keyboard input to an insertable character
-//                                        (return type is int, -1 means not valid to insert)
+//                                        (return shaderType is int, -1 means not valid to insert)
 //    STB_TEXTEDIT_GETCHAR(obj,i)       returns the i'th character of obj, 0-based
 //    STB_TEXTEDIT_NEWLINE              the character returned by _GETCHAR() we recognize
 //                                        as manually wordwrapping for end-of-line positioning
@@ -243,7 +243,7 @@
 //          various definitions like STB_TEXTEDIT_K_LEFT have the is-key-event bit
 //          set, and make STB_TEXTEDIT_KEYTOCHAR check that the is-key-event bit is
 //          clear. STB_TEXTEDIT_KEYTYPE defaults to int, but you can #define it to
-//          anything other type you wante before including.
+//          anything other shaderType you wante before including.
 //
 //
 //   When rendering, you can read the cursor position and selection state from
@@ -1269,7 +1269,7 @@ static void stb_text_undo(IMSTB_TEXTEDIT_STRING *str, STB_TexteditState *state)
       STB_TEXTEDIT_DELETECHARS(str, u.where, u.delete_length);
    }
 
-   // check type of recorded action:
+   // check shaderType of recorded action:
    if (u.insert_length) {
       // easy case: was a deletion, so we need to insert n characters
       STB_TEXTEDIT_INSERTCHARS(str, u.where, &s->undo_char[u.char_storage], u.insert_length);

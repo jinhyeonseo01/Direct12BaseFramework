@@ -11,7 +11,7 @@ namespace std
 	/// <summary>
 	/// 부호 기준 -1, 0, 1
 	/// </summary>
-	/// <param name="x">int 값</param>
+	/// <param names="x">int 값</param>
 	/// <returns></returns>
 	inline char sign(const int& x) { return (x > 0) - (x < 0); }
 }

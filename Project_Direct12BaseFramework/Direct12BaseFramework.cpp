@@ -30,7 +30,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     for (auto& b : SceneManager::_sceneList)
         Debug::log << b->name << "\n";
 	//for (auto& a : scene->_gameObjectList)
-        //Debug::log << a->name << "\n";
+        //Debug::log << a->names << "\n";
     obj2->SetParent(obj1);
     obj3->SetParent(obj2);
 	obj4->SetParent(obj1);

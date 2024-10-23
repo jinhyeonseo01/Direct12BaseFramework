@@ -309,7 +309,7 @@ void GameObject::Debug(int depth)
 {
 	for (int i = 0; i < depth; i++)
 		Debug::log << "      ";
-	//Debug::log << "-Obj:" << name << std::format(" (act_t{}, act_s{}, des{})", _active_total,_active_self,_destroy) << "\n";
+	//Debug::log << "-Obj:" << names << std::format(" (act_t{}, act_s{}, des{})", _active_total,_active_self,_destroy) << "\n";
 	Debug::log << "-Obj:" << name << "\n";
 
 	for (int i = 0; i < _components.size(); i++)

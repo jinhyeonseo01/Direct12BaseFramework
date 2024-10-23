@@ -16,7 +16,7 @@
 #pragma once
 
 #include <algorithm>
-#include <cctype>
+#include <cwctype>
 #include <execution>
 #include <map>
 #include <regex>
@@ -36,7 +36,7 @@ namespace wstr
      * @return Converted value as std::wstring.
      */
     template<typename T>
-    static inline std::wstring to_string(T value)
+    static inline std::wstring to_wstring(T value)
     {
         std::wstringstream ss;
         ss << value;
@@ -52,7 +52,7 @@ namespace wstr
      * @return Variable of datatype T.
      */
     template<typename T>
-    static inline T parse_string(const std::wstring & str)
+    static inline T parse_wstring(const std::wstring & str)
     {
         T result;
         std::wistringstream(str) >> result;
@@ -70,7 +70,7 @@ namespace wstr
         auto result = str;
         std::transform(result.begin(), result.end(), result.begin(), [](wchar_t c) -> wchar_t
         {
-            return static_cast<wchar_t>(std::tolower(c));
+            return static_cast<wchar_t>(std::towlower(c));
         });
 
         return result;
@@ -86,7 +86,7 @@ namespace wstr
         auto result = str;
         std::transform(result.begin(), result.end(), result.begin(), [](wchar_t c) -> wchar_t
         {
-            return static_cast<wchar_t>(std::toupper(c));
+            return static_cast<wchar_t>(std::towupper(c));
         });
 
         return result;
@@ -102,7 +102,7 @@ namespace wstr
         auto result = str;
         if (!result.empty())
         {
-            result.front() = static_cast<wchar_t>(std::toupper(result.front()));
+            result.front() = static_cast<wchar_t>(std::towupper(result.front()));
         }
 
         return result;
@@ -118,7 +118,7 @@ namespace wstr
         auto result = to_lower(str);
         if (!result.empty())
         {
-            result.front() = static_cast<wchar_t>(std::toupper(result.front()));
+            result.front() = static_cast<wchar_t>(std::towupper(result.front()));
         }
 
         return result;
@@ -164,7 +164,7 @@ namespace wstr
      */
     static inline void trim_left(std::wstring & str)
     {
-        str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int ch) { return !std::isspace(ch); }));
+        str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int ch) { return !std::iswspace(ch); }));
     }
 
     /**
@@ -174,7 +174,7 @@ namespace wstr
      */
     static inline void trim_right(std::wstring & str)
     {
-        str.erase(std::find_if(str.rbegin(), str.rend(), [](int ch) { return !std::isspace(ch); }).base(), str.end());
+        str.erase(std::find_if(str.rbegin(), str.rend(), [](int ch) { return !std::iswspace(ch); }).base(), str.end());
     }
 
     /**
@@ -354,7 +354,7 @@ namespace wstr
             tokens.push_back(token);
         }
 
-        // Match semantics of split(str,str)
+        // Match registers of split(str,str)
         if (str.empty() || ends_with(str, delim)) {
             tokens.emplace_back();
         }

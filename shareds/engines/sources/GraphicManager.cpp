@@ -48,6 +48,16 @@ void GraphicManager::TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HAND
     _textureDescriptorHeapAllocator[index] = false;
 }
 
+std::shared_ptr<CBufferTable> GraphicManager::GetCurrentCBufferTable()
+{
+    if (_currentCbufferTableIndex != _currentCommandListIndex)
+    {
+        _currentCbufferTableIndex = _currentCommandListIndex;
+        _cbufferTableList[_currentCommandListIndex]->Reset();
+    }
+    return _cbufferTableList[_currentCommandListIndex];
+}
+
 void GraphicManager::Init()
 {
     if (instance == nullptr)
@@ -272,12 +282,13 @@ void GraphicManager::RefreshSwapChain()
             _swapChain->ResizeTarget(&dxgiDesc1); //이건 디스플레이 모드를 바꾸는거임
         }
 
+        WaitSync();
+
         { // 스왑체인의 버퍼를 바꾸는거
             DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc = {};
             _swapChain->GetDesc1(&dxgiSwapChainDesc);
             _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width, setting.screenInfo.height, setting.screenFormat, dxgiSwapChainDesc.Flags);
         }
-        WaitSync();
 
         { //버퍼 재할당
             _swapChainBuffers_Res.clear();
@@ -530,6 +541,7 @@ void GraphicManager::CreateCommandQueueListAlloc()
 void GraphicManager::CreateDescriptorHeap()
 {
     CreateTextureHeap();
+    CreateCBufferHeap();
 }
 
 void GraphicManager::CreateTextureHeap()
@@ -545,6 +557,19 @@ void GraphicManager::CreateTextureHeap()
     SRV_HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
 
     DXAssert(_device->CreateDescriptorHeap(&SRV_HeapDesc, IID_PPV_ARGS(&_textureDescriptorHeap)));
+}
+
+void GraphicManager::CreateCBufferHeap()
+{
+    _cbufferDescriptorHeapCount = 4096;
+
+    _cbufferTableList.reserve(_commandLists.size());
+    for(int i=0;i<_commandLists.size();i++)
+    {
+        _cbufferTableList.push_back(std::make_shared<CBufferTable>());
+        _cbufferTableList[i]->_cbufferDescriptorHeapCount = _cbufferDescriptorHeapCount;
+        _cbufferTableList[i]->Init();
+    }
 }
 
 

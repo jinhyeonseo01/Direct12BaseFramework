@@ -14,7 +14,7 @@ namespace dxe
 		static std::unordered_map<std::wstring, std::wstring> _CloneGuidTable;
         static std::vector<std::shared_ptr<EObject>> _TempLifeCycle;
 		
-		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::shaderType>
 		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
 		static bool AddObject(std::shared_ptr<T> object)
 		{
@@ -27,7 +27,7 @@ namespace dxe
 			}
 			return false;
 		}
-		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
+		//template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::shaderType>
 		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, EObject*>>>
 		static bool RemoveObject(std::shared_ptr<T> object)
 		{
@@ -166,9 +166,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리를 수행할 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static bool ReRefChain(std::weak_ptr<T>& other)
         {
@@ -181,9 +181,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리를 수행할 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static bool ReRefChain(std::shared_ptr<T>& other)
         {
@@ -196,9 +196,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리를 수행할 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static void ReRefChain(std::vector<std::weak_ptr<T>>& others)
         {
@@ -208,9 +208,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리를 수행할 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static void ReRefChain(std::vector<std::shared_ptr<T>>& others)
         {
@@ -220,9 +220,9 @@ namespace dxe
         /// <summary>
         /// 깊은 복사 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static bool CloneChain(std::weak_ptr<T>& other)
 		{
@@ -235,9 +235,9 @@ namespace dxe
         /// <summary>
         /// 깊은 복사 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static bool CloneChain(std::shared_ptr<T>& other)
         {
@@ -250,9 +250,9 @@ namespace dxe
         /// <summary>
         /// 깊은 복사 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static void CloneChain(std::vector<std::weak_ptr<T>>& others)
         {
@@ -262,9 +262,9 @@ namespace dxe
         /// <summary>
         /// 깊은 복사 대상 추가
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static void CloneChain(std::vector<std::shared_ptr<T>>& others)
         {
@@ -275,9 +275,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리 수행
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_base_of<EObject, T>::value>::type>
         static bool ChangePtrToClone(std::weak_ptr<T>& other)
         {
@@ -291,9 +291,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리 수행
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static bool ChangePtrToClone(std::shared_ptr<T>& other)
         {
@@ -307,9 +307,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리 수행
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static void ChangePtrToClone(std::vector<std::weak_ptr<T>>& others)
         {
@@ -322,9 +322,9 @@ namespace dxe
         /// <summary>
         /// 재참조 처리 수행
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name=""></typeparam>
-        /// <param name="others"></param>
+        /// <typeparam names="T"></typeparam>
+        /// <typeparam names=""></typeparam>
+        /// <param names="others"></param>
         template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
         static void ChangePtrToClone(std::vector<std::shared_ptr<T>>& others)
         {

@@ -354,7 +354,7 @@ namespace str
             tokens.push_back(token);
         }
 
-        // Match semantics of split(str,str)
+        // Match registers of split(str,str)
         if (str.empty() || ends_with(str, delim)) {
             tokens.emplace_back();
         }

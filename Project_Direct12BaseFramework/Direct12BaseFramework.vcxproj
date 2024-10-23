@@ -168,6 +168,8 @@
     <ClInclude Include="..\shareds\constants\headers\wstrutil.h" />
     <ClInclude Include="..\shareds\engines\headers\Bone.h" />
     <ClInclude Include="..\shareds\engines\headers\Camera.h" />
+    <ClInclude Include="..\shareds\engines\headers\CBuffer.h" />
+    <ClInclude Include="..\shareds\engines\headers\CBufferTable.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
     <ClInclude Include="..\shareds\engines\headers\Component.h" />
     <ClInclude Include="..\shareds\engines\headers\DXEngine.h" />
@@ -218,6 +220,8 @@
     <ClCompile Include="..\shareds\constants\sources\Timer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Bone.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Camera.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\CBuffer.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\CBufferTable.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine_Debug.cpp" />
@@ -226,6 +230,7 @@
     <ClCompile Include="..\shareds\engines\sources\EObject.cpp" />
     <ClCompile Include="..\shareds\engines\sources\GameObject.cpp" />
     <ClCompile Include="..\shareds\engines\sources\GraphicManager.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\GraphicManager_Pipeline.cpp" />
     <ClCompile Include="..\shareds\engines\sources\GraphicSetting.cpp" />
     <ClCompile Include="..\shareds\engines\sources\IClone.cpp" />
     <ClCompile Include="..\shareds\engines\sources\IDelayedDestroy.cpp" />

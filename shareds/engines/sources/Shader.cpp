@@ -5,7 +5,7 @@
 #include "graphic_config.h"
 
 
-std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string startPointName,
+std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPointName,
                                          std::string shaderVersion, std::vector<D3D_SHADER_MACRO>& shaderMacro)
 {
     std::wstring shaderPath = path;
@@ -13,7 +13,8 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string startPoi
     std::wstring ext = std::filesystem::path(shaderPath).extension();
 
     std::shared_ptr<ShaderCode> shaderCode = std::make_shared<ShaderCode>();
-    shaderCode->type = shaderVersion;
+    shaderCode->shaderType = shaderVersion;
+    shaderCode->endPointName = endPointName;
 
     if (ext == L".hlsl" || ext == L".HLSL")
     {
@@ -25,9 +26,9 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string startPoi
         compileFlag = D3DCOMPILE_OPTIMIZATION_LEVEL3; // 고급 메모리 접근 최적화, 명령어 재배열 및 코드 압축, Data Parallelization
 #endif
 
-        std::string functionName = startPointName;
-        std::string version = shaderVersion;
-        if (str::split(shaderVersion, "_").size() <= 1)
+        std::string functionName = shaderCode->endPointName;
+        std::string version = shaderCode->shaderType;
+        if (str::split(version, "_").size() <= 1)
             version += "_5_0";
 
         /*버텍스 셰이더 : "vs_5_0", "vs_6_0" 등
@@ -70,6 +71,20 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string startPoi
     return shaderCode;
 }
 
+ShaderProfileInfo::ShaderRegisterInfo ShaderProfileInfo::GetRegisterByName(const std::string& name)
+{
+    if (_nameToRegisterTable.contains(name))
+        return _nameToRegisterTable[name];
+    return ShaderProfileInfo::ShaderRegisterInfo{};
+}
+
+ShaderProfileInfo::ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
+{
+    if (_nameToCBufferTable.contains(name))
+        return _nameToCBufferTable[name];
+    return ShaderCBufferInfo{};
+}
+
 std::shared_ptr<RootSignature> Shader::GetRootSignature()
 {
     return  _rootSignature;
@@ -104,10 +119,11 @@ void Shader::Init()
     _pipelineDesc.Flags |= D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
 #endif
 
-    _rootSignature = std::make_shared<RootSignature>();
-    _rootSignature->Init();
+    //_rootSignature = std::make_shared<RootSignature>();
+    //_rootSignature->Init();
+    //_pipelineDesc.pRootSignature = GetRootSignature()->_rootSignature.Get();
 
-    _pipelineDesc.pRootSignature = GetRootSignature()->_rootSignature.Get();
+    _pipelineDesc.pRootSignature = GraphicManager::instance->_rootSignature->_rootSignature.Get();
 
     _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size())};
 
@@ -273,80 +289,43 @@ void Shader::Init()
     Debug::log << "쉐이더 생성 완료\n";
 
 
-    {
-        ID3D12ShaderReflection* pReflector = nullptr;
-        HRESULT hr = D3DReflect(_shaderCodeTable["vs"]->_shaderByteCode.pShaderBytecode, _shaderCodeTable["vs"]->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, (void**)&pReflector);
+    //{
+    //    ID3D12ShaderReflection* pReflector = nullptr;
+    //    HRESULT hr = D3DReflect(_shaderCodeTable["vs"]->_shaderByteCode.pShaderBytecode, _shaderCodeTable["vs"]->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, (void**)&pReflector);
 
-        if (SUCCEEDED(hr)) {
-            D3D12_SHADER_DESC shaderDesc;
-            pReflector->GetDesc(&shaderDesc);
-            Debug::log << "Number of constant buffers: " << shaderDesc.ConstantBuffers << "\n";
-            // 상수 버퍼(CB)의 레지스터 정보를 읽어오기
-            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
-                ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
-                D3D12_SHADER_BUFFER_DESC bufferDesc;
-                pConstantBuffer->GetDesc(&bufferDesc);
-                Debug::log << "Constant Buffer " << i << ": " << bufferDesc.Name
-                    << ", Variables: " << bufferDesc.Variables
-                    << ", Size: " << bufferDesc.Size << "\n";
+    //    if (SUCCEEDED(hr)) {
+    //        D3D12_SHADER_DESC shaderDesc;
+    //        pReflector->GetDesc(&shaderDesc);
+    //        Debug::log << "Number of constant buffers: " << shaderDesc.ConstantBuffers << "\n";
+    //        // 상수 버퍼(CB)의 레지스터 정보를 읽어오기
+    //        for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
+    //            ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
+    //            D3D12_SHADER_BUFFER_DESC bufferDesc;
+    //            pConstantBuffer->GetDesc(&bufferDesc);
+    //            Debug::log << "Constant Buffer " << i << ": " << bufferDesc.Name
+    //                << ", Variables: " << bufferDesc.Variables
+    //                << ", Size: " << bufferDesc.Size << "\n";
 
-                for (UINT j = 0; j < bufferDesc.Variables; j++) {
-                    ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
-                    D3D12_SHADER_VARIABLE_DESC varDesc;
-                    pVar->GetDesc(&varDesc);
-                    Debug::log << "  Variable " << j << ": " << varDesc.Name
-                        << ", StartOffset: " << varDesc.StartOffset
-                        << ", Size: " << varDesc.Size << "\n";
-                }
-            }
-
-
-            for (UINT i = 0; i < shaderDesc.BoundResources; i++) {
-                D3D12_SHADER_INPUT_BIND_DESC bindDesc;
-                pReflector->GetResourceBindingDesc(i, &bindDesc);
-                Debug::log << "Resource " << i << ": " << bindDesc.Name
-                    << ", Type: " << bindDesc.Type
-                    << ", BindPoint: " << bindDesc.BindPoint << "\n";
-            }
-        }
-    }
-    {
-        ID3D12ShaderReflection* pReflector = nullptr;
-        HRESULT hr = D3DReflect(_shaderCodeTable["ps"]->_shaderByteCode.pShaderBytecode, _shaderCodeTable["ps"]->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, (void**)&pReflector);
-
-        if (SUCCEEDED(hr)) {
-            D3D12_SHADER_DESC shaderDesc;
-            pReflector->GetDesc(&shaderDesc);
-            Debug::log << "Number of constant buffers: " << shaderDesc.ConstantBuffers << "\n";
-            // 상수 버퍼(CB)의 레지스터 정보를 읽어오기
-            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
-                ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
-                D3D12_SHADER_BUFFER_DESC bufferDesc;
-                pConstantBuffer->GetDesc(&bufferDesc);
-                Debug::log << "Constant Buffer " << i << ": " << bufferDesc.Name
-                    << ", Variables: " << bufferDesc.Variables
-                    << ", Size: " << bufferDesc.Size << "\n";
-
-                for (UINT j = 0; j < bufferDesc.Variables; j++) {
-                    ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
-                    D3D12_SHADER_VARIABLE_DESC varDesc;
-                    pVar->GetDesc(&varDesc);
-                    Debug::log << "  Variable " << j << ": " << varDesc.Name
-                        << ", StartOffset: " << varDesc.StartOffset
-                        << ", Size: " << varDesc.Size << "\n";
-                }
-            }
+    //            for (UINT j = 0; j < bufferDesc.Variables; j++) {
+    //                ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
+    //                D3D12_SHADER_VARIABLE_DESC varDesc;
+    //                pVar->GetDesc(&varDesc);
+    //                Debug::log << "  Variable " << j << ": " << varDesc.Name
+    //                    << ", StartOffset: " << varDesc.StartOffset
+    //                    << ", Size: " << varDesc.Size << "\n";
+    //            }
+    //        }
 
 
-            for (UINT i = 0; i < shaderDesc.BoundResources; i++) {
-                D3D12_SHADER_INPUT_BIND_DESC bindDesc;
-                pReflector->GetResourceBindingDesc(i, &bindDesc);
-                Debug::log << "Resource " << i << ": " << bindDesc.Name
-                    << ", Type: " << bindDesc.Type
-                    << ", BindPoint: " << bindDesc.BindPoint << "\n";
-            }
-        }
-    }
+    //        for (UINT i = 0; i < shaderDesc.BoundResources; i++) {
+    //            D3D12_SHADER_INPUT_BIND_DESC bindDesc;
+    //            pReflector->GetResourceBindingDesc(i, &bindDesc);
+    //            Debug::log << "Resource " << i << ": " << bindDesc.Name
+    //                << ", Type: " << bindDesc.Type
+    //                << ", BindPoint: " << bindDesc.BindPoint << "\n";
+    //        }
+    //    }
+    //}
 
 }
 
@@ -355,70 +334,244 @@ void Shader::SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command)
     command->SetPipelineState(_pipelineState.Get());
 }
 
-void Shader::Profile(std::wstring path, std::string startPoint)
+
+void Shader::Profile()
 {
-    std::ifstream shaderFile(path);
-    if (!shaderFile.is_open())
-        Debug::log << "쉐이더 분석 실패 : "<<path << " 열지 못함\n";
-    std::streamsize size = shaderFile.tellg();
-    shaderFile.seekg(0, std::ios::beg);
-    std::vector<std::string> shaderText;
-    shaderText.reserve(1024);
-
-    std::string str;
-    while(shaderFile >> str) {
-        shaderText.push_back(std::move(str));
-    }
-
+    for (auto& codePair : _shaderCodeTable)
     {
-        auto findStartIter = std::find_if(shaderText.begin(), shaderText.end(), [&](const std::string& line) {
-            return str::contains(line, startPoint);
-            });
-        if (findStartIter == shaderText.end())
-        {
-            Debug::log << "쉐이더 분석 실패 : " << path << " 진입점이 없음.\n";
-            return;
-        }
-        auto temp = str::split(*findStartIter, "(")[1];
-        str::trim(temp);
-        auto inputStruct = str::split(temp, " ")[0];
+        auto& code = codePair.second;
+        ComPtr<ID3D12ShaderReflection> pReflector = nullptr;
+        HRESULT hr = D3DReflect(code->_shaderByteCode.pShaderBytecode, code->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, reinterpret_cast<void**>(pReflector.GetAddressOf()));
 
+        if (DXSuccess(hr))
         {
-            auto findInputStructLineIter = std::find_if(shaderText.begin(), shaderText.end(), [&](const std::string& line) {
-                return str::contains(line, inputStruct) && str::contains(line, "struct");
-                });
-            if (findInputStructLineIter == shaderText.end())
-            {
-                Debug::log << "쉐이더 분석 실패 : " << path << " Struct가 없음.\n";
-                return;
-            }
-            ShaderCodeInfo codeInfo;
-            codeInfo._structData.emplace("vertexData", std::unordered_map<std::string, std::string>{});
-            while (true)
-            {
-                if (str::contains(*findInputStructLineIter, "}"))
-                    break;
+            D3D12_SHADER_DESC shaderDesc;
+            pReflector->GetDesc(&shaderDesc);
 
-                if (str::contains(*findInputStructLineIter, ":"))
+            ShaderProfileInfo::ShaderCBufferInfo cbufferInfo;
+            ShaderProfileInfo::ShaderCBufferPropertyInfo cbufferPropertyInfo;
+
+            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
+                ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
+                D3D12_SHADER_BUFFER_DESC bufferDesc;
+                pConstantBuffer->GetDesc(&bufferDesc);
+                if(bufferDesc.Type != D3D_CT_CBUFFER)
+                    continue;
+
+                cbufferInfo.name = std::string(bufferDesc.Name);
+                cbufferInfo.index = bufferDesc.Variables;
+                cbufferInfo.bufferByteSize = static_cast<int>(bufferDesc.Size);
+
+                for (UINT j = 0; j < bufferDesc.Variables; j++) {
+                    ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
+
+                    D3D12_SHADER_VARIABLE_DESC varDesc;
+                    pVar->GetDesc(&varDesc);
+                    ID3D12ShaderReflectionType* pType = pVar->GetType();
+                    D3D12_SHADER_TYPE_DESC typeDesc;
+                    pType->GetDesc(&typeDesc);
+                    
+                    switch (typeDesc.Class)
+                    {
+                    case D3D_SVC_SCALAR:
+                        cbufferPropertyInfo._className = "scalar";
+                        break;
+                    case D3D_SVC_VECTOR:
+                        cbufferPropertyInfo._className = "vector";
+                        break;
+                    case D3D_SVC_MATRIX_ROWS:
+                        cbufferPropertyInfo._className = "matrix";
+                        break;
+                    case D3D_SVC_MATRIX_COLUMNS:
+                        cbufferPropertyInfo._className = "matrix";
+                        break;
+                    case D3D_SVC_OBJECT:
+                        cbufferPropertyInfo._className = "object";
+                        break;
+                    case D3D_SVC_STRUCT:
+                        cbufferPropertyInfo._className = "struct";
+                        break;
+                    }
+                    cbufferPropertyInfo.elementType = "none";
+                    switch (typeDesc.Type)
+                    {
+                    case D3D_SVT_FLOAT:
+                        cbufferPropertyInfo.elementType = "float";
+                        break;
+                    case D3D_SVT_INT:
+                        cbufferPropertyInfo.elementType = "int";
+                        break;
+                    case D3D_SVT_UINT:
+                        cbufferPropertyInfo.elementType = "uint";
+                        break;
+                    }
+                    cbufferPropertyInfo.index = static_cast<int>(i);
+                    cbufferPropertyInfo._name = std::string(varDesc.Name);
+                    cbufferPropertyInfo.byteOffset = varDesc.StartOffset;
+                    cbufferPropertyInfo.byteSize = varDesc.Size;
+                    cbufferPropertyInfo.elementCount = static_cast<int>(typeDesc.Elements);
+                    cbufferPropertyInfo.rowCount = static_cast<int>(typeDesc.Rows);
+                    cbufferPropertyInfo.colCount = static_cast<int>(typeDesc.Columns);
+
+                    /*Debug::log << "  Variable " << j << ": " << varDesc.Name
+                        << ", StartOffset: " << varDesc.StartOffset
+                        << ", Size: " << varDesc.Size
+                        << ", type: " << cbufferPropertyInfo.elementType
+                        << ", class: " << cbufferPropertyInfo._className
+                        << ", row: " << typeDesc.Rows 
+                        << ", col: " << typeDesc.Columns
+                        << ", element: " << typeDesc.Elements << "\n";*/
+
+                    cbufferInfo.propertys.push_back(cbufferPropertyInfo);
+                }
+
+                //cbufferInfo.propertys.push_back();
+                
+                if (!_profileInfo._nameToCBufferTable.contains(cbufferInfo.name))
                 {
-                    auto contexts = str::split(*findInputStructLineIter, ":");
-                    auto leftContext = contexts[0];
-                    str::trim(leftContext);
-                    auto rightContext = contexts[1];
-                    str::trim(rightContext);
-                    auto names = str::split(leftContext, " ");
-                    auto name = names[names.size() - 1];
-                    auto type = names[names.size() - 2];
-                    auto attris = str::split(rightContext, ";");
-                    auto attri = attris[attris.size() - 1];
-                    str::trim(name);
-                    str::trim(type);
-                    str::trim(attri);
+                    _profileInfo._nameToCBufferTable.emplace(cbufferInfo.name, cbufferInfo);
+                    _profileInfo.cbuffers.push_back(cbufferInfo);
+                }
+                
+            }
 
 
+            ShaderProfileInfo::ShaderStructPropertyInfo structPropertyInfo;
+            if (!_profileInfo._typeToStructTable.contains(codePair.first))
+                _profileInfo._typeToStructTable.emplace(codePair.first, ShaderProfileInfo::ShaderStructInfo{});
+            _profileInfo._typeToStructTable[codePair.first].count = shaderDesc.InputParameters;
+
+            for (UINT i = 0; i < shaderDesc.InputParameters; i++) {
+
+                D3D12_SIGNATURE_PARAMETER_DESC desc;
+                pReflector->GetInputParameterDesc(i, &desc);
+
+                structPropertyInfo.elementType = "float";
+                switch (desc.ComponentType) {
+                case D3D_REGISTER_COMPONENT_UINT32:
+                    structPropertyInfo.elementType = "uint";
+                    break;
+                case D3D_REGISTER_COMPONENT_SINT32:
+                    structPropertyInfo.elementType = "int";
+                    break;
+                case D3D_REGISTER_COMPONENT_FLOAT32:
+                    structPropertyInfo.elementType = "float";
+                    break;
+                    break;
+                default:
+                    Debug::log << "Unknown" << "\n";
+                    break;
+                }
+                structPropertyInfo.elementTypeRange = 0;
+                for(int j=0;j<8;j++)
+                    structPropertyInfo.elementTypeRange += (desc.Mask & (1 << j)) ? 1 : 0;
+                structPropertyInfo.semantic = std::string(desc.SemanticName);
+                structPropertyInfo.semanticIndex = static_cast<int>(desc.SemanticIndex);
+                structPropertyInfo.registerIndex = static_cast<int>(desc.Register);
+
+                _profileInfo._typeToStructTable[codePair.first].propertys.push_back(structPropertyInfo);
+            }
+
+
+            ShaderProfileInfo::ShaderRegisterInfo registerInfo;
+
+            D3D12_SHADER_INPUT_BIND_DESC bindDesc;
+            for (UINT i = 0; i < shaderDesc.BoundResources; i++)
+            {
+                pReflector->GetResourceBindingDesc(i, &bindDesc);
+                registerInfo.registerIndex = static_cast<int>(bindDesc.BindPoint);
+                registerInfo.registerCount = static_cast<int>(bindDesc.BindCount);
+                registerInfo.name = std::string(bindDesc.Name);
+                registerInfo.elementType = "float";
+                switch (bindDesc.ReturnType) {
+                case D3D_RETURN_TYPE_UINT:
+                    registerInfo.elementType = "uint";
+                    break;
+                case D3D_RETURN_TYPE_SINT:
+                    registerInfo.elementType = "int";
+                    break;
+                case D3D_RETURN_TYPE_FLOAT:
+                    registerInfo.elementType = "float";
+                    break;
+                case D3D_RETURN_TYPE_UNORM:
+                    registerInfo.elementType = "float";
+                    break;
+                case 0:
+                    // SRV가 아닐경우
+                    break;
+                default:
+                    Debug::log << "Unknown Return Type: " << bindDesc.ReturnType << "\n";
+                    break;
+                }
+                registerInfo.space = static_cast<int>(bindDesc.Space);
+                registerInfo.numSample = static_cast<int>(bindDesc.NumSamples);
+                registerInfo.registerType = 'b';
+                switch (bindDesc.Type) {
+                case D3D_SIT_CBUFFER:
+                    registerInfo.registerType = 'b';
+                    break;
+                case D3D_SIT_BYTEADDRESS:
+                case D3D_SIT_STRUCTURED:
+                case D3D_SIT_TEXTURE:
+                case D3D_SIT_TBUFFER:
+                    registerInfo.registerType = 't';
+                    break;
+                case D3D_SIT_UAV_RWSTRUCTURED:
+                case D3D_SIT_UAV_RWBYTEADDRESS:
+                case D3D_SIT_UAV_APPEND_STRUCTURED:
+                case D3D_SIT_UAV_CONSUME_STRUCTURED:
+                case D3D_SIT_UAV_RWSTRUCTURED_WITH_COUNTER:
+                case D3D_SIT_UAV_RWTYPED:
+                    registerInfo.registerType = 'u';
+                    break;
+                case D3D_SIT_SAMPLER:
+                    registerInfo.registerType = 's';
+                    break;
+                default:
+                    Debug::log << "Unknown Type : " << bindDesc.Type << "\n";
+                    break;
+                }
+                registerInfo.bufferType = "none";
+                switch (bindDesc.Dimension) {
+                case D3D_SRV_DIMENSION_BUFFER:
+                    registerInfo.bufferType = "buffer";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE1D:
+                    registerInfo.bufferType = "texture1D";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE1DARRAY:
+                    registerInfo.bufferType = "texture1DArray";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE2D:
+                    registerInfo.bufferType = "texture2D";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE2DARRAY:
+                    registerInfo.bufferType = "texture2DArray";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE2DMS:
+                    registerInfo.bufferType = "texture2DMS";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE2DMSARRAY:
+                    registerInfo.bufferType = "texture2DMSArray";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURE3D:
+                    registerInfo.bufferType = "texture3D";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURECUBE:
+                    registerInfo.bufferType = "textureCube";
+                    break;
+                case D3D_SRV_DIMENSION_TEXTURECUBEARRAY:
+                    registerInfo.bufferType = "textureCubeArray";
+                    break;
+                }
+                
+
+                if (!_profileInfo._nameToRegisterTable.contains(registerInfo.name))
+                {
+                    _profileInfo._nameToRegisterTable.emplace(registerInfo.name, registerInfo);
+                    _profileInfo.registers.push_back(registerInfo);
                 }
             }
-            codeInfo._structData;
         }
     }
 }
@@ -435,9 +588,13 @@ std::shared_ptr<Shader> Shader::Load(std::wstring path)
     auto shader = std::make_shared<Shader>();
 
     auto shaderVS = Load(path, "VS_Main", "vs", shaderMacro);
-    shader->_shaderCodeTable.emplace(shaderVS->type, shaderVS);
     auto shaderPS = Load(path, "PS_Main", "ps", shaderMacro);
-    shader->_shaderCodeTable.emplace(shaderPS->type, shaderPS);
+
+    shader->_shaderCodeTable.emplace(shaderVS->shaderType, shaderVS);
+    shader->_shaderCodeTable.emplace(shaderPS->shaderType, shaderPS);
+
+    shader->Profile();
+
     return shader;
 }
 

@@ -92,7 +92,7 @@
 // The only purpose of this define is if you want force compilation of the stb_truetype backend ALONG with the FreeType backend.
 //#define IMGUI_ENABLE_STB_TRUETYPE
 
-//---- Define constructor and implicit cast operators to convert back<>forth between your math types and ImVec2/ImVec4.
+//---- Define constructor and implicit cast operators to convert back<>forth between your math elementTypes and ImVec2/ImVec4.
 // This will be inlined as part of ImVec2 and ImVec4 class declarations.
 /*
 #define IM_VEC2_CLASS_EXTRA                                                     \
@@ -130,6 +130,6 @@
 /*
 namespace ImGui
 {
-    void MyFunction(const char* name, MyMatrix44* mtx);
+    void MyFunction(const char* names, MyMatrix44* mtx);
 }
 */

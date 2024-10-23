@@ -2,12 +2,14 @@
 
 #include <stdafx.h>
 
+#include "CBufferTable.h"
 #include "GraphicSetting.h"
 #include "RenderTargetGroup.h"
 #include "RootSignature.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Vertex.h"
+
 
 namespace dxe
 {
@@ -73,8 +75,16 @@ namespace dxe
         D3D12_CPU_DESCRIPTOR_HANDLE TextureDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle = nullptr);
         void TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
 
-        public:
-            SelectorInfo vertexInfo{};
+    public://DescriptorHeap
+        int _cbufferDescriptorHeapCount = 0;
+        int _currentCbufferTableIndex = -1;
+        std::vector<std::shared_ptr<CBufferTable>> _cbufferTableList;
+        std::shared_ptr<CBufferTable> GetCurrentCBufferTable();
+
+
+
+    public:
+        SelectorInfo vertexInfo{};
 
     public:
         bool _isRelease = false;
@@ -91,12 +101,13 @@ namespace dxe
         void CreateFactory();
         void CreateDevice();
         void CreateFences();
-        void InitShader();
         void CreateRootSignature();
         void RefreshRenderTargetGroups();
         void CreateCommandQueueListAlloc();
         void CreateDescriptorHeap();
         void CreateTextureHeap();
+        void CreateCBufferHeap();
+        void InitShader();
 
         void RefreshSwapChain();
         void RefreshRequest();

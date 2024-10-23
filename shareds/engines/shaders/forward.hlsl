@@ -263,6 +263,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
    
         if (g_lights[i].mateiral.lightType == 0)
         {
+             input.worldNormal = normalize(mul(float4(input.worldNormal, 0.0f), WorldMatrix));
             color += ComputeDirectionalLight(g_lights[i], g_lights[i].mateiral, input.worldNormal, toEye);
             
             matrix shadowCameraVP = g_mat_0;

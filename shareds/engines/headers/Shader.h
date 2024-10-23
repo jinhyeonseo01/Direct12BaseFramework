@@ -45,14 +45,6 @@ namespace dxe
         Screen, // FinalColor = 1 - (1 - SrcColor) * (1 - DestColor)
     };
 
-    class ShaderCodeInfo
-    {
-    public:
-        std::string _VSStructName;
-        std::string _PSStructName;
-
-        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> _structData;
-    };
 
     class ShaderInfo
     {
@@ -74,20 +66,85 @@ namespace dxe
         uint8_t _blendTargetMask = 0b00000001;
         BlendType _blendType[8] = { BlendType::AlphaBlend };
 
-        /*
-        BlendType _blendType;
-        _src
-        _dst
-        */
-
         int _renderQueue = 2000;
         RenderQueueType _renderQueueType = RenderQueueType::Opaque;
+    };
+
+    class ShaderProfileInfo
+    {
+    public:
+        class ShaderStructPropertyInfo
+        {
+        public:
+            std::string elementType;
+            int elementTypeRange = 0;
+            std::string semantic;
+            int semanticIndex = 0;
+            int registerIndex = 0;
+        };
+        class ShaderStructInfo
+        {
+        public:
+            std::string name;
+            int count = 0;
+            std::vector<ShaderStructPropertyInfo> propertys;
+        };
+
+        class ShaderRegisterInfo
+        {
+        public:
+            std::string elementType;
+            std::string name;
+            int registerIndex = 0;
+            char registerType = 0;
+            int registerCount = 0;
+            std::string bufferType;
+            int space = 0;
+            int numSample = 0;
+        };
+        class ShaderCBufferPropertyInfo
+        {
+        public:
+            std::string _name;
+            std::string elementType;
+            std::string _className;
+
+            int elementCount = 0;
+            int byteOffset = 0;
+            int byteSize = 0;
+            int index = 0;
+            int rowCount = 0;
+            int colCount = 0;
+        };
+
+        class ShaderCBufferInfo
+        {
+        public:
+            std::string name;
+            int index;
+            int bufferByteSize = 0;
+            std::vector<ShaderCBufferPropertyInfo> propertys;
+        };
+
+        std::vector<ShaderRegisterInfo> registers;
+        std::vector<ShaderCBufferInfo> cbuffers;
+
+        //shader shaderType names ¥‹¿ß∑Œ
+        std::unordered_map<std::string, ShaderStructInfo> _typeToStructTable;
+        std::unordered_map<std::string, ShaderCBufferInfo> _nameToCBufferTable;
+        std::unordered_map<std::string, ShaderRegisterInfo> _nameToRegisterTable;
+
+        ShaderRegisterInfo GetRegisterByName(const std::string& name);
+        ShaderCBufferInfo GetCBufferByName(const std::string& name);
+
     };
 
     class ShaderCode
     {
     public:
-        std::string type;
+        std::string shaderType;
+        std::string endPointName;
+
         ComPtr<ID3DBlob> _blob;
         ComPtr<ID3DBlob> _errorBlob;
         std::vector<char> _shaderPrecompiledBuffer;
@@ -101,6 +158,7 @@ namespace dxe
 
         std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
         ShaderInfo _info;
+        ShaderProfileInfo _profileInfo;
     public:
 
         ComPtr<ID3D12PipelineState>			_pipelineState;
@@ -112,10 +170,10 @@ namespace dxe
         void Init();
         void SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command);
 
-        static void Profile(std::wstring path, std::string startPoint);
+        void Profile();
         static std::shared_ptr<Shader> Load(std::wstring path);
         static std::shared_ptr<ShaderCode> Load(
-            std::wstring path, std::string startPointName,
+            std::wstring path, std::string endPointName,
             std::string shaderVersion,
             std::vector<D3D_SHADER_MACRO>& shaderMacro);
     };
