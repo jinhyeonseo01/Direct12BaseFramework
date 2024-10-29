@@ -1,11 +1,40 @@
 
 
-cbuffer TransformParams : register(b2)
+
+cbuffer CameraParams : register(b0)
 {
-    row_major matrix WorldMatrix;
     row_major matrix ViewMatrix;
     row_major matrix ProjectionMatrix;
 };
+
+cbuffer ObjectParams : register(b4)
+{
+
+};
+
+//cbuffer BoneParams : register(b3)
+//{
+//    row_major matrix boneMatrix[256];
+//};
+
+cbuffer TransformParams : register(b2)
+{
+    row_major matrix WorldMatrix;
+};
+
+cbuffer DefaultMaterialParams : register(b1)
+{
+    float4 color3;
+};
+
+Texture2D test : register(t3);
+
+SamplerState sampler_normal : register(s0);
+SamplerState sampler_no_mip : register(s1);
+SamplerState sampler_aniso_4 : register(s2);
+SamplerState sampler_aniso_8 : register(s3);
+SamplerState sampler_aniso_16 : register(s4);
+
 
 struct VS_IN
 {
@@ -24,8 +53,6 @@ struct VS_OUT
     float2 uv : TEXCOORD;
 };
 
-Texture2D test : register(t3);
-SamplerState g_sam_0 : register(s0);
 
 VS_OUT VS_Main(VS_IN input, uint vertexID : SV_VertexID)
 {
@@ -37,15 +64,14 @@ VS_OUT VS_Main(VS_IN input, uint vertexID : SV_VertexID)
     //output.worldPos = input.pos;
 
     // 뷰 및 투영 변환 적용
-    //float4 viewPos = mul(worldPos, ViewMatrix);
-    //output.pos = mul(viewPos, ProjectionMatrix);
+    float4 viewPos = mul(worldPos, ViewMatrix);
 
     // 노멀 변환 (평행 이동 제외)
     //output.worldNormal = normalize(mul(float4(input.normal, 0.0f), WorldMatrix));
     
     output.uv = input.uv.xy;
     output.color = input.color;
-    output.pos = worldPos;
+    output.pos = mul(viewPos, ProjectionMatrix);
 
     return output;
 }
@@ -54,10 +80,10 @@ VS_OUT VS_Main(VS_IN input, uint vertexID : SV_VertexID)
 //[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 color = input.color;
+    float3 color2 = input.color;
 
-    float4 AlbedoColor = test.Sample(g_sam_0, input.uv);
+    float4 AlbedoColor = test.Sample(sampler_aniso_16, input.uv);
 
-    return float4(color, 1.0f) * pow(AlbedoColor, 1.0 / 2.2);
+    return float4(color2, 1.0f) * pow(AlbedoColor, 1.0 / 2.2) * color3;
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }

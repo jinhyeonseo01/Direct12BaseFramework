@@ -37,6 +37,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     if (state == ResourceState::DSV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+        desc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
+        desc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
         resourceStates = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
@@ -45,6 +47,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     else if (state == ResourceState::RTV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+        desc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
+        desc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
         resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;
         float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);

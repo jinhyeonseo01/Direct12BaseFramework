@@ -41,7 +41,7 @@ namespace dxe
 
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
-        int msaaLevel = 2;
+        int msaaLevel = 4;
 
         WindowType windowType = WindowType::Windows;
         FrameSync syncType = FrameSync::VSync;
@@ -55,7 +55,8 @@ namespace dxe
         
         int swapChain_BufferCount = 3;
 
-        int GetMSAALevel();
+        int GetMSAACount();
+        int GetMSAAQuality();
         BOOL GetMSAAActive();
 
     public:
@@ -68,11 +69,22 @@ namespace dxe
     };
 
 
+
     struct TransformParams
     {
         Matrix WorldMatrix = Matrix::Identity;
         Matrix ViewMatrix = Matrix::Identity;
         Matrix ProjectionMatrix = Matrix::Identity;
+    };
+    struct DefaultMaterialParams
+    {
+        Vector4 color;
+    };
+
+    struct CameraParams
+    {
+        Matrix viewMatrix = Matrix::Identity;
+        Matrix projectionMatrix = Matrix::Identity;
     };
 
 }

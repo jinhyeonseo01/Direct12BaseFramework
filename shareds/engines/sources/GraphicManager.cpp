@@ -17,36 +17,6 @@ void GraphicManager::SetHWnd(const HWND& hWnd)
     this->hWnd = hWnd;
 }
 
-uint32_t GraphicManager::TextureIndexAlloc()
-{
-    for (int i = 0; i < _textureDescriptorHeapAllocator.size(); ++i)
-    {
-        if (!_textureDescriptorHeapAllocator[i])
-        {
-            _textureDescriptorHeapAllocator[i] = true;
-            return i;
-        }
-    }
-    return -1;  // No available slots
-}
-D3D12_CPU_DESCRIPTOR_HANDLE GraphicManager::TextureDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle)
-{
-    unsigned int index = TextureIndexAlloc();
-    assert(index != -1);
-
-    CD3DX12_CPU_DESCRIPTOR_HANDLE DescriptorHandle(_textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), index, _textureDescriptorSize);
-    if(handle != nullptr)
-        *handle = DescriptorHandle;
-    return DescriptorHandle;
-}
-
-void GraphicManager::TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle)
-{
-    D3D12_CPU_DESCRIPTOR_HANDLE start = _textureDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    uint32_t index = (uint32_t)(handle.ptr - start.ptr) / _textureDescriptorSize;
-    assert(index >= 0);
-    _textureDescriptorHeapAllocator[index] = false;
-}
 
 std::shared_ptr<CBufferPool> GraphicManager::GetCurrentCBufferPool()
 {
@@ -88,7 +58,7 @@ void GraphicManager::Init()
     CreateSwapChain();
     CreateFences();
     CreateRootSignature();
-    CreateDescriptorHeap();
+    CreateDescriptors();
     // 여기까진 정적
 
     Refresh();
@@ -207,13 +177,8 @@ void GraphicManager::CreateSwapChain()
         swapChainDesc.Format = setting.screenFormat;
 
         //msaa rendering
-        swapChainDesc.SampleDesc.Count = 1;//아니면 이 안에서 더 작게
-        swapChainDesc.SampleDesc.Quality = 0;
-        if (setting.GetMSAAActive())
-        {
-            swapChainDesc.SampleDesc.Count = setting.GetMSAALevel();//아니면 이 안에서 더 작게
-            swapChainDesc.SampleDesc.Quality = 1;
-        }
+        swapChainDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
+        swapChainDesc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
 
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 해당 버퍼를 렌더타겟 용도로 쓰겠다
         swapChainDesc.BufferCount = setting.swapChain_BufferCount;
@@ -549,36 +514,21 @@ void GraphicManager::CreateCommandQueueListAlloc()
     }
 }
 
-void GraphicManager::CreateDescriptorHeap()
+void GraphicManager::CreateDescriptors()
 {
-    CreateTextureHeap();
-    CreateCBufferHeap();
+    CreateTextureHandlePool();
+    CreateCBufferPool();
+    CreateDescriptorTable();
 }
 
-void GraphicManager::CreateTextureHeap()
+void GraphicManager::CreateTextureHandlePool()
 {
-    _textureDescriptorHeapCount = 2048;
-    _textureDescriptorSize = _device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-    _textureDescriptorHeapAllocator.resize(_textureDescriptorHeapCount, false);
-
-    D3D12_DESCRIPTOR_HEAP_DESC SRV_HeapDesc = {};
-    SRV_HeapDesc.NumDescriptors = _textureDescriptorHeapCount;
-    SRV_HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    SRV_HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
-
-    DXAssert(_device->CreateDescriptorHeap(&SRV_HeapDesc, IID_PPV_ARGS(&_textureDescriptorHeap)));
+    _textureHandlePool = std::make_shared<ShaderResourcePool>();
+    _textureHandlePool->Init(4096);
 }
 
-void GraphicManager::CreateCBufferHeap()
+void GraphicManager::CreateCBufferPool()
 {
-    _descriptorTableList.resize(_commandLists.size());
-    for(int i=0;i< _descriptorTableList.size();i++)
-    {
-        _descriptorTableList[i] = std::make_shared<DescriptorTable>();
-        _descriptorTableList[i]->Init(_rootSignature->_ranges, 4096);
-    }
-
     _cbufferPoolList.resize(_commandLists.size());
     for(int i=0;i< _cbufferPoolList.size();i++)
     {
@@ -587,6 +537,17 @@ void GraphicManager::CreateCBufferHeap()
         _cbufferPoolList[i]->AddCBuffer("TransformParams", sizeof(TransformParams), 1024);
         _cbufferPoolList[i]->Init();
     }
+}
+
+void GraphicManager::CreateDescriptorTable()
+{
+    _descriptorTableList.resize(_commandLists.size());
+    for (int i = 0; i < _descriptorTableList.size(); i++)
+    {
+        _descriptorTableList[i] = std::make_shared<DescriptorTable>();
+        _descriptorTableList[i]->Init(_rootSignature->_ranges, 4096);
+    }
+
 }
 
 

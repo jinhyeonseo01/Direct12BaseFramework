@@ -14,7 +14,7 @@ Texture::Texture()
 Texture::~Texture()
 {
     if(_SRV_CPUHandle.ptr != 0)
-        GraphicManager::instance->TextureDescriptorHandleFree(_SRV_CPUHandle);
+        GraphicManager::instance->_textureHandlePool->HandleFree(_SRV_CPUHandle);
 }
 
 void Texture::SetState(ResourceState state)
@@ -200,7 +200,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     GraphicManager::instance->SetResource();
 
 
-    texture->_SRV_CPUHandle = GraphicManager::instance->TextureDescriptorHandleAlloc();
+    texture->_SRV_CPUHandle = GraphicManager::instance->_textureHandlePool->HandleAlloc();
     
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
     SRVDesc.Format = metadata.format;
@@ -253,7 +253,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         heapDesc.NumDescriptors = 1;
         heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
         heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_DSV_DescHeap)));
+        DXAssert(device->CreateDescriptors(&heapDesc, ComPtrIDAddr(_DSV_DescHeap)));
 
         D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle = _DSV_DescHeap->GetCPUDescriptorHandleForHeapStart();
 
@@ -275,7 +275,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         heapDesc.NumDescriptors = 1;
         heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
         heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_RTV_DescHeap)));
+        DXAssert(device->CreateDescriptors(&heapDesc, ComPtrIDAddr(_RTV_DescHeap)));
 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
         D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
@@ -289,7 +289,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
     }*/
     if (_state == ResourceState::RT_SRV || _state == ResourceState::SRV)
     {
-        GraphicManager::instance->TextureDescriptorHandleAlloc(&_SRV_CPUHandle);
+        _SRV_CPUHandle = GraphicManager::instance->_textureHandlePool->HandleAlloc();
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;

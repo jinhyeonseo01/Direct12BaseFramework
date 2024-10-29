@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "Vertex.h"
 #include "RenderTexture.h"
+#include "ShaderResourcePool.h"
 
 
 namespace dxe
@@ -67,15 +68,7 @@ namespace dxe
         std::unordered_map<int, std::shared_ptr<RenderTargetGroup>> _renderTargetGroupTable;
 
     public://DescriptorHeap
-        int _textureDescriptorSize = 0;
-        int _textureDescriptorHeapCount = 0;
-        int _textureDescriptorHeapIndex = 0;
-        std::vector<bool> _textureDescriptorHeapAllocator;
-        ComPtr<ID3D12DescriptorHeap> _textureDescriptorHeap;
-
-        uint32_t TextureIndexAlloc();
-        D3D12_CPU_DESCRIPTOR_HANDLE TextureDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle = nullptr);
-        void TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
+        std::shared_ptr<ShaderResourcePool> _textureHandlePool;
 
     public://DescriptorHeap
         int _currentCBufferPoolIndex = -1;
@@ -108,9 +101,10 @@ namespace dxe
         void CreateRootSignature();
         void RefreshRenderTargetGroups();
         void CreateCommandQueueListAlloc();
-        void CreateDescriptorHeap();
-        void CreateTextureHeap();
-        void CreateCBufferHeap();
+        void CreateDescriptors();
+        void CreateTextureHandlePool();
+        void CreateCBufferPool();
+        void CreateDescriptorTable();
         void InitShader();
 
         void RefreshSwapChain();

@@ -13,6 +13,7 @@
 #include <Scene.h>
 #include <SceneManager.h>
 #include <Vertex.h>
+#include <Input.h>
 
 #include "GraphicManager.h"
 

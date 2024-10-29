@@ -21,10 +21,14 @@ public:
     int _groupHandleCount = 0;
 
     std::unordered_map<std::string, int> _registerToHandleOffsetTable;
+    std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _recycleHandleTable;
 
     ComPtr<ID3D12DescriptorHeap> _descriptorHeap;
+    ComPtr<ID3D12DescriptorHeap> _tempDescriptorHeap;
 
+    void AddRecycleHandle(std::string registerName, const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
     void SetCurrentGroupHandle(std::shared_ptr<Shader> shader, std::string registerName, const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
+    void RecycleCurrentGroupHandle(std::shared_ptr<Shader> shader, std::string registerName);
     void SetCPUHandle(int groupIndex, int offsetIndex, const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
     D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(int groupIndex, int offsetIndex);
     D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(int groupIndex, int offsetIndex);

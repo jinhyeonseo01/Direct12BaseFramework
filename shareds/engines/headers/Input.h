@@ -24,6 +24,10 @@ namespace dxe
 
 	class Input
 	{
+	public:
+        static Input* main;
+        Input();
+        virtual ~Input();
 	protected:
 		static const int _maxInputKeyField = 2048;
 		static const int _maxInputMouseField = 1100;

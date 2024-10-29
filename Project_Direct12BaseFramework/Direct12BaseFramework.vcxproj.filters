@@ -198,9 +198,6 @@
     <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\RenderTarget.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\shareds\constants\headers\strutil.h">
       <Filter>Constant\Headers</Filter>
     </ClInclude>
@@ -226,6 +223,9 @@
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\Material.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\ShaderResourcePool.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -368,9 +368,6 @@
     <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\RenderTarget.cpp">
-      <Filter>Engine\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\RootSignature.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
@@ -393,6 +390,9 @@
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\DescriptorTable.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\ShaderResourcePool.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,6 +5,7 @@
 #include <stdafx.h>
 #include <DXEngine.h>
 
+#include "Camera.h"
 #include "MeshRenderer.h"
 
 
@@ -39,12 +40,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
 
         {
-            auto scene = SceneManager::CreateScene(L"Test Scene")->MakeInit<Scene>();
-            auto obj1 = scene->CreateGameObject(L"Render Test")->MakeInit<GameObject>();
+            auto scene = SceneManager::CreateScene(L"Test Scene");
 
+            auto cameraObj = scene->CreateGameObject(L"Camera");
+            cameraObj->transform->worldPosition(Vector3(0, 0, -0.5f));
+            cameraObj->AddComponent<Camera>();
 
+            auto obj1 = scene->CreateGameObject(L"Render Test");
             obj1->transform->worldPosition(Vector3(0.5f, 0, 0.1f));
-            auto meshRender = obj1->AddComponent<MeshRenderer>()->MakeInit<MeshRenderer>();
+            obj1->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, 45, 0) * D2R);
+            auto meshRender = obj1->AddComponent<MeshRenderer>();
         }
 
         while (!dxe::Engine::GetEngineList().empty())

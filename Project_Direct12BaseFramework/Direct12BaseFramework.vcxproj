@@ -190,7 +190,6 @@
     <ClInclude Include="..\shareds\engines\headers\MeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\Model.h" />
     <ClInclude Include="..\shareds\engines\headers\RendererComponent.h" />
-    <ClInclude Include="..\shareds\engines\headers\RenderTarget.h" />
     <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h" />
     <ClInclude Include="..\shareds\engines\headers\RenderTexture.h" />
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
@@ -198,6 +197,7 @@
     <ClInclude Include="..\shareds\engines\headers\Scene.h" />
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h" />
     <ClInclude Include="..\shareds\engines\headers\Shader.h" />
+    <ClInclude Include="..\shareds\engines\headers\ShaderResourcePool.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
     <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\SoundManager.h" />
@@ -247,7 +247,6 @@
     <ClCompile Include="..\shareds\engines\sources\MeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Model.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp" />
-    <ClCompile Include="..\shareds\engines\sources\RenderTarget.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RenderTexture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
@@ -255,6 +254,7 @@
     <ClCompile Include="..\shareds\engines\sources\Scene.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Shader.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\ShaderResourcePool.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp" />

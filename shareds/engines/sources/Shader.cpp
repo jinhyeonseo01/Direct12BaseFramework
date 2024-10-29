@@ -138,12 +138,8 @@ void Shader::Init()
     _pipelineDesc.RTVFormats[0] = GraphicManager::instance->setting.screenFormat;
     _pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     _pipelineDesc.SampleMask = UINT_MAX;
-
-    _pipelineDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAALevel();
-    //_pipelineDesc.SampleDesc.Count = 1;
-    //_pipelineDesc.SampleDesc.Quality = (GraphicManager::instance->setting.GetMSAAActive() ? 1 : 0);
-    _pipelineDesc.SampleDesc.Quality = 0;
-
+    _pipelineDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
+    _pipelineDesc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
     _pipelineDesc.DSVFormat = GraphicManager::instance->setting.depthStencilFormat;
     //_pipelineDesc.
 

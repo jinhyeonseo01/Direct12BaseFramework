@@ -49,8 +49,12 @@ void CBufferPool::AddCBuffer(std::string name, int size, int count)
     _cbufferIndexTable.emplace(name, 0);
 }
 
-CBufferView CBufferPool::PopCBuffer(std::string name)
+CBufferView CBufferPool::PopCBuffer(std::string name, int size, int count)
 {
+    if(!_cbufferTable.contains(name))
+    {
+        AddCBuffer(name, size, count);
+    }
     auto view = _cbufferTable[name]->GetView(_cbufferIndexTable[name]);
     _cbufferIndexTable[name] += 1;
     return view;

@@ -1,5 +1,11 @@
 #include "Camera.h"
 
+#include "DXEngine.h"
+#include "GameObject.h"
+#include "GraphicManager.h"
+#include "GraphicSetting.h"
+#include "Transform.h"
+
 
 Camera::Camera()
 {
@@ -42,6 +48,11 @@ void Camera::Start()
 void Camera::Update()
 {
     Component::Update();
+    auto r = gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0));
+    r += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
+
+    r.Normalize(r);
+    gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + r * 0.01f);
 }
 
 void Camera::LateUpdate()
@@ -67,4 +78,35 @@ void Camera::OnDestroy()
 void Camera::OnComponentDestroy()
 {
     Component::OnComponentDestroy();
+}
+
+void Camera::Destroy()
+{
+    Component::Destroy();
+}
+
+void Camera::BeforeRendering()
+{
+    Component::BeforeRendering();
+    _aspect = GraphicManager::instance->setting.screenInfo.width / GraphicManager::instance->setting.screenInfo.height;
+
+    cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(_fovy*D2R, _aspect, _near, _far);
+    cameraInfo.viewMatrix = XMMatrixLookToLH(gameObject.lock()->transform->worldPosition(),
+        gameObject.lock()->transform->forward(),
+        gameObject.lock()->transform->up());
+    
+    auto cameraBuffer = GraphicManager::instance->GetCurrentCBufferPool()->PopCBuffer("CameraParams", sizeof(CameraParams), 1);
+    cameraBuffer.SetData(&cameraInfo, sizeof(CameraParams));
+    
+    GraphicManager::instance->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
+}
+
+void Camera::Rendering()
+{
+    Component::Rendering();
+}
+
+void Camera::AfterRendering()
+{
+    Component::AfterRendering();
 }

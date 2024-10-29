@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "GraphicSetting.h"
 
 namespace dxe
 {
@@ -15,11 +16,7 @@ namespace dxe
         float _fovy = 60.0f;
         float _aspect = 1;
 
-        Matrix _projection;
-        void A()
-        {
-            Matrix::CreatePerspectiveFieldOfView(_fovy, _aspect, _near, _far);
-        }
+        CameraParams cameraInfo;
 
     public:
 
@@ -33,6 +30,10 @@ namespace dxe
         void OnDisable() override;
         void OnDestroy() override;
         void OnComponentDestroy() override;
+        void Destroy() override;
+        void BeforeRendering() override;
+        void Rendering() override;
+        void AfterRendering() override;
     };
 }
 

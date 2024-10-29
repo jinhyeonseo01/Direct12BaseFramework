@@ -37,7 +37,8 @@ void MeshRenderer::Init()
     material->shader = GraphicManager::instance->shaderList[0];
 
     texture = Texture::Load(L"test.png", true);
-    material->_propertyTextures.emplace("test", texture);
+    material->SetData("test", texture);
+    material->SetData("color", Vector4(0, 0, 1, 1));
     materials.push_back(material);
 
     mesh = std::make_shared<Mesh>();
@@ -143,10 +144,20 @@ void MeshRenderer::Rendering()
         cbuffer.SetData(&data, sizeof(data));
         table->SetCurrentGroupHandle(material->shader.lock(), "TransformParams", cbuffer.handle);
 
-        table->SetCurrentGroupHandle(material->shader.lock(), "test", material->_propertyTextures["test"].lock()->GetSRVHandle());
+
+        auto cbuffer2 = pool->PopCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams));
+        DefaultMaterialParams data2;
+        material->SetTextureDatas(table, material->shader.lock());
+        material->GetData("color", data2.color);
+
+        cbuffer2.SetData(&data2, sizeof(data2));
+        table->SetCurrentGroupHandle(material->shader.lock(), "DefaultMaterialParams", cbuffer2.handle);
+
+        GraphicManager::instance->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
 
         auto a = table->GetCurrentGroupGPUHandle(0);
         list->SetGraphicsRootDescriptorTable(1, a);
+
 
         list->DrawIndexedInstanced(mesh->indexCount, 1, 0, 0, 0);
         //list->DrawInstanced(mesh->vertexCount, 1, 0, 0);

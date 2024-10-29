@@ -14,6 +14,7 @@ public:
     int _cbufferDescriptorSize = 0;
     int _cbufferDescriptorHeapCount = 0;
     int _cbufferDescriptorHeapNextIndex = 0;
+    int _cbufferDefaultSize = 64;
 
     //std::vector<bool> _cbufferDescriptorHeapAllocator;
     //ComPtr<ID3D12DescriptorHeap> _cbufferDescriptorHeap;
@@ -30,7 +31,7 @@ public:
     static void CBufferRegister(ShaderCBufferInfo& cbufferInfo, int count);
     void AddCBuffer(std::string name, std::shared_ptr<CBuffer> cbuffer);
     void AddCBuffer(std::string name, int size, int count);
-    CBufferView PopCBuffer(std::string name);
+    CBufferView PopCBuffer(std::string name, int size = 128, int count = 64);
     void Init();
     void Reset();
 
