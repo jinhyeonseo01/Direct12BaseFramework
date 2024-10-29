@@ -111,4 +111,16 @@ namespace dxe
 	{
 		
 	}
+
+    void Component::BeforeRendering()
+    {
+    }
+
+    void Component::Rendering()
+    {
+    }
+
+    void Component::AfterRendering()
+    {
+    }
 }

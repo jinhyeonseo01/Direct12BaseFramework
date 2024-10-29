@@ -6,9 +6,9 @@
 
 namespace dxe
 {
-	std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable;
-	std::unordered_map<std::wstring, std::wstring> EObject::_CloneGuidTable;
-    std::vector<std::shared_ptr<EObject>> EObject::_TempLifeCycle;
+	std::unordered_map<std::wstring, std::weak_ptr<EObject>> EObject::_EObjectTable{};
+	std::unordered_map<std::wstring, std::wstring> EObject::_CloneGuidTable{};
+    std::vector<std::shared_ptr<EObject>> EObject::_TempLifeCycle{};
 
 
 	EObject::EObject()

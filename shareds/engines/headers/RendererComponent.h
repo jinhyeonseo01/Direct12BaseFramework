@@ -7,7 +7,7 @@ namespace dxe
     {
     public:
         RendererComponent();
-        virtual ~RendererComponent();
+        virtual ~RendererComponent() override;
         void* Clone() override;
         void ReRef() override;
         void Destroy() override;
@@ -19,6 +19,9 @@ namespace dxe
         void OnDisable() override;
         void OnDestroy() override;
         void OnComponentDestroy() override;
+        void BeforeRendering() override;
+        void Rendering() override;
+        void AfterRendering() override;
     };
 }
 

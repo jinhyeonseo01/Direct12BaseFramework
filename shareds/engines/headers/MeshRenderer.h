@@ -1,4 +1,6 @@
 #pragma once
+#include "stdafx.h"
+#include "Material.h"
 #include "RendererComponent.h"
 
 namespace dxe
@@ -6,7 +8,8 @@ namespace dxe
     class MeshRenderer : public dxe::RendererComponent
     {
     public:
-        ~MeshRenderer() override;
+        MeshRenderer();
+        virtual ~MeshRenderer() override;
         void* Clone() override;
         void ReRef() override;
         void Destroy() override;
@@ -18,6 +21,14 @@ namespace dxe
         void OnDisable() override;
         void OnDestroy() override;
         void OnComponentDestroy() override;
+        void BeforeRendering() override;
+        void Rendering() override;
+        void AfterRendering() override;
+
+    public:
+        std::vector<std::shared_ptr<Material>> materials;
+        std::shared_ptr<Mesh> mesh;
+        std::shared_ptr<Texture> texture;
     };
 }
 

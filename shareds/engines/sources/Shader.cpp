@@ -71,14 +71,14 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
     return shaderCode;
 }
 
-ShaderProfileInfo::ShaderRegisterInfo ShaderProfileInfo::GetRegisterByName(const std::string& name)
+ShaderRegisterInfo ShaderProfileInfo::GetRegisterByName(const std::string& name)
 {
     if (_nameToRegisterTable.contains(name))
         return _nameToRegisterTable[name];
-    return ShaderProfileInfo::ShaderRegisterInfo{};
+    return ShaderRegisterInfo{};
 }
 
-ShaderProfileInfo::ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
+ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
 {
     if (_nameToCBufferTable.contains(name))
         return _nameToCBufferTable[name];
@@ -90,18 +90,26 @@ std::shared_ptr<RootSignature> Shader::GetRootSignature()
     return  _rootSignature;
 }
 
+
 void Shader::Init()
 {
     auto device = GraphicManager::instance->_device;
 
-    auto vertexSetInfo = GraphicManager::instance->vertexInfo;
-    _inputElementDesc.resize(GraphicManager::instance->vertexInfo.propCount);
-    
-    for(int i=0;i< _inputElementDesc.size();i++)
+    _pipelineDesc = {};
+
+    auto vertexSetInfo = GraphicManager::instance->vertexInfo_Full;
+    _inputElementDesc.resize(GraphicManager::instance->vertexInfo_Full.propCount);
+
+    for (int i = 0; i < _inputElementDesc.size(); i++)
     {
-        D3D12_INPUT_ELEMENT_DESC elementDesc;
+        D3D12_INPUT_ELEMENT_DESC elementDesc = {};
+        //char* c = new char[strlen(PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str()) + 1];
+        //std::memcpy(c, PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str(), strlen(PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str()) + 1);
+        //elementDesc.SemanticName = c;
+        std::string name = PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str();
         elementDesc.SemanticName = PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str();
-        elementDesc.SemanticIndex = 0;
+        elementDesc.SemanticIndex = vertexSetInfo.propInfos[i].index;
+        elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
         switch (vertexSetInfo.propInfos[i].size) {
         case 1: elementDesc.Format = DXGI_FORMAT_R32_FLOAT; break;
         case 2: elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT; break;
@@ -113,11 +121,10 @@ void Shader::Init()
         elementDesc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
         elementDesc.InstanceDataStepRate = 0;
         _inputElementDesc[i] = elementDesc;
+
     }
+
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-#if _DEBUG
-    _pipelineDesc.Flags |= D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
-#endif
 
     //_rootSignature = std::make_shared<RootSignature>();
     //_rootSignature->Init();
@@ -125,14 +132,17 @@ void Shader::Init()
 
     _pipelineDesc.pRootSignature = GraphicManager::instance->_rootSignature->_rootSignature.Get();
 
-    _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size())};
+    _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size()) };
 
     _pipelineDesc.NumRenderTargets = 1;
     _pipelineDesc.RTVFormats[0] = GraphicManager::instance->setting.screenFormat;
     _pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    
+    _pipelineDesc.SampleMask = UINT_MAX;
+
     _pipelineDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAALevel();
-    _pipelineDesc.SampleDesc.Quality = (GraphicManager::instance->setting.GetMSAAActive() ? 1 : 0);
+    //_pipelineDesc.SampleDesc.Count = 1;
+    //_pipelineDesc.SampleDesc.Quality = (GraphicManager::instance->setting.GetMSAAActive() ? 1 : 0);
+    _pipelineDesc.SampleDesc.Quality = 0;
 
     _pipelineDesc.DSVFormat = GraphicManager::instance->setting.depthStencilFormat;
     //_pipelineDesc.
@@ -141,8 +151,11 @@ void Shader::Init()
 
     //_pipelineState->
 
-    CD3DX12_RASTERIZER_DESC2 resterizerDesc {D3D12_DEFAULT};
+    //CD3DX12_RASTERIZER_DESC2 resterizerDesc {D3D12_DEFAULT};
+    CD3DX12_RASTERIZER_DESC resterizerDesc{ D3D12_DEFAULT };
 
+    resterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+    resterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
     switch (_info.cullingType)
     {
     case CullingType::BACK:
@@ -175,7 +188,8 @@ void Shader::Init()
 
     CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
     depthStencilDesc.DepthEnable = _info._zTest ? TRUE : FALSE;
-    switch(_info._zComp)
+    depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+    switch (_info._zComp)
     {
     case CompOper::Always: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS; break;
     case CompOper::Less: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
@@ -187,7 +201,7 @@ void Shader::Init()
     case CompOper::Never: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NEVER; break;
     default: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
     }
-    depthStencilDesc.DepthWriteMask = _info._zWrite ? D3D12_DEPTH_WRITE_MASK_ZERO : D3D12_DEPTH_WRITE_MASK_ALL;
+    depthStencilDesc.DepthWriteMask = _info._zWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 
 
     depthStencilDesc.StencilEnable = _info._stencilTest ? TRUE : FALSE;
@@ -197,6 +211,7 @@ void Shader::Init()
     depthStencilDesc.FrontFace.StencilFailOp = _info._stencilFailOp;
     depthStencilDesc.FrontFace.StencilDepthFailOp = _info._stencilDepthFailOp;
     depthStencilDesc.FrontFace.StencilPassOp = _info._stencilPassOp;
+    depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
     switch (_info._stencilComp)
     {
     case CompOper::Always: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS; break;
@@ -214,120 +229,91 @@ void Shader::Init()
 
     _pipelineDesc.DepthStencilState = depthStencilDesc;
 
-    for(int i=0;i<8;i++)
+    _pipelineDesc.BlendState.AlphaToCoverageEnable = FALSE; // 필요에 따라 TRUE로 설정
+    _pipelineDesc.BlendState.IndependentBlendEnable = TRUE; // 여러 렌더 타겟에 대해 다른 블렌딩 설정을 원할 경우 TRUE로 설정
+
+
+
+    for (int i = 0; i < 8; i++)
     {
-        if((_info._blendTargetMask & (1 << i)) != 0)
+        D3D12_RENDER_TARGET_BLEND_DESC& blendDesc = _pipelineDesc.BlendState.RenderTarget[i];
+        blendDesc.BlendEnable = FALSE;
+        blendDesc.LogicOpEnable = FALSE;
+        blendDesc.SrcBlend = D3D12_BLEND_ONE;
+        blendDesc.DestBlend = D3D12_BLEND_ZERO;
+
+        blendDesc.BlendEnable = _info._renderQueueType == RenderQueueType::Transparent ? TRUE : FALSE;
+        blendDesc.LogicOpEnable = FALSE;
+        blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+        if (blendDesc.BlendEnable)
         {
-            D3D12_RENDER_TARGET_BLEND_DESC& blendDesc = _pipelineDesc.BlendState.RenderTarget[i];
-            blendDesc.BlendEnable = _info._renderQueueType == RenderQueueType::Transparent;
-            blendDesc.LogicOpEnable = FALSE;
-            if (blendDesc.BlendEnable)
+            switch (_info._blendType[i])
             {
-                switch (_info._blendType[i])
-                {
-                case BlendType::AlphaBlend:
-                    blendDesc.BlendEnable = TRUE;
-                    blendDesc.LogicOpEnable = FALSE;
-                    blendDesc.LogicOp = D3D12_LOGIC_OP_COPY;
-                    blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-                    blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
-                    break;
-                case BlendType::Add:
-                    blendDesc.BlendEnable = TRUE;
-                    blendDesc.LogicOpEnable = FALSE;
-                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
-                    blendDesc.DestBlend = D3D12_BLEND_ONE;
-                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
-                    break;
-                case BlendType::Multiple:
-                    blendDesc.BlendEnable = TRUE;
-                    blendDesc.LogicOpEnable = FALSE;
-                    blendDesc.SrcBlend = D3D12_BLEND_DEST_COLOR;
-                    blendDesc.DestBlend = D3D12_BLEND_ZERO;
-                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
-                    break;
-                case BlendType::ColorDodge:
-                    blendDesc.BlendEnable = TRUE;
-                    blendDesc.LogicOpEnable = FALSE;
-                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
-                    blendDesc.DestBlend = D3D12_BLEND_INV_SRC_COLOR;
-                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
-                    break;
-                case BlendType::Subtract:
-                    blendDesc.BlendEnable = TRUE;
-                    blendDesc.LogicOpEnable = FALSE;
-                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
-                    blendDesc.DestBlend = D3D12_BLEND_ONE;
-                    blendDesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
-                    break;
-                case BlendType::Screen:
-                    blendDesc.BlendEnable = TRUE;
-                    blendDesc.LogicOpEnable = FALSE;
-                    blendDesc.SrcBlend = D3D12_BLEND_ONE;
-                    blendDesc.DestBlend = D3D12_BLEND_INV_DEST_COLOR;
-                    blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
-                    break;
-                }
-            }
-            else
-            {
-                blendDesc.BlendEnable = FALSE;
+            case BlendType::AlphaBlend:
+                blendDesc.BlendEnable = TRUE;
                 blendDesc.LogicOpEnable = FALSE;
                 blendDesc.LogicOp = D3D12_LOGIC_OP_COPY;
+                blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+                blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+                blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                break;
+            case BlendType::Add:
+                blendDesc.BlendEnable = TRUE;
+                blendDesc.LogicOpEnable = FALSE;
                 blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                blendDesc.DestBlend = D3D12_BLEND_ONE;
+                blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                break;
+            case BlendType::Multiple:
+                blendDesc.BlendEnable = TRUE;
+                blendDesc.LogicOpEnable = FALSE;
+                blendDesc.SrcBlend = D3D12_BLEND_DEST_COLOR;
                 blendDesc.DestBlend = D3D12_BLEND_ZERO;
+                blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                break;
+            case BlendType::ColorDodge:
+                blendDesc.BlendEnable = TRUE;
+                blendDesc.LogicOpEnable = FALSE;
+                blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                blendDesc.DestBlend = D3D12_BLEND_INV_SRC_COLOR;
+                blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                break;
+            case BlendType::Subtract:
+                blendDesc.BlendEnable = TRUE;
+                blendDesc.LogicOpEnable = FALSE;
+                blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                blendDesc.DestBlend = D3D12_BLEND_ONE;
+                blendDesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+                break;
+            case BlendType::Screen:
+                blendDesc.BlendEnable = TRUE;
+                blendDesc.LogicOpEnable = FALSE;
+                blendDesc.SrcBlend = D3D12_BLEND_ONE;
+                blendDesc.DestBlend = D3D12_BLEND_INV_DEST_COLOR;
+                blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                break;
             }
+        }
+        else
+        {
+            blendDesc.BlendEnable = FALSE;
+            blendDesc.LogicOpEnable = FALSE;
+            blendDesc.LogicOp = D3D12_LOGIC_OP_COPY;
+            blendDesc.SrcBlend = D3D12_BLEND_ONE;
+            blendDesc.DestBlend = D3D12_BLEND_ZERO;
         }
     }
 
     _pipelineDesc.VS = _shaderCodeTable["vs"]->_shaderByteCode;
     _pipelineDesc.PS = _shaderCodeTable["ps"]->_shaderByteCode;
 
-    device->CreateGraphicsPipelineState(&_pipelineDesc, ComPtrIDAddr(_pipelineState));
+    DXAssert(device->CreateGraphicsPipelineState(&_pipelineDesc, ComPtrIDAddr(_pipelineState)));
 
     Debug::log << "쉐이더 생성 완료\n";
 
-
-    //{
-    //    ID3D12ShaderReflection* pReflector = nullptr;
-    //    HRESULT hr = D3DReflect(_shaderCodeTable["vs"]->_shaderByteCode.pShaderBytecode, _shaderCodeTable["vs"]->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, (void**)&pReflector);
-
-    //    if (SUCCEEDED(hr)) {
-    //        D3D12_SHADER_DESC shaderDesc;
-    //        pReflector->GetDesc(&shaderDesc);
-    //        Debug::log << "Number of constant buffers: " << shaderDesc.ConstantBuffers << "\n";
-    //        // 상수 버퍼(CB)의 레지스터 정보를 읽어오기
-    //        for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
-    //            ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
-    //            D3D12_SHADER_BUFFER_DESC bufferDesc;
-    //            pConstantBuffer->GetDesc(&bufferDesc);
-    //            Debug::log << "Constant Buffer " << i << ": " << bufferDesc.Name
-    //                << ", Variables: " << bufferDesc.Variables
-    //                << ", Size: " << bufferDesc.Size << "\n";
-
-    //            for (UINT j = 0; j < bufferDesc.Variables; j++) {
-    //                ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
-    //                D3D12_SHADER_VARIABLE_DESC varDesc;
-    //                pVar->GetDesc(&varDesc);
-    //                Debug::log << "  Variable " << j << ": " << varDesc.Name
-    //                    << ", StartOffset: " << varDesc.StartOffset
-    //                    << ", Size: " << varDesc.Size << "\n";
-    //            }
-    //        }
-
-
-    //        for (UINT i = 0; i < shaderDesc.BoundResources; i++) {
-    //            D3D12_SHADER_INPUT_BIND_DESC bindDesc;
-    //            pReflector->GetResourceBindingDesc(i, &bindDesc);
-    //            Debug::log << "Resource " << i << ": " << bindDesc.Name
-    //                << ", Type: " << bindDesc.Type
-    //                << ", BindPoint: " << bindDesc.BindPoint << "\n";
-    //        }
-    //    }
-    //}
-
 }
+
 
 void Shader::SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command)
 {
@@ -348,8 +334,8 @@ void Shader::Profile()
             D3D12_SHADER_DESC shaderDesc;
             pReflector->GetDesc(&shaderDesc);
 
-            ShaderProfileInfo::ShaderCBufferInfo cbufferInfo;
-            ShaderProfileInfo::ShaderCBufferPropertyInfo cbufferPropertyInfo;
+            ShaderCBufferInfo cbufferInfo;
+            ShaderCBufferPropertyInfo cbufferPropertyInfo;
 
             for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
                 ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
@@ -413,15 +399,6 @@ void Shader::Profile()
                     cbufferPropertyInfo.rowCount = static_cast<int>(typeDesc.Rows);
                     cbufferPropertyInfo.colCount = static_cast<int>(typeDesc.Columns);
 
-                    /*Debug::log << "  Variable " << j << ": " << varDesc.Name
-                        << ", StartOffset: " << varDesc.StartOffset
-                        << ", Size: " << varDesc.Size
-                        << ", type: " << cbufferPropertyInfo.elementType
-                        << ", class: " << cbufferPropertyInfo._className
-                        << ", row: " << typeDesc.Rows 
-                        << ", col: " << typeDesc.Columns
-                        << ", element: " << typeDesc.Elements << "\n";*/
-
                     cbufferInfo.propertys.push_back(cbufferPropertyInfo);
                 }
 
@@ -431,14 +408,15 @@ void Shader::Profile()
                 {
                     _profileInfo._nameToCBufferTable.emplace(cbufferInfo.name, cbufferInfo);
                     _profileInfo.cbuffers.push_back(cbufferInfo);
+                    CBufferPool::CBufferRegister(cbufferInfo, 1);
                 }
                 
             }
 
 
-            ShaderProfileInfo::ShaderStructPropertyInfo structPropertyInfo;
+            ShaderStructPropertyInfo structPropertyInfo;
             if (!_profileInfo._typeToStructTable.contains(codePair.first))
-                _profileInfo._typeToStructTable.emplace(codePair.first, ShaderProfileInfo::ShaderStructInfo{});
+                _profileInfo._typeToStructTable.emplace(codePair.first, ShaderStructInfo{});
             _profileInfo._typeToStructTable[codePair.first].count = shaderDesc.InputParameters;
 
             for (UINT i = 0; i < shaderDesc.InputParameters; i++) {
@@ -473,7 +451,7 @@ void Shader::Profile()
             }
 
 
-            ShaderProfileInfo::ShaderRegisterInfo registerInfo;
+            ShaderRegisterInfo registerInfo;
 
             D3D12_SHADER_INPUT_BIND_DESC bindDesc;
             for (UINT i = 0; i < shaderDesc.BoundResources; i++)
@@ -564,7 +542,8 @@ void Shader::Profile()
                     registerInfo.bufferType = "textureCubeArray";
                     break;
                 }
-                
+                registerInfo.registerTypeString = registerInfo.registerType + std::to_string(registerInfo.registerIndex);
+                str::trim(registerInfo.registerTypeString);
 
                 if (!_profileInfo._nameToRegisterTable.contains(registerInfo.name))
                 {

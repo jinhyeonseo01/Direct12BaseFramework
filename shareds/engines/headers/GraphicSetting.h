@@ -4,6 +4,16 @@
 
 namespace dxe
 {
+
+    enum class ResourceState
+    {
+        RTV,
+        DSV,
+        SRV,
+        RT_SRV,
+    };
+
+
     enum class AAType
     {
         MSAA,
@@ -38,15 +48,12 @@ namespace dxe
         Viewport screenInfo = Viewport(0,0,1920,1080);
         DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
         DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+        //DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 
     public:
         
-        int swapChain_BufferCount = 2;
-        int CBV_REGISTER_COUNT = 5;
-        int SRV_REGISTER_COUNT = 5;
-        int REGISTER_COUNT = 10; // 위에 두개 합친거
-        
+        int swapChain_BufferCount = 3;
 
         int GetMSAALevel();
         BOOL GetMSAAActive();
@@ -59,5 +66,14 @@ namespace dxe
         long long int maxGPUMemory = 0;
         std::wstring GPUAdapterName;
     };
+
+
+    struct TransformParams
+    {
+        Matrix WorldMatrix = Matrix::Identity;
+        Matrix ViewMatrix = Matrix::Identity;
+        Matrix ProjectionMatrix = Matrix::Identity;
+    };
+
 }
 

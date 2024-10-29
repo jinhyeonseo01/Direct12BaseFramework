@@ -2,13 +2,15 @@
 
 #include <stdafx.h>
 
-#include "CBufferTable.h"
+#include "CBufferPool.h"
+#include "DescriptorTable.h"
 #include "GraphicSetting.h"
 #include "RenderTargetGroup.h"
 #include "RootSignature.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Vertex.h"
+#include "RenderTexture.h"
 
 
 namespace dxe
@@ -59,7 +61,7 @@ namespace dxe
 
     public:
         std::vector<ComPtr<ID3D12Resource>> _swapChainBuffers_Res;
-        std::vector<std::shared_ptr<Texture>> _swapChainRT;
+        std::vector<std::shared_ptr<RenderTexture>> _swapChainRT;
         int _swapChainIndex = 0;
 
         std::unordered_map<int, std::shared_ptr<RenderTargetGroup>> _renderTargetGroupTable;
@@ -76,15 +78,17 @@ namespace dxe
         void TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
 
     public://DescriptorHeap
-        int _cbufferDescriptorHeapCount = 0;
-        int _currentCbufferTableIndex = -1;
-        std::vector<std::shared_ptr<CBufferTable>> _cbufferTableList;
-        std::shared_ptr<CBufferTable> GetCurrentCBufferTable();
+        int _currentCBufferPoolIndex = -1;
+        std::vector<std::shared_ptr<CBufferPool>> _cbufferPoolList;
 
+        int _currentDescriptorTableIndex = -1;
+        std::vector<std::shared_ptr<DescriptorTable>> _descriptorTableList;
 
 
     public:
-        SelectorInfo vertexInfo{};
+        SelectorInfo vertexInfo_Full{};
+
+        std::vector<std::shared_ptr<Shader>> shaderList;
 
     public:
         bool _isRelease = false;
@@ -142,6 +146,8 @@ namespace dxe
         ComPtr<ID3D12CommandQueue> GetCommandQueue();
 
         std::shared_ptr<RenderTargetGroup> GetRenderTargetGroup(const RTGType& type);
+        std::shared_ptr<DescriptorTable> GetCurrentDescriptorTable();
+        std::shared_ptr<CBufferPool> GetCurrentCBufferPool();
 
         GraphicManager();
         virtual ~GraphicManager();

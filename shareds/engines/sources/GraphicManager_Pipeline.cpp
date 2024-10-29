@@ -8,22 +8,25 @@ void GraphicManager::RefreshRenderTargetGroups()
     this->_renderTargetGroupTable.clear();
     this->_swapChainRT.clear();
 
-    std::shared_ptr<Texture> depthStencilTexture = Texture::Create(setting.depthStencilFormat, setting.screenInfo.width, setting.screenInfo.height,
+    std::shared_ptr<RenderTexture> depthStencilTexture = RenderTexture::Create(setting.depthStencilFormat, setting.screenInfo.width, setting.screenInfo.height,
         CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
         D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
 
     // SwapChain Group
     {
-        std::vector<std::shared_ptr<Texture>> renderTargetTextureList;
+        std::vector<std::shared_ptr<RenderTexture>> renderTargetTextureList;
         renderTargetTextureList.resize(_swapChainBuffers_Res.size());
 
         for (uint32_t i = 0; i < renderTargetTextureList.size(); ++i)
         {
             ComPtr<ID3D12Resource> resource = _swapChainBuffers_Res[i];
-            renderTargetTextureList[i] = std::make_shared<Texture>();
-            renderTargetTextureList[i]->SetState(ResourceState::RTV);
-            renderTargetTextureList[i]->SetClearColor(Vector4(0.5, 0.5, 1, 1));
-            renderTargetTextureList[i]->CreateFromResource(resource, setting.screenFormat);
+            renderTargetTextureList[i] = RenderTexture::Link(resource, setting.screenFormat, setting.screenInfo.width, setting.screenInfo.height,
+                ResourceState::RTV, Vector4(0.7, 0.7, 0.7, 1));
+
+            //renderTargetTextureList[i] = std::make_shared<RenderTexture>();
+            //renderTargetTextureList[i]->SetState(ResourceState::RTV);
+            //renderTargetTextureList[i]->SetClearColor(Vector4(1, 1, 1, 1));
+            //renderTargetTextureList[i]->CreateFromResource(resource, setting.screenFormat);
         }
         this->_swapChainRT = renderTargetTextureList;
 
@@ -52,11 +55,20 @@ void GraphicManager::RenderPrepare()
 
         FanceWaitSync(_currentCommandListIndex);
         ClearCurrentCommand();
-        auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
+        GetCurrentCBufferPool()->Reset();
+        GetCurrentDescriptorTable()->Reset();
 
+
+        GetCurrentCommandList()->SetGraphicsRootSignature(_rootSignature->GetRootSignature().Get());
+        GetCurrentCommandList()->SetDescriptorHeaps(1, GetCurrentDescriptorTable()->_descriptorHeap.GetAddressOf());
+
+        auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
         ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+        GetRenderTargetGroup(RTGType::SwapChain)->OMSetRenderTargets(1, _swapChainIndex);
         GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(_swapChainIndex);
         GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
+
+
 
         // 여기서 미리 Camera와 환경세팅의 ConstantBuffer를 등록함.
         //

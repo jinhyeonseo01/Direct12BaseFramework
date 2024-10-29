@@ -11,7 +11,7 @@ RenderTargetGroup::~RenderTargetGroup()
 {
 }
 
-void RenderTargetGroup::Create(std::vector<std::shared_ptr<Texture>>& renderTargetList, std::shared_ptr<Texture> depthStencil)
+void RenderTargetGroup::Create(std::vector<std::shared_ptr<RenderTexture>>& renderTargetList, std::shared_ptr<RenderTexture> depthStencil)
 {
     _renderTargetTextureList.clear();
     _renderTargetTextureList = renderTargetList;
@@ -72,7 +72,7 @@ void RenderTargetGroup::OMSetRenderTargets(uint32_t count, uint32_t offset)
         commandList->RSSetScissorRects(1, &_rect);
 
         commandList->OMSetRenderTargets(count, &_renderTargetHandleList[offset],
-            _renderTargetHandleList.size() != 0/*다중*/, &_depthStencilHandle);
+            _renderTargetHandleList.size() <= 1 ? FALSE : TRUE/*다중*/, &_depthStencilHandle);
     }
 }
 

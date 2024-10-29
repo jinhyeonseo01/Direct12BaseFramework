@@ -39,25 +39,25 @@ namespace dxe
         "TANGENT",
         "BITANGENT",
         "COLOR",
-        "TEXCOORD0",
-        "TEXCOORD0",
-        "TEXCOORD1",
-        "TEXCOORD2",
-        "TEXCOORD3",
-        "TEXCOORD4",
-        "TEXCOORD5",
-        "TEXCOORD6",
-        "TEXCOORD7",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
+        "TEXCOORD",
         "BONE_IDs",
-        "BONE_ID0",
-        "BONE_ID1",
-        "BONE_ID2",
-        "BONE_ID3",
+        "BONE_ID",
+        "BONE_ID",
+        "BONE_ID",
+        "BONE_ID",
         "BONE_Ws",
-        "BONE_W0",
-        "BONE_W1",
-        "BONE_W2",
-        "BONE_W3"
+        "BONE_W",
+        "BONE_W",
+        "BONE_W",
+        "BONE_W"
     };
 
 
@@ -68,6 +68,7 @@ namespace dxe
         int byteSize = 0;
         int offset = 0;
         int byteOffset = 0;
+        int index = 0;
         VertexProp prop;
     };
     class SelectorInfo

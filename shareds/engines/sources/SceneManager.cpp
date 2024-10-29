@@ -42,3 +42,9 @@ std::shared_ptr<Scene> SceneManager::GetScene(std::wstring name)
 		return nullptr;
 	return *iter;
 }
+
+void SceneManager::DeleteAll()
+{
+    _sceneList.clear();
+    _currentScene = nullptr;
+}

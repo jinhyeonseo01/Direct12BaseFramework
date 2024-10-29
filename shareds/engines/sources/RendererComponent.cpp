@@ -62,3 +62,18 @@ void dxe::RendererComponent::OnComponentDestroy()
 {
     Component::OnComponentDestroy();
 }
+
+void RendererComponent::BeforeRendering()
+{
+    Component::BeforeRendering();
+}
+
+void RendererComponent::Rendering()
+{
+    Component::Rendering();
+}
+
+void RendererComponent::AfterRendering()
+{
+    Component::AfterRendering();
+}

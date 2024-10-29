@@ -43,9 +43,9 @@ namespace dxe
 
 		//Remove Cycle
 
-		//BeforeRendering
-		//Rendering
-		//AfterRendering
+        virtual void BeforeRendering();
+        virtual void Rendering();
+        virtual void AfterRendering();
 
 		//------------------
 		//OnCollision(GameObject& other) // 아니면 콜리전으로

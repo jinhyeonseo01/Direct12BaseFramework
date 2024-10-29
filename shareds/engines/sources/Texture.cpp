@@ -23,19 +23,22 @@ void Texture::SetState(ResourceState state)
 }
 
 std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
-                                         const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
+                                         const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, Vector4 clearColor)
 {
     auto texture = std::make_shared<Texture>();
     auto device = GraphicManager::instance->_device;
 
-    texture->SetState(state);
+    texture->SetState(ResourceState::SRV);
     texture->SetClearColor(clearColor);
+    texture->SetSize(Vector2(width, height));
+
+
 
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
     D3D12_CLEAR_VALUE optimizedClearValue = {};
     D3D12_RESOURCE_STATES resourceStates = D3D12_RESOURCE_STATE_COMMON;
     D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr; // Optimized clear value pointer
-
+    /*
     if (state == ResourceState::DSV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
@@ -51,8 +54,9 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
         float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
         pOptimizedClearValue = &optimizedClearValue;
-    }
-    else if (state == ResourceState::RTVSRV)
+    }*/
+    /*
+    if (state == ResourceState::RT_SRV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
         //모든 쉐이더에서 쓸 수 있음을 의미함
@@ -61,7 +65,13 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
         pOptimizedClearValue = &optimizedClearValue;
     }
-
+    */
+    desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    //모든 쉐이더에서 쓸 수 있음을 의미함
+    resourceStates = D3D12_RESOURCE_STATE_GENERIC_READ;
+    float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
+    optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
+    pOptimizedClearValue = &optimizedClearValue;
     DXAssert(device->CreateCommittedResource(
         &heapProperty,
         heapFlags,
@@ -82,15 +92,20 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
 
     std::wstring ext = std::filesystem::path(path).extension();
 
+    HRESULT loadSuccess;
     if (ext == L".dds" || ext == L".DDS")
-        ::LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, nullptr, texture->_image);
+        loadSuccess = LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, nullptr, texture->_image);
     else if (ext == L".tga" || ext == L".TGA")
-        ::LoadFromTGAFile(path.c_str(), nullptr, texture->_image);
+        loadSuccess = LoadFromTGAFile(path.c_str(), nullptr, texture->_image);
     else if (ext == L".hdr" || ext == L".HDR")
-        ::LoadFromHDRFile(path.c_str(), nullptr, texture->_image);
+        loadSuccess = LoadFromHDRFile(path.c_str(), nullptr, texture->_image);
     else // png, jpg, jpeg, bmp
-        ::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
-
+        loadSuccess = LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
+    if (!DXSuccess(loadSuccess))
+    {
+        Debug::log << "해당 경로에 텍스쳐 없음\n";
+        return nullptr;
+    }
     if (!(ext == L".dds" || ext == L".DDS") && createMipMap)
     {
         ScratchImage mipmapImage;
@@ -102,7 +117,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
             texture->_image.GetImages(),          // 소스 이미지 배열
             texture->_image.GetImageCount(),      // 소스 이미지 개수
             texture->_image.GetMetadata(),        // 소스 이미지 메타데이터
-            TEX_FILTER_CUBIC, // 필터 옵션 (기본값 사용)
+            TEX_FILTER_CUBIC, // 필터 옵션 (기본값 사용) // CUBIC
             0, mipmapImage);
         texture->_image.Release();
         texture->_image = std::move(mipmapImage);
@@ -188,17 +203,41 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     texture->_SRV_CPUHandle = GraphicManager::instance->TextureDescriptorHandleAlloc();
     
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-    SRVDesc.Format = texture->_image.GetMetadata().format;
+    SRVDesc.Format = metadata.format;
     SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // D3D12_SRV_DIMENSION_TEXTURECUBE
     SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    SRVDesc.TextureCube.MipLevels = texture->_image.GetMetadata().mipLevels;
+    SRVDesc.TextureCube.MipLevels = metadata.mipLevels;
     SRVDesc.TextureCube.MostDetailedMip = 0;
     SRVDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
     texture->_SRV_ViewDesc = SRVDesc;
-
+    texture->mipLevels = metadata.mipLevels;
+    texture->SetSize(Vector2(metadata.width, metadata.height));
     device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
 
+    return texture;
+}
+
+std::shared_ptr<Texture> Texture::Link(std::shared_ptr<RenderTexture> renderTexture, DXGI_FORMAT format)
+{
+    auto texture = std::make_shared<Texture>();
+
+    texture->_resource = renderTexture->GetResource();
+    texture->mipLevels = 1;
+    texture->SetState(ResourceState::RT_SRV);
+    texture->SetSize(renderTexture->_size);
+    texture->CreateFromResource(texture->_resource, format);
+    return texture;
+}
+
+std::shared_ptr<Texture> Texture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width, uint32_t height, int mipLevels)
+{
+    auto texture = std::make_shared<Texture>();
+
+    texture->SetState(ResourceState::RT_SRV);
+    texture->SetSize(Vector2(width, height));
+    texture->CreateFromResource(resource, format);
+    texture->mipLevels = std::max(mipLevels, 1);
     return texture;
 }
 
@@ -206,7 +245,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
 {
     auto device = GraphicManager::instance->_device;
     _resource = resource;
-
+    /*
     if (_state == ResourceState::DSV)
     {
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
@@ -247,40 +286,18 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
 
         _RTV_ViewDesc = RTVDesc;
         device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
-    }
-
-
-    else if (_state == ResourceState::RTVSRV)
+    }*/
+    if (_state == ResourceState::RT_SRV || _state == ResourceState::SRV)
     {
-        D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-        heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-        heapDesc.NumDescriptors = 1;
-        heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-        heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptorHeap(&heapDesc, ComPtrIDAddr(_RTV_DescHeap)));
-
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
-        D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
-        RTVDesc.Format = format; // 리소스의 포맷
-        RTVDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 텍스처 2D
-        RTVDesc.Texture2D.MipSlice = 0; // MIP 레벨 0
-        RTVDesc.Texture2D.PlaneSlice = 0; // 평면 슬라이스 0
-        _RTV_ViewDesc = RTVDesc;
-        device->CreateRenderTargetView(_resource.Get(), &_RTV_ViewDesc, rtvHeapBegin);
-
-
-
         GraphicManager::instance->TextureDescriptorHandleAlloc(&_SRV_CPUHandle);
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;
         srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-        srvDesc.Texture2D.MipLevels = 1;
+        srvDesc.Texture2D.MipLevels = mipLevels;
         _SRV_ViewDesc = srvDesc;
 
         device->CreateShaderResourceView(_resource.Get(), &_SRV_ViewDesc, _SRV_CPUHandle);
-
     }
-
 }

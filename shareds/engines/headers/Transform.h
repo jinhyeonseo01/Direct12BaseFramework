@@ -69,5 +69,8 @@ namespace dxe
 		void OnDestroy() override;
 		void Init() override;
 		void OnComponentDestroy() override;
-	};
+        void BeforeRendering() override;
+        void Rendering() override;
+        void AfterRendering() override;
+    };
 }

@@ -48,14 +48,24 @@ void GraphicManager::TextureDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HAND
     _textureDescriptorHeapAllocator[index] = false;
 }
 
-std::shared_ptr<CBufferTable> GraphicManager::GetCurrentCBufferTable()
+std::shared_ptr<CBufferPool> GraphicManager::GetCurrentCBufferPool()
 {
-    if (_currentCbufferTableIndex != _currentCommandListIndex)
+    if (_currentCBufferPoolIndex != _currentCommandListIndex)
     {
-        _currentCbufferTableIndex = _currentCommandListIndex;
-        _cbufferTableList[_currentCommandListIndex]->Reset();
+        _currentCBufferPoolIndex = _currentCommandListIndex;
+        _cbufferPoolList[_currentCommandListIndex]->Reset();
     }
-    return _cbufferTableList[_currentCommandListIndex];
+    return _cbufferPoolList[_currentCommandListIndex];
+}
+
+std::shared_ptr<DescriptorTable> GraphicManager::GetCurrentDescriptorTable()
+{
+    if (_currentDescriptorTableIndex != _currentCommandListIndex)
+    {
+        _currentDescriptorTableIndex = _currentCommandListIndex;
+        _descriptorTableList[_currentCommandListIndex]->Reset();
+    }
+    return _descriptorTableList[_currentCommandListIndex];
 }
 
 void GraphicManager::Init()
@@ -261,6 +271,11 @@ void GraphicManager::RefreshSwapChain()
         {
             _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, nullptr);
         }
+        {
+            _swapChainRT.clear();
+            _swapChainBuffers_Res.clear();
+            _renderTargetGroupTable.clear();
+        }
 
         { // 디스플레이의 모드를 바꾸는거
             DXGI_MODE_DESC dxgiDesc1 = {};
@@ -282,8 +297,6 @@ void GraphicManager::RefreshSwapChain()
             _swapChain->ResizeTarget(&dxgiDesc1); //이건 디스플레이 모드를 바꾸는거임
         }
 
-        WaitSync();
-
         { // 스왑체인의 버퍼를 바꾸는거
             DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc = {};
             _swapChain->GetDesc1(&dxgiSwapChainDesc);
@@ -291,7 +304,6 @@ void GraphicManager::RefreshSwapChain()
         }
 
         { //버퍼 재할당
-            _swapChainBuffers_Res.clear();
             _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
             for (int i = 0; i < setting.swapChain_BufferCount; i++)
                 _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
@@ -357,8 +369,8 @@ void GraphicManager::ClearCurrentCommand()
     auto list = GetCurrentCommandList();
     auto allocator = GetCurrentCommandAllocator();
     // 이번 렌더 주기동안 사용할 list를 마련해주시고용
-    allocator->Reset();
-    list->Reset(allocator.Get(), nullptr);
+    DXAssert(allocator->Reset());
+    DXAssert(list->Reset(allocator.Get(), nullptr));
 }
 
 void GraphicManager::FinishAndExecuteCurrentCommand()
@@ -481,16 +493,15 @@ void GraphicManager::InitShader()
         VertexProp::uv7,
         VertexProp::bone_ids,
         VertexProp::bone_weights,
-        //BLENDWEIGHT
-        //BLENDINDICES
     };
-    vertexInfo = Vertex::GetSelectorInfo(props);
+    vertexInfo_Full = Vertex::GetSelectorInfo(props);
 
-
+    shaderList.reserve(128);
 
     {//Test
         std::shared_ptr<Shader> shader =  Shader::Load(L"../shareds/engines/shaders/forward.hlsl");
         shader->Init();
+        shaderList.push_back(shader);
     }
 }
 
@@ -531,7 +542,7 @@ void GraphicManager::CreateCommandQueueListAlloc()
         DXAssert(_device->CreateCommandAllocator(commandType, ComPtrIDAddr(commandAllocator)));
         DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr, ComPtrIDAddr(commandList)));
         DXAssert(commandList->QueryInterface(ComPtrIDAddr(commandList4)));
-        commandList4->Close();
+        //commandList4->Close();
 
         _resourceCommandAllocator = commandAllocator;
         _resourceCommandList = commandList4;
@@ -561,14 +572,20 @@ void GraphicManager::CreateTextureHeap()
 
 void GraphicManager::CreateCBufferHeap()
 {
-    _cbufferDescriptorHeapCount = 4096;
-
-    _cbufferTableList.reserve(_commandLists.size());
-    for(int i=0;i<_commandLists.size();i++)
+    _descriptorTableList.resize(_commandLists.size());
+    for(int i=0;i< _descriptorTableList.size();i++)
     {
-        _cbufferTableList.push_back(std::make_shared<CBufferTable>());
-        _cbufferTableList[i]->_cbufferDescriptorHeapCount = _cbufferDescriptorHeapCount;
-        _cbufferTableList[i]->Init();
+        _descriptorTableList[i] = std::make_shared<DescriptorTable>();
+        _descriptorTableList[i]->Init(_rootSignature->_ranges, 4096);
+    }
+
+    _cbufferPoolList.resize(_commandLists.size());
+    for(int i=0;i< _cbufferPoolList.size();i++)
+    {
+        _cbufferPoolList[i] = std::make_shared<CBufferPool>();
+        _cbufferPoolList[i]->_cbufferDescriptorHeapCount = 4096;
+        _cbufferPoolList[i]->AddCBuffer("TransformParams", sizeof(TransformParams), 1024);
+        _cbufferPoolList[i]->Init();
     }
 }
 
@@ -578,7 +595,8 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
     if( setting.screenInfo.width != viewInfo.width ||
         setting.screenInfo.height != viewInfo.height)
         _refreshReserve = true;
-
+    viewInfo.minDepth = 0;
+    viewInfo.maxDepth = 1;
     setting.screenInfo = viewInfo;
 }
 
@@ -624,6 +642,7 @@ std::shared_ptr<RenderTargetGroup> GraphicManager::GetRenderTargetGroup(const RT
         return _renderTargetGroupTable[static_cast<int>(type)];
     return nullptr;
 }
+
 
 
 GraphicManager::GraphicManager()

@@ -394,6 +394,21 @@ void Transform::OnComponentDestroy()
 	Component::OnComponentDestroy();
 }
 
+void Transform::BeforeRendering()
+{
+    Component::BeforeRendering();
+}
+
+void Transform::Rendering()
+{
+    Component::Rendering();
+}
+
+void Transform::AfterRendering()
+{
+    Component::AfterRendering();
+}
+
 Transform::Transform()
 {
 	localPosition = Vector3(0, 0, 0);

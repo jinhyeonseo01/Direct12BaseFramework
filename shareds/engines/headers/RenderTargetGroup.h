@@ -1,6 +1,7 @@
 #pragma once
 #include <stdafx.h>
 
+#include "RenderTexture.h"
 #include "Texture.h"
 
 namespace dxe
@@ -21,8 +22,8 @@ namespace dxe
         int order = 0;
         RenderTargetGroup();
         virtual ~RenderTargetGroup();
-        std::vector<std::shared_ptr<Texture>> _renderTargetTextureList;
-        std::shared_ptr<Texture> _depthStencilTexture;
+        std::vector<std::shared_ptr<RenderTexture>> _renderTargetTextureList;
+        std::shared_ptr<RenderTexture> _depthStencilTexture;
 
         ComPtr<ID3D12DescriptorHeap> _renderTargetHeap;
         std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> _renderTargetHandleList;
@@ -33,7 +34,7 @@ namespace dxe
         D3D12_VIEWPORT _viewport;
         D3D12_RECT _rect;
 
-        void Create(std::vector<std::shared_ptr<Texture>>& renderTargetList, std::shared_ptr<Texture> depthStencil);
+        void Create(std::vector<std::shared_ptr<RenderTexture>>& renderTargetList, std::shared_ptr<RenderTexture> depthStencil);
 
         void ResourceBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
         void OMSetRenderTargets(uint32_t count, uint32_t offset);

@@ -1,4 +1,5 @@
 #include "DXEngine.h"
+#include "RendererComponent.h"
 #include "Scene.h"
 #include "SceneManager.h"
 
@@ -168,7 +169,12 @@ void Engine::RenderingPipeline()
 		std::shared_ptr<GameObject>& currentObject = gameObjects[i];
 
 		if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
-
+            std::vector<std::shared_ptr<RendererComponent>> renderers;
+            currentObject->GetComponents<RendererComponent>(renderers);
+            for (auto& r : renderers)
+            {
+                r->Rendering();
+            }
 		}
 		//GetAcrive -> prevRendering
 	}

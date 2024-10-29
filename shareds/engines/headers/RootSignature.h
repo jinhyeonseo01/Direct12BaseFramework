@@ -18,5 +18,6 @@ public:
     ComPtr<ID3D12RootSignature> _rootSignature;
     ComPtr<ID3D12RootSignature> _computeRootSignature;
 
+    std::vector<D3D12_DESCRIPTOR_RANGE> _ranges;
 };
 

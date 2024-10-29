@@ -59,73 +59,75 @@ namespace dxe
         D3D12_STENCIL_OP _stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
         D3D12_STENCIL_OP _stencilPassOp = D3D12_STENCIL_OP_KEEP;
 
-        CullingType cullingType;
+        CullingType cullingType = CullingType::NONE;
 
         FrontWise _wise = FrontWise::CW;
 
-        uint8_t _blendTargetMask = 0b00000001;
         BlendType _blendType[8] = { BlendType::AlphaBlend };
 
         int _renderQueue = 2000;
         RenderQueueType _renderQueueType = RenderQueueType::Opaque;
     };
 
+
+    class ShaderStructPropertyInfo
+    {
+    public:
+        std::string elementType;
+        int elementTypeRange = 0;
+        std::string semantic;
+        int semanticIndex = 0;
+        int registerIndex = 0;
+    };
+    class ShaderStructInfo
+    {
+    public:
+        std::string name;
+        int count = 0;
+        std::vector<ShaderStructPropertyInfo> propertys;
+    };
+
+    class ShaderRegisterInfo
+    {
+    public:
+        std::string elementType;
+        std::string name;
+        int registerIndex = 0;
+        char registerType = 0;
+        std::string registerTypeString = "b0";
+        int registerCount = 0;
+        std::string bufferType;
+        int space = 0;
+        int numSample = 0;
+    };
+    class ShaderCBufferPropertyInfo
+    {
+    public:
+        std::string _name;
+        std::string elementType;
+        std::string _className;
+
+        int elementCount = 0;
+        int byteOffset = 0;
+        int byteSize = 0;
+        int index = 0;
+        int rowCount = 0;
+        int colCount = 0;
+    };
+
+    class ShaderCBufferInfo
+    {
+    public:
+        std::string name;
+        int index;
+        int bufferByteSize = 0;
+        std::vector<ShaderCBufferPropertyInfo> propertys;
+    };
+
+
     class ShaderProfileInfo
     {
     public:
-        class ShaderStructPropertyInfo
-        {
-        public:
-            std::string elementType;
-            int elementTypeRange = 0;
-            std::string semantic;
-            int semanticIndex = 0;
-            int registerIndex = 0;
-        };
-        class ShaderStructInfo
-        {
-        public:
-            std::string name;
-            int count = 0;
-            std::vector<ShaderStructPropertyInfo> propertys;
-        };
-
-        class ShaderRegisterInfo
-        {
-        public:
-            std::string elementType;
-            std::string name;
-            int registerIndex = 0;
-            char registerType = 0;
-            int registerCount = 0;
-            std::string bufferType;
-            int space = 0;
-            int numSample = 0;
-        };
-        class ShaderCBufferPropertyInfo
-        {
-        public:
-            std::string _name;
-            std::string elementType;
-            std::string _className;
-
-            int elementCount = 0;
-            int byteOffset = 0;
-            int byteSize = 0;
-            int index = 0;
-            int rowCount = 0;
-            int colCount = 0;
-        };
-
-        class ShaderCBufferInfo
-        {
-        public:
-            std::string name;
-            int index;
-            int bufferByteSize = 0;
-            std::vector<ShaderCBufferPropertyInfo> propertys;
-        };
-
         std::vector<ShaderRegisterInfo> registers;
         std::vector<ShaderCBufferInfo> cbuffers;
 

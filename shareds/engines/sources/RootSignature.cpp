@@ -32,7 +32,7 @@ void RootSignature::Init()
     samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
     samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
     samplerDesc.MipLODBias = 0;
-    samplerDesc.MaxAnisotropy = 0;
+    samplerDesc.MaxAnisotropy = 16;
     samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
     samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
     samplerDesc.MinLOD = 0.0f;
@@ -43,11 +43,17 @@ void RootSignature::Init()
     samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
     // 디스크립터 범위 설정
-    D3D12_DESCRIPTOR_RANGE ranges[2] =
-    {
-        { D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 4, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND }, // b1 ~ b4
-        { D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 5, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } //  t0 ~t4
-    };
+    unsigned int cbvRegister = 1;
+    unsigned int srvRegister = 0;
+    unsigned int uavRegister = 0;
+    _ranges.push_back({ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 7, cbvRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } );
+    cbvRegister += _ranges[_ranges.size() - 1].NumDescriptors;
+
+    _ranges.push_back({ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, srvRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } );
+    srvRegister += _ranges[_ranges.size() - 1].NumDescriptors;
+
+    //_ranges.push_back({ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 2, uavRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } );
+    //uavRegister += _ranges[_ranges.size() - 1].NumDescriptors;
 
     // 루트 파라미터 설정
     // 직접32비트 꼽을때사용 (Constants)         =>        SetGraphicsRoot32BitConstants / SetGraphicsRoot32BitConstant
@@ -64,8 +70,8 @@ void RootSignature::Init()
 
     //테이블 사용
     rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(ranges);
-    rootParameters[1].DescriptorTable.pDescriptorRanges = ranges;
+    rootParameters[1].DescriptorTable.NumDescriptorRanges = _ranges.size();
+    rootParameters[1].DescriptorTable.pDescriptorRanges = _ranges.data();
     rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 
@@ -113,7 +119,8 @@ void RootSignature::InitCompute()
     D3D12_DESCRIPTOR_RANGE ranges[2] =
     {
         { D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 7, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND }, // b1 ~ b7
-        { D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 16, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } //  t0 ~t4
+        { D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } //  t0 ~t8
+        // { D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 2, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } //  u0 ~u1
     };
 
     // 루트 파라미터 설정
