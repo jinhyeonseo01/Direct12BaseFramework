@@ -47,9 +47,12 @@ namespace dxe
         FrameSync syncType = FrameSync::VSync;
         Viewport screenInfo = Viewport(0,0,1920,1080);
         DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-        DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-        //DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        //DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+        DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
+    public:
+        std::wstring enginePath = L"../shareds/engines/";
+        std::wstring engineShaderPath = L"../shareds/engines/shaders/";
 
     public:
         

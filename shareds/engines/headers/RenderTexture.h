@@ -24,6 +24,10 @@ public:
         _size = size;
     };
     void SetState(ResourceState state);
+    void SetFormat(DXGI_FORMAT format)
+    {
+        this->format = format;
+    };
 
     ComPtr<ID3D12Resource> GetResource() { return _resource; }
     ComPtr<ID3D12DescriptorHeap> GetRTV() { return _RTV_DescHeap; }
@@ -31,6 +35,7 @@ public:
 
     ResourceState					_state = ResourceState::SRV;
     ComPtr<ID3D12Resource>			_resource;
+    DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM;
 
     static std::shared_ptr<RenderTexture> Create(DXGI_FORMAT format, uint32_t width, uint32_t height, const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor = Vector4(1, 1, 1, 1));
     static std::shared_ptr<RenderTexture> Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width, uint32_t height, ResourceState state, Vector4

@@ -134,12 +134,20 @@ void Shader::Init()
 
     _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size()) };
 
-    _pipelineDesc.NumRenderTargets = 1;
     _pipelineDesc.RTVFormats[0] = GraphicManager::instance->setting.screenFormat;
+    _pipelineDesc.NumRenderTargets = std::min(8, renderTargetCount);
+    for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
+        _pipelineDesc.RTVFormats[i] = RTVForamts[i];
+
     _pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     _pipelineDesc.SampleMask = UINT_MAX;
     _pipelineDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
     _pipelineDesc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
+    if (isMsaaDisable)
+    {
+        _pipelineDesc.SampleDesc.Count = 1;
+        _pipelineDesc.SampleDesc.Quality = 0;
+    }
     _pipelineDesc.DSVFormat = GraphicManager::instance->setting.depthStencilFormat;
     //_pipelineDesc.
 
@@ -308,6 +316,18 @@ void Shader::Init()
 
     Debug::log << "쉐이더 생성 완료\n";
 
+}
+
+void Shader::SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts)
+{
+    renderTargetCount = rts.size();
+    for(int i=0;i<std::min(8, renderTargetCount);i++)
+        RTVForamts[i] = rts[i]->format;
+}
+
+void Shader::SetMSAADisable()
+{
+    isMsaaDisable = true;
 }
 
 
@@ -553,7 +573,7 @@ void Shader::Profile()
 
 std::shared_ptr<Shader> Shader::Load(std::wstring path)
 {
-    std::wstring shaderPath = path;
+    std::wstring shaderPath = GraphicManager::instance->setting.engineShaderPath + path;
 
     std::vector<D3D_SHADER_MACRO> shaderMacro
     {
@@ -562,8 +582,8 @@ std::shared_ptr<Shader> Shader::Load(std::wstring path)
     };
     auto shader = std::make_shared<Shader>();
 
-    auto shaderVS = Load(path, "VS_Main", "vs", shaderMacro);
-    auto shaderPS = Load(path, "PS_Main", "ps", shaderMacro);
+    auto shaderVS = Load(shaderPath, "VS_Main", "vs", shaderMacro);
+    auto shaderPS = Load(shaderPath, "PS_Main", "ps", shaderMacro);
 
     shader->_shaderCodeTable.emplace(shaderVS->shaderType, shaderVS);
     shader->_shaderCodeTable.emplace(shaderPS->shaderType, shaderPS);

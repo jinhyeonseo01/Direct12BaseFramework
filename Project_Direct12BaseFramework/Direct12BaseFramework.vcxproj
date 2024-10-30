@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>false</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -74,6 +75,10 @@
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
+    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>false</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>false</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>false</CopyCppRuntimeToOutputDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
@@ -117,8 +122,12 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeaderFile>stdafx.h, pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)plugins\includes\directx\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <CombineFilesOnlyFromTheSameFolder>false</CombineFilesOnlyFromTheSameFolder>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -134,8 +143,10 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeaderFile>stdafx.h, pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,14 +156,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.h" />
-    <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_win32.h" />
-    <ClInclude Include="..\plugins\includes\imgui\imconfig.h" />
-    <ClInclude Include="..\plugins\includes\imgui\imgui.h" />
-    <ClInclude Include="..\plugins\includes\imgui\imgui_internal.h" />
-    <ClInclude Include="..\plugins\includes\imgui\imstb_rectpack.h" />
-    <ClInclude Include="..\plugins\includes\imgui\imstb_textedit.h" />
-    <ClInclude Include="..\plugins\includes\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_win32.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imconfig.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imgui.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imgui_internal.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imstb_rectpack.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imstb_textedit.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\imgui\imstb_truetype.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\shareds\constants\headers\convert_assimp.h" />
     <ClInclude Include="..\shareds\constants\headers\convert_directx.h" />
     <ClInclude Include="..\shareds\constants\headers\convert_math.h" />
@@ -205,19 +240,40 @@
     <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
     <ClInclude Include="..\shareds\engines\headers\Vertex.h" />
+    <ClInclude Include="ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp" />
-    <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\plugins\includes\imgui\imgui.cpp" />
-    <ClCompile Include="..\plugins\includes\imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\plugins\includes\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\plugins\includes\imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\plugins\includes\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_demo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_draw.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_tables.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\imgui\imgui_widgets.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\convert_assimp.cpp" />
     <ClCompile Include="..\shareds\constants\sources\debug_console.cpp" />
     <ClCompile Include="..\shareds\constants\sources\graphic_config.cpp" />
-    <ClCompile Include="..\shareds\constants\sources\pch.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_ext.cpp" />
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp" />
     <ClCompile Include="..\shareds\constants\sources\Timer.cpp" />
@@ -258,10 +314,16 @@
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Texture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Vertex.cpp" />
-    <ClCompile Include="Direct12BaseFramework.cpp" />
+    <ClCompile Include="Direct12BaseFramework.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc" />

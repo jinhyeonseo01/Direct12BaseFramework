@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "RenderTexture.h"
 
 #include "GraphicManager.h"
@@ -28,6 +29,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
 
     texture->SetState(state);
     texture->SetClearColor(clearColor);
+    texture->SetSize(Vector2(width, height));
+    texture->SetFormat(format);
 
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
     D3D12_CLEAR_VALUE optimizedClearValue = {};
@@ -37,8 +40,10 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     if (state == ResourceState::DSV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-        desc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
-        desc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
+        desc.SampleDesc.Count = 1;
+        desc.SampleDesc.Quality = 0;
+        desc.MipLevels = 1;
+        desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
         resourceStates = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
@@ -49,6 +54,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
         desc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
         desc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
+        desc.MipLevels = 1;
+        desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
         resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;
         float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
@@ -61,9 +68,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         &desc,
         resourceStates,
         pOptimizedClearValue,
-        IID_PPV_ARGS(&(texture->_resource)))); //ComPtrIDAddr(texture->_resource)
+        ComPtrIDAddr(texture->_resource))); //ComPtrIDAddr(texture->_resource)
     texture->CreateFromResource(texture->_resource, format);
-    texture->SetSize(Vector2(width,height));
     return texture;
 }
 
@@ -71,6 +77,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Link(ComPtr<ID3D12Resource> resour
 {
     auto texture = std::make_shared<RenderTexture>();
 
+    texture->SetFormat(format);
     texture->SetState(state);
     texture->SetSize(Vector2(static_cast<float>(width), static_cast<float>(height)));
     texture->SetClearColor(clearColor);
@@ -82,6 +89,7 @@ void RenderTexture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FOR
 {
     auto device = GraphicManager::instance->_device;
     _resource = resource;
+    SetFormat(format);
 
     if (_state == ResourceState::DSV)
     {

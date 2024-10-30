@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "convert_assimp.h"
 
 #include <assimp/color4.h>

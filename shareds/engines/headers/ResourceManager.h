@@ -6,6 +6,7 @@ namespace dxe
 {
 	class ResourceManager
 	{
+	public:
 
 	};
 }

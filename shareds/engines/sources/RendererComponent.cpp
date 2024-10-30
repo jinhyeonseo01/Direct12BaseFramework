@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "RendererComponent.h"
 
 dxe::RendererComponent::RendererComponent()

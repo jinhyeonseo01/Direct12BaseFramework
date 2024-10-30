@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "MeshRenderer.h"
 
 #include "GameObject.h"

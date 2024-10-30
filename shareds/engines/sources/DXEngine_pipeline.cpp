@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DXEngine.h"
 #include "RendererComponent.h"
 #include "Scene.h"

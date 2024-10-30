@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderTargetGroup.h"
 #include "stdafx.h"
 #include "RootSignature.h"
 
@@ -167,9 +168,13 @@ namespace dxe
         D3D12_GRAPHICS_PIPELINE_STATE_DESC  _pipelineDesc = {};
         std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc;
 
-
+        int renderTargetCount = 1;
+        DXGI_FORMAT RTVForamts[8]{DXGI_FORMAT_R8G8B8A8_UNORM};
+        bool isMsaaDisable = false;
 
         void Init();
+        void SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts);
+        void SetMSAADisable();
         void SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command);
 
         void Profile();

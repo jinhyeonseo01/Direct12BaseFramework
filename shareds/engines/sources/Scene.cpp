@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "Scene.h"
 #include "Component.h"
 #include "Transform.h"

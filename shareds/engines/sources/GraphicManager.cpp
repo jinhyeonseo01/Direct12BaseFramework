@@ -177,8 +177,8 @@ void GraphicManager::CreateSwapChain()
         swapChainDesc.Format = setting.screenFormat;
 
         //msaa rendering
-        swapChainDesc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
-        swapChainDesc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
+        swapChainDesc.SampleDesc.Count = 1;
+        swapChainDesc.SampleDesc.Quality = 0;
 
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 해당 버퍼를 렌더타겟 용도로 쓰겠다
         swapChainDesc.BufferCount = setting.swapChain_BufferCount;
@@ -410,7 +410,7 @@ void GraphicManager::CreateDevice()
     msaaQualityLevel.NumQualityLevels = 0;
     DXSuccess(_device->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &msaaQualityLevel, sizeof(D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS)));
 
-    setting.msaaSupportAble = msaaQualityLevel.NumQualityLevels > 1;
+    setting.msaaSupportAble = msaaQualityLevel.NumQualityLevels > 0;
     setting.msaaSupportMaxLevel = msaaQualityLevel.NumQualityLevels;
 
 }
@@ -464,7 +464,9 @@ void GraphicManager::InitShader()
     shaderList.reserve(128);
 
     {//Test
-        std::shared_ptr<Shader> shader =  Shader::Load(L"../shareds/engines/shaders/forward.hlsl");
+        std::shared_ptr<Shader> shader =  Shader::Load(L"forward.hlsl");
+        shader->SetMSAADisable();
+        shader->SetRenderTargets(_swapChainRT);
         shader->Init();
         shaderList.push_back(shader);
     }

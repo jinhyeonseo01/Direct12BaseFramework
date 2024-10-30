@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "IDelayedDestroy.h"
 
 namespace dxe

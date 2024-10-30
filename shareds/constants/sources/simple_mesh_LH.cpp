@@ -7,7 +7,7 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //-------------------------------------------------------------------------------------
-
+#include "stdafx.h"
 #include "pch.h"
 #include "simple_mesh_LH.h"
 

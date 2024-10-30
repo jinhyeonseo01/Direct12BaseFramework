@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include "engine_utility.h"
 #include "IClone.h"
 #include "EObject.h"

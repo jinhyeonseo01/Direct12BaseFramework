@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "IType.h"
 
 #include "debug_console.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CBufferPool.h"
 
 #include "GraphicManager.h"

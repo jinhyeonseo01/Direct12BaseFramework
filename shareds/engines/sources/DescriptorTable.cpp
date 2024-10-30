@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DescriptorTable.h"
 
 #include "GraphicManager.h"

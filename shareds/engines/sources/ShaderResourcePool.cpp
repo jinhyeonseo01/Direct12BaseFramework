@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ShaderResourcePool.h"
 
 #include "GraphicManager.h"

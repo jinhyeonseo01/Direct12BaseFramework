@@ -105,9 +105,6 @@
     <ClInclude Include="..\shareds\engines\headers\SceneManager.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\ResourceManager.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\IDelayedDestroy.h">
       <Filter>Engine\Utility</Filter>
     </ClInclude>
@@ -228,13 +225,16 @@
     <ClInclude Include="..\shareds\engines\headers\ShaderResourcePool.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\ResourceManager.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shareds\constants\sources\pch.cpp">
-      <Filter>Constant\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
       <Filter>Constant\Sources</Filter>
@@ -270,9 +270,6 @@
       <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\SceneManager.cpp">
-      <Filter>Engine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\IDelayedDestroy.cpp">
@@ -394,6 +391,12 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\ShaderResourcePool.cpp">
       <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\stdafx.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "RootSignature.h"
 
 #include "GraphicManager.h"
