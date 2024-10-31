@@ -135,7 +135,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\Debug\*" "$(OutDir)"</Command>
+      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\DebugDLL\*" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,7 +159,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\Release\*" "$(OutDir)"</Command>
+      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\ReleaseDLL\*" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
