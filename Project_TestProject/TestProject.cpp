@@ -53,8 +53,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             auto meshRender = obj1->AddComponent<MeshRenderer>();
 
         }
-        ResourceManager::main->LoadModel(L"Ellen.fbx", L"Ellen");
-        ResourceManager::main->LoadModel(L"Kind.fbx", L"Kind");
+        //ResourceManager::main->LoadModel(L"Ellen.fbx", L"Ellen");
+        //ResourceManager::main->LoadModel(L"Kind.fbx", L"Kind");
+        ResourceManager::main->LoadModel(L"ter.obj", L"Ellen");
         //ResourceManager::main->WaitAll();
 
         while (!dxe::Engine::GetEngineList().empty())

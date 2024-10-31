@@ -111,7 +111,12 @@ namespace dxe
 		return false;
 	}
 
-	std::shared_ptr<GameObject> Scene::Find(std::wstring name, bool includeDestroy)
+    std::shared_ptr<GameObject> Scene::CreateGameObject(const std::shared_ptr<Model>& model)
+    {
+
+    }
+
+    std::shared_ptr<GameObject> Scene::Find(std::wstring name, bool includeDestroy)
 	{
 		auto iter = std::find_if(this->_gameObjectList.begin(), this->_gameObjectList.end(), [&](const std::shared_ptr<GameObject>& element){
 			if (!includeDestroy && element->IsDestroy())

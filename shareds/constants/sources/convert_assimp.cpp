@@ -1,8 +1,4 @@
 #include "stdafx.h"
-#include "convert_assimp.h"
-
-#include <assimp/color4.h>
-#include <assimp/types.h>
 
 DirectX::SimpleMath::Matrix convert_assimp::Format(const aiMatrix4x4& mat)
 {
@@ -37,15 +33,15 @@ DirectX::SimpleMath::Quaternion convert_assimp::Format(const aiQuaternion& pOrie
 {
     return DirectX::SimpleMath::Quaternion(pOrientation.x, pOrientation.y, pOrientation.z, pOrientation.w);
 }
-DirectX::SimpleMath::Color convert_assimp::Format(const aiColor4D color)
+DirectX::SimpleMath::Color convert_assimp::Format(const aiColor4D& color)
 {
     return DirectX::SimpleMath::Color(color.r, color.g, color.b, color.a);
 }
-DirectX::SimpleMath::Ray convert_assimp::Format(const aiRay ray)
+DirectX::SimpleMath::Ray convert_assimp::Format(const aiRay& ray)
 {
     return DirectX::SimpleMath::Ray(Format(ray.pos), Format(ray.dir));
 }
-DirectX::SimpleMath::Plane convert_assimp::Format(const aiPlane plane)
+DirectX::SimpleMath::Plane convert_assimp::Format(const aiPlane& plane)
 {
     return DirectX::SimpleMath::Plane(plane.a, plane.b, plane.c, plane.d);
 }

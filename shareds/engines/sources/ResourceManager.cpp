@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ResourceManager.h"
 
+#include "Model.h"
+
 
 ResourceManager* ResourceManager::main = nullptr;
 
@@ -70,9 +72,11 @@ std::shared_ptr<AssimpLoadPack> AssimpLoadPack::LoadAsync(std::wstring path, std
             if ((pack->scene == nullptr) || pack->scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || (pack->scene->mRootNode == nullptr))
             {
                 Debug::log << "Error : 모델 로드 실패 : " << pack->importer->GetErrorString() << "\n";
-                Debug::log << std::filesystem::current_path() << "\n";
             }
-            Debug::log << "모델 로드 성공 : " << std::string(pack->scene->mName.data, pack->scene->mName.length) << "\n";
+            else
+            {
+                Debug::log << "모델 로드 성공 : " << std::string(pack->scene->mName.data, pack->scene->mName.length) << "\n";
+            }
         }
         catch (...)
         {
@@ -117,6 +121,9 @@ std::shared_ptr<AssimpLoadPack> ResourceManager::LoadModel(std::wstring path, st
 {
     auto pack = std::make_shared<AssimpLoadPack>()->Init()->LoadAsync(path, name);
     _aiPackList.push_back(pack);
+    WaitAll();
+    auto model = std::make_shared<Model>();
+    model->Init(pack);
     return pack;
 }
 

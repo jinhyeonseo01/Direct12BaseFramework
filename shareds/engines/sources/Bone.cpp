@@ -5,13 +5,23 @@ Bone::Bone()
 {
 }
 
-Bone::Bone(const std::wstring& boneName, int boneId)
-{
-    this->boneName = boneName;
-    this->boneId = boneId;
-}
-
 Bone::~Bone()
 {
 
+}
+
+void Bone::SetName(const std::string& boneName, const std::string& nodeName)
+{
+    this->boneName = boneName;
+    this->nodeName = nodeName;
+}
+
+void Bone::SetBoneID(int id)
+{
+    this->boneId = id;
+}
+
+void Bone::SetOffsetTransform(const Matrix& matrix)
+{
+    offsetTransform = matrix;
 }

@@ -3,6 +3,7 @@
 
 #include "GraphicManager.h"
 #include "graphic_config.h"
+#include "Transform.h"
 
 Mesh::Mesh()
 {
@@ -12,6 +13,84 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {
     _vertexList.clear();
+}
+
+void Mesh::SetName(const std::string& name)
+{
+    this->name = name;
+}
+
+void Mesh::SetBound(const BoundingBox& bound)
+{
+    this->_bound = bound;
+}
+
+void Mesh::SetBound(const Vector3& min, const Vector3& max)
+{
+    Vector3 center = (max + min) / 2;
+    BoundingBox bound;
+    bound.Center = center;
+    bound.Extents = max - center;
+    bound.Extents = Vector3(std::abs(bound.Extents.x), std::abs(bound.Extents.y), std::abs(bound.Extents.z));
+    SetBound(bound);
+}
+
+void Mesh::CalculateBound()
+{
+    Vector3 min = Vector3::Zero;
+    Vector3 max = Vector3::Zero;
+    for(auto& vert : _vertexList)
+    {
+        if (min.x > vert.position.x)
+            min.x = vert.position.x;
+        if (min.y > vert.position.y)
+            min.y = vert.position.y;
+        if (max.x < vert.position.x)
+            max.x = vert.position.x;
+        if (max.y < vert.position.y)
+            max.y = vert.position.y;
+    }
+    SetBound(min, max);
+}
+
+void Mesh::Init(std::vector<Vertex> _vertexList, std::vector<uint32_t> _indexBuffer)
+{
+    this->_vertexList = _vertexList;
+    this->_indexBuffer = _indexBuffer;
+    CalculateBound();
+    if (this->name.empty())
+        SetName("none");
+}
+
+bool Mesh::Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, float& dis)
+{
+    BoundingBox finalBound = this->_bound;
+
+    if (trans != nullptr) {
+        Matrix localToWorld = Matrix::Identity;
+        trans->GetLocalToWorldMatrix(localToWorld);
+        this->_bound.Transform(finalBound, localToWorld);
+    }
+    return worldRay.Intersects(finalBound, dis);
+}
+
+bool Mesh::Intersects(std::shared_ptr<Transform> trans, const BoundingBox& worldBox)
+{
+    BoundingBox finalBound = this->_bound;
+
+    if (trans != nullptr) {
+        Matrix localToWorld = Matrix::Identity;
+        trans->GetLocalToWorldMatrix(localToWorld);
+        this->_bound.Transform(finalBound, localToWorld);
+    }
+    return worldBox.Intersects(finalBound);
+}
+
+
+void Mesh::CreateBothBuffer()
+{
+    CreateVertexBuffer();
+    CreateIndexBuffer();
 }
 
 void Mesh::CreateVertexBuffer()

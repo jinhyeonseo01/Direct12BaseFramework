@@ -33,6 +33,8 @@ namespace dxe
 		bool RemoveGameObject(std::shared_ptr<GameObject> gameObject);
 		bool RemoveAtGameObject(int index);
 
+        std::shared_ptr<GameObject> CreateGameObject(const std::shared_ptr<Model>& model);
+
 		std::shared_ptr<GameObject> Find(std::wstring name, bool includeDestroy = false);
 		int Find(std::wstring name, std::vector<std::shared_ptr<GameObject>> vec, bool includeDestroy = false);
 

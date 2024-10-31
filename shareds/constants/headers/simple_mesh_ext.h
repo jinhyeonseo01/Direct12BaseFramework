@@ -6,6 +6,22 @@ namespace DirectX
 {
     namespace SimpleMath
     {
+        inline bool Equals(const float& a, const float& b) noexcept
+        {
+            return std::abs(a - b) <= 1e-6f;
+        }
+        inline bool Equals(const double& a, const double& b) noexcept
+        {
+            return std::abs(a - b) <= 1e-14f;
+        }
+        inline bool Equals(const Vector3& a, const Vector3& b) noexcept
+        {
+            return (a - b).LengthSquared() <= 1e-6f;
+        }
+        inline bool Equals(const Vector2& a, const Vector2& b) noexcept
+        {
+            return (a - b).LengthSquared() <= 1e-6f;
+        }
 		inline void ToEuler(const Quaternion& quat, Vector3& euler) noexcept
 		{
             float x = quat.x;

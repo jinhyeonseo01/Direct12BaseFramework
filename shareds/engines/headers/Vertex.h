@@ -90,7 +90,7 @@ namespace dxe
         Vector3 bitangent = Vector3(0, 0, 0);
 		Vector4 color = Vector4(1, 1, 0, 1);
         std::vector<Vector3> uvs{ 8 };
-		Vector4 boneId = Vector4(0, 0, 0, 0);
+		Vector4 boneId = Vector4(-1, -1, -1, -1);
         Vector4 boneWeight = Vector4(0, 0, 0, 0);
 
 
