@@ -67,6 +67,7 @@ namespace dxe
 
 	public:
         std::shared_ptr<GraphicManager> graphic;
+        std::shared_ptr<ResourceManager> resource;
 
 	public: //Engine Field
 		std::chrono::time_point<std::chrono::steady_clock> _engineStartClock{};
@@ -122,11 +123,15 @@ namespace dxe
 		virtual void LogicPipeline();
 		virtual void RenderingPipeline();
 
-	public:
+	protected:
 		virtual void DebugInit();
 		virtual void DebugPipeline();
-		std::vector<DebugCommand> _debugCommandList;
+
+	    std::vector<DebugCommand> _debugCommandList;
 		bool _debugCommandMode = false;
+
+	    double _debugFrameTimer = 0;
+        bool _debugFrameTimerActive = false;
 	};
 
 	class DebugCommand

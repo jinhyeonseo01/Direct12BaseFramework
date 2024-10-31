@@ -128,11 +128,15 @@
       <MinimalRebuild>false</MinimalRebuild>
       <CombineFilesOnlyFromTheSameFolder>false</CombineFilesOnlyFromTheSameFolder>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\Debug\*" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -154,6 +158,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\Release\*" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.h">
@@ -240,7 +247,6 @@
     <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
     <ClInclude Include="..\shareds\engines\headers\Vertex.h" />
-    <ClInclude Include="ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp">

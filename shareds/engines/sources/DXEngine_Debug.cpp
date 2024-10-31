@@ -113,13 +113,27 @@ void Engine::DebugInit()
     _debugCommandList.push_back(command);
     command.command = "dx";
     _debugCommandList.push_back(command);
+
+    command.command = "frameMonitor";
+    command.detail = L"프레임 모니터링";
+    command.func = std::function([&](std::vector<std::wstring>& args) {
+        auto engine = GetEngine(_mainEngineIndex);
+        auto scene = SceneManager::_currentScene;
+
+        _debugFrameTimerActive = !_debugFrameTimerActive;
+
+        });
+    _debugCommandList.push_back(command);
+    command.command = "fm";
+    _debugCommandList.push_back(command);
 }
 
 void Engine::DebugPipeline()
 {
 	auto engine = GetEngine(_mainEngineIndex);
 	auto scene = SceneManager::_currentScene;
-	if (engine->input->GetKeyUp(KeyCode::BackQoute))
+
+    if (engine->input->GetKeyUp(KeyCode::BackQoute))
 	{
 		_debugCommandMode = true;
 		UpdateTitleName(std::to_wstring(std::format("{} ({})", std::to_string(_titleName), "Console Read Waiting...")));
@@ -152,6 +166,16 @@ void Engine::DebugPipeline()
         SetWindowRect(Viewport(0, 0, 1920, 1080));
         graphic->_refreshReserve = true;
     }
+
+    if(_debugFrameTimerActive)
+	{
+        _debugFrameTimer += engine->deltaTime;
+        if(_debugFrameTimer > 2)
+        {
+            Debug::log << currentFrame << "\n";
+            _debugFrameTimer = 0;
+        }
+	}
 }
 
 bool DebugCommand::operator==(const std::string& command) const

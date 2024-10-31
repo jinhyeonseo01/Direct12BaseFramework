@@ -75,6 +75,10 @@
     <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
+    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>false</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>false</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>false</CopyCppRuntimeToOutputDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(IncludePath)</IncludePath>
@@ -117,11 +121,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,6 +146,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 #include <DXEngine.h>
 #include <Input.h>
 
+#include "ResourceManager.h"
 #include "Scene.h"
 #include "SceneManager.h"
 
@@ -136,6 +137,7 @@ namespace dxe
 		this->_engineInputDispatcher = std::make_unique<InputDispatcher>(this->shared_from_this());
 		this->input = std::make_unique<Input>();
         this->graphic = std::make_shared<GraphicManager>();
+        this->resource = std::make_shared<ResourceManager>();
 
 		AppendEngine(this->shared_from_this());
 		DebugInit();
@@ -153,6 +155,8 @@ namespace dxe
         graphic->SetHWnd(GetWindowHWnd());
         graphic->SetScreenInfo(GetWindowRect());
 	    graphic->Init();
+
+        resource->Init();
 
 		return this->shared_from_this();
 	}
@@ -397,7 +401,8 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
     DirectX::SimpleMath::Viewport Engine::SetWindowRect(const DirectX::SimpleMath::Viewport& windowRect)
 	{
 		this->_windowRect = windowRect;
-	    this->graphic->SetScreenInfo(windowRect);
+        if(this->graphic != nullptr)
+	        this->graphic->SetScreenInfo(windowRect);
 		return this->GetWindowRect();
 	}
 

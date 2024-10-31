@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "MeshRenderer.h"
+#include "ResourceManager.h"
 
 
 using namespace dxe;
@@ -50,7 +51,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             obj1->transform->worldPosition(Vector3(0.5f, 0, 0.1f));
             obj1->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, 45, 0) * D2R);
             auto meshRender = obj1->AddComponent<MeshRenderer>();
+
         }
+        ResourceManager::main->LoadModel(L"Ellen.fbx", L"Ellen");
+        ResourceManager::main->LoadModel(L"Kind.fbx", L"Kind");
+        //ResourceManager::main->WaitAll();
 
         while (!dxe::Engine::GetEngineList().empty())
         {

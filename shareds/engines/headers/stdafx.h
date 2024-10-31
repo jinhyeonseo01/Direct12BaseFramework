@@ -92,8 +92,10 @@
 
 #ifdef _DEBUG
 #pragma comment(lib, "assimp-vc143-mtd.lib")
+#pragma comment(lib, "zlibstaticd.lib")
 #else
 #pragma comment(lib, "assimp-vc143-mt.lib")
+#pragma comment(lib, "zlibstatic.lib")
 #endif
 
 

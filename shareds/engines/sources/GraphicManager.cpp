@@ -230,12 +230,20 @@ void GraphicManager::RefreshSwapChain()
 {
     BOOL bFullScreenState = FALSE;
     _swapChain->GetFullscreenState(&bFullScreenState, NULL);
-    Debug::log << bFullScreenState << (int)setting.windowType << "\n";
-    if (bFullScreenState != (setting.windowType == WindowType::FullScreen))
+
+    if (setting.windowType == WindowType::Windows)
+        Debug::log << "화면모드 전환 : Window" << "\n";
+    if (setting.windowType == WindowType::FullScreen)
+        Debug::log << "화면모드 전환 : FullScreen" << "\n";
+    if (setting.windowType == WindowType::FullScreen_Noborder)
+        Debug::log << "화면모드 전환 : FullScreen_Noborder" << "\n";
+
     {
+        if (bFullScreenState != (setting.windowType == WindowType::FullScreen))
         {
             _swapChain->SetFullscreenState(setting.windowType == WindowType::FullScreen, nullptr);
         }
+
         {
             _swapChainRT.clear();
             _swapChainBuffers_Res.clear();
@@ -360,10 +368,16 @@ void GraphicManager::SwapChainExecute()
         _swapChain->Present(1, 0);
         break;
     case FrameSync::GSync:
-        _swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+        if (setting.windowType == WindowType::FullScreen)
+            _swapChain->Present(0, 0);
+        else
+            _swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
         break;
     case FrameSync::NonSync:
-        _swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING | DXGI_PRESENT_DO_NOT_WAIT);
+        if (setting.windowType == WindowType::FullScreen)
+            _swapChain->Present(0, DXGI_PRESENT_DO_NOT_WAIT);
+        else
+            _swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING | DXGI_PRESENT_DO_NOT_WAIT);
         break;
     }
     //_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING); // GSync
@@ -558,6 +572,7 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
     if( setting.screenInfo.width != viewInfo.width ||
         setting.screenInfo.height != viewInfo.height)
         _refreshReserve = true;
+
     viewInfo.minDepth = 0;
     viewInfo.maxDepth = 1;
     setting.screenInfo = viewInfo;

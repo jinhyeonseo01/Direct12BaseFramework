@@ -83,6 +83,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 color2 = input.color;
 
     float4 AlbedoColor = test.Sample(sampler_aniso_16, input.uv);
+    //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
+    //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
 
     return float4(color2, 1.0f) * pow(AlbedoColor, 1.0 / 2.2) * color3;
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);

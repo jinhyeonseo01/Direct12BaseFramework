@@ -3,7 +3,7 @@
 
 Model::Model()
 {
-
+    _meshList.reserve(64);
 }
 
 Model::~Model()

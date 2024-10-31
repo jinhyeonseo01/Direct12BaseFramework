@@ -225,9 +225,6 @@
     <ClInclude Include="..\shareds\engines\headers\ShaderResourcePool.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>

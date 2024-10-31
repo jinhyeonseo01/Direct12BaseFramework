@@ -5,6 +5,8 @@
 #include <stdafx.h>
 #include <DXEngine.h>
 
+#include "ResourceManager.h"
+
 using namespace dxe;
 
 void Initialize(HINSTANCE hInstance);
