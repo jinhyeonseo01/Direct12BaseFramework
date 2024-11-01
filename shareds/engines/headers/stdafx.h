@@ -173,3 +173,11 @@ using namespace Microsoft::WRL;
 namespace dx = DirectX;
 
 using namespace dxe;
+
+
+//#define TRACY_ENABLE
+
+#ifdef TRACY_ENABLE
+    #include "tracy/tracy/Tracy.hpp"
+    #include "tracy/tracy/TracyD3D12.hpp"
+#endif

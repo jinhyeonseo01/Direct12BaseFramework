@@ -23,7 +23,7 @@ void Model::CreateGraphicResource()
         mesh->CreateBothBuffer();
 }
 
-void Model::Init(std::shared_ptr<AssimpLoadPack> pack)
+void Model::Init(std::shared_ptr<AssimpPack> pack)
 {
     _meshList.reserve(32);
     _boneList.reserve(256);
@@ -80,7 +80,7 @@ void Model::Init(std::shared_ptr<AssimpLoadPack> pack)
             //--------- Index 등록 ---------
             for (int j = 0; j < currentAIMesh->mNumFaces; j++)
             {
-                auto& polygon = currentAIMesh->mFaces[3];
+                auto& polygon = currentAIMesh->mFaces[j];
                 if (polygon.mNumIndices == 3)
                 {
                     indexs.push_back(polygon.mIndices[0]);
@@ -175,7 +175,7 @@ void Model::Init(std::shared_ptr<AssimpLoadPack> pack)
                 node->SetBone(bone);
         }
     }
-
+    
     //값 세팅
     if(_nodeList.size() != 0)
         this->rootNode = _nodeList[0];
@@ -184,7 +184,7 @@ void Model::Init(std::shared_ptr<AssimpLoadPack> pack)
     isSkinned = _boneList.size() != 0;
 }
 
-void Model::SetName(const std::string& name)
+void Model::SetName(const std::wstring& name)
 {
     this->name = name;
 }
@@ -192,7 +192,9 @@ void Model::SetName(const std::string& name)
 std::shared_ptr<Mesh> Model::AddMesh(const std::shared_ptr<Mesh>& mesh)
 {
     _meshList.push_back(mesh);
-    _meshNameToMeshTable[mesh->name] = mesh;
+    int count = _meshNameToMeshTable.count(mesh->name);
+    mesh->SetSubIndex(count);
+    _meshNameToMeshTable.emplace(mesh->name, mesh);
     return mesh;
 }
 
@@ -264,13 +266,36 @@ std::shared_ptr<Bone> Model::GetBoneByID(int index)
     return nullptr;
 }
 
-std::shared_ptr<Mesh> Model::GetMeshByName(const std::string& name)
+std::vector<std::shared_ptr<Mesh>> Model::GetMeshsByName(const std::string& name)
 {
+    std::vector<std::shared_ptr<Mesh>> meshs;
+    meshs.reserve(3);
     if (_meshNameToMeshTable.contains(name))
-        return _meshNameToMeshTable[name];
-    return nullptr;
+    {
+        auto iterRange = _meshNameToMeshTable.equal_range(name);
+        for(auto it = iterRange.first; it != iterRange.second;++it)
+            meshs.push_back(it->second);
+        return meshs;
+    }
+    return std::move(meshs);
 }
 
+std::shared_ptr<Mesh> Model::GetMeshByNameSubIndex(const std::string& name, int index)
+{
+    std::shared_ptr<Mesh> mesh = nullptr;
+    if (_meshNameToMeshTable.contains(name))
+    {
+        auto iterRange = _meshNameToMeshTable.equal_range(name);
+        int i = 0;
+        for (auto it = iterRange.first; it != iterRange.second; ++it)
+        {
+            if (index == i)
+                return it->second;
+            i++;
+        }
+    }
+    return nullptr;
+}
 
 
 ModelNode::ModelNode()
@@ -306,7 +331,9 @@ void ModelNode::SetParent(ModelNode* parent)
 
 void ModelNode::AddMeshName(const std::string& meshName)
 {
-    meshNameList.push_back(meshName);
+    auto iter = std::find(meshNameList.begin(), meshNameList.end(), meshName);
+    if(iter == meshNameList.end())
+        meshNameList.push_back(meshName);
 }
 
 void ModelNode::SetBone(const std::shared_ptr<Bone>& bone)

@@ -41,6 +41,7 @@ void MeshRenderer::Init()
     material->SetData("test", texture);
     material->SetData("color", Vector4(0, 0, 1, 1));
     materials.push_back(material);
+    /*
 
     mesh = std::make_shared<Mesh>();
 
@@ -75,6 +76,7 @@ void MeshRenderer::Init()
 
     mesh->CreateVertexBuffer();
     mesh->CreateIndexBuffer();
+    */
 }
 
 void MeshRenderer::Start()

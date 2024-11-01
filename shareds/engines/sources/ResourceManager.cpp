@@ -17,29 +17,32 @@ ResourceManager::~ResourceManager()
 
 }
 
-AssimpLoadPack::AssimpLoadPack()
+AssimpPack::AssimpPack()
 {
 }
 
-AssimpLoadPack::~AssimpLoadPack()
+AssimpPack::~AssimpPack()
 {
 }
 
-std::shared_ptr<AssimpLoadPack> AssimpLoadPack::Init()
+std::shared_ptr<AssimpPack> AssimpPack::Init()
 {
     importer = std::make_shared<Assimp::Importer>();
 
     return shared_from_this();
 }
 
-std::shared_ptr<AssimpLoadPack> AssimpLoadPack::LoadAsync(std::wstring path, std::wstring name)
+std::shared_ptr<AssimpPack> AssimpPack::LoadAsync(std::wstring path, std::wstring name)
 {
     auto pathString = std::to_string(path);
-    this->asyncLoadThread = std::make_shared<std::jthread>(std::bind([](AssimpLoadPack* pack, std::stop_token token, std::string path)
+    this->name = name;
+    this->path = path;
+    this->asyncLoadThread = std::make_shared<std::jthread>(std::bind([=](AssimpPack* pack, std::stop_token token, std::string path)
     {
         pack->loadComplate.store(false);
         try
         {
+            Debug::log << "모델 로드 중 : " << path << "\n";
             pack->scene = pack->importer->ReadFile(path + "\0",
                 aiProcess_MakeLeftHanded | // 왼손 좌표계로 변경
                 aiProcess_FlipWindingOrder | //CW, CCW 바꾸는거임.
@@ -71,21 +74,20 @@ std::shared_ptr<AssimpLoadPack> AssimpLoadPack::LoadAsync(std::wstring path, std
             );
             if ((pack->scene == nullptr) || pack->scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || (pack->scene->mRootNode == nullptr))
             {
-                Debug::log << "Error : 모델 로드 실패 : " << pack->importer->GetErrorString() << "\n";
+                Debug::log << "모델 로드 실패 : " << path << "\n" << pack->importer->GetErrorString() << "\n";
             }
             else
             {
-                Debug::log << "모델 로드 성공 : " << std::string(pack->scene->mName.data, pack->scene->mName.length) << "\n";
+                Debug::log << "모델 로드 성공 : "<< path <<"\n";
+                ResourceManager::main->LoadModel(pack->shared_from_this());
             }
         }
         catch (...)
         {
-            
+            Debug::log << "모델 로드 중 에러 : " << path <<"\n";
         }
         pack->loadComplate.store(true);
     }, this, std::placeholders::_1, pathString));
-    //this->asyncLoadThread->detach();
-    this->name = name;
     return shared_from_this();
 }
 
@@ -98,9 +100,9 @@ void ResourceManager::Init()
 bool ResourceManager::IsLoading()
 {
     bool loading = false;
-    for (int i=0;i< _aiPackList.size();i++)
+    for (int i=0;i< assimpPackList.size();i++)
     {
-        bool currentLoad = !_aiPackList[i]->loadComplate.load();
+        bool currentLoad = !assimpPackList[i]->loadComplate.load();
         loading |= currentLoad;
     }
     return loading;
@@ -108,26 +110,64 @@ bool ResourceManager::IsLoading()
 
 bool ResourceManager::WaitAll()
 {
-    for (int i = 0; i < _aiPackList.size(); i++)
+    for (int i = 0; i < assimpPackList.size(); i++)
     {
-        bool currentLoad = !_aiPackList[i]->loadComplate.load();
+        bool currentLoad = !assimpPackList[i]->loadComplate.load();
         if (currentLoad)
-            _aiPackList[i]->asyncLoadThread->join();
+            assimpPackList[i]->asyncLoadThread->join();
     }
     return true;
 }
 
-std::shared_ptr<AssimpLoadPack> ResourceManager::LoadModel(std::wstring path, std::wstring name)
+std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& path, const std::wstring& name)
 {
-    auto pack = std::make_shared<AssimpLoadPack>()->Init()->LoadAsync(path, name);
-    _aiPackList.push_back(pack);
-    WaitAll();
-    auto model = std::make_shared<Model>();
-    model->Init(pack);
+    auto pack = std::make_shared<AssimpPack>()->Init()->LoadAsync(path, name);
+    assimpPackList.push_back(pack);
+    assimpPackTable[name] = pack;
     return pack;
 }
 
-void ResourceManager::LoadTexture(std::wstring path, std::wstring name)
+std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pack)
 {
-    
+    auto model = std::make_shared<Model>();
+    model->SetName(pack->name);
+    model->Init(pack->shared_from_this());
+    modelList.push_back(model);
+    modelTable[model->name] = model;
+    return model;
+}
+
+std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::wstring name)
+{
+    return nullptr;
+}
+
+
+std::shared_ptr<Shader> ResourceManager::LoadShader(std::wstring path, std::wstring name)
+{
+    return nullptr;
+}
+
+std::shared_ptr<Model> ResourceManager::GetModel(std::wstring name)
+{
+    if (modelTable.contains(name))
+        return modelTable[name];
+    return nullptr;
+}
+
+std::shared_ptr<AssimpPack> ResourceManager::GetAssimpPack(std::wstring name)
+{
+    if (assimpPackTable.contains(name))
+        return assimpPackTable[name];
+    return nullptr;
+}
+
+std::shared_ptr<Shader> ResourceManager::GetTexture(std::wstring name)
+{
+    return nullptr;
+}
+
+std::shared_ptr<Texture> ResourceManager::GetShader(std::wstring name)
+{
+    return nullptr;
 }

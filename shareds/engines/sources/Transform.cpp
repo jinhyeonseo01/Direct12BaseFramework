@@ -302,6 +302,12 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
 	}
 }
 
+void Transform::LookUp(const Vector3& dir, const Vector3& up)
+{
+    Matrix mat = XMMatrixLookToLH(localPosition, dir, up);
+    SetLocalSRTMatrix(mat);
+}
+
 Vector3 Transform::LocalToWorld_Position(const Vector3& value)
 {
 	Matrix& mat = localToWorldMatrix;

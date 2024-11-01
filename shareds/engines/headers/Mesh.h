@@ -9,6 +9,7 @@ namespace dxe
     {
     public:
         std::string name;
+        int subMeshIndex = 0;
 
         std::vector<Vertex> _vertexList;
         std::vector<float> _dataBuffer;
@@ -19,6 +20,7 @@ namespace dxe
         Mesh();
         virtual ~Mesh();
         void SetName(const std::string& name);
+        void SetSubIndex(int index);
         void SetBound(const BoundingBox& bound);
         void SetBound(const Vector3& min, const Vector3& max);
         void CalculateBound();

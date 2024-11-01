@@ -2,6 +2,7 @@
 #include <stdafx.h>
 
 #include "EObject.h"
+#include "Model.h"
 
 namespace dxe
 {
@@ -29,11 +30,11 @@ namespace dxe
 	public:
 		std::shared_ptr<GameObject> CreateGameObject();
 		std::shared_ptr<GameObject> CreateGameObject(std::wstring name);
+        std::shared_ptr<GameObject> CreateGameObjects(const std::shared_ptr<Model>& model, ModelNode* node = nullptr);
+
 		bool AddGameObject(std::shared_ptr<GameObject> gameObject);
 		bool RemoveGameObject(std::shared_ptr<GameObject> gameObject);
 		bool RemoveAtGameObject(int index);
-
-        std::shared_ptr<GameObject> CreateGameObject(const std::shared_ptr<Model>& model);
 
 		std::shared_ptr<GameObject> Find(std::wstring name, bool includeDestroy = false);
 		int Find(std::wstring name, std::vector<std::shared_ptr<GameObject>> vec, bool includeDestroy = false);

@@ -47,15 +47,27 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             cameraObj->transform->worldPosition(Vector3(0, 0, -0.5f));
             cameraObj->AddComponent<Camera>();
 
-            auto obj1 = scene->CreateGameObject(L"Render Test");
+            /*auto obj1 = scene->CreateGameObject(L"Render Test");
             obj1->transform->worldPosition(Vector3(0.5f, 0, 0.1f));
             obj1->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, 45, 0) * D2R);
-            auto meshRender = obj1->AddComponent<MeshRenderer>();
+            auto meshRender = obj1->AddComponent<MeshRenderer>();*/
 
         }
-        //ResourceManager::main->LoadModel(L"Ellen.fbx", L"Ellen");
-        //ResourceManager::main->LoadModel(L"Kind.fbx", L"Kind");
-        ResourceManager::main->LoadModel(L"ter.obj", L"Ellen");
+
+        //ResourceManager::main->LoadAssimpPack(L"Ellen.fbx", L"Ellen");
+        ResourceManager::main->LoadAssimpPack(L"Kind.fbx", L"Kind");
+        ResourceManager::main->LoadAssimpPack(L"ter.obj", L"ter1");
+        //ResourceManager::main->LoadAssimpPack(L"ter.fbx", L"ter2");
+        {
+            ResourceManager::main->WaitAll();
+            auto model = ResourceManager::main->GetModel(L"ter1");
+            model->CreateGraphicResource();
+
+            auto obj = SceneManager::_currentScene->CreateGameObjects(model, model->rootNode.get());
+            //obj->transform->localScale = obj->transform->localScale * 0.1f;
+            obj->transform->localPosition = Vector3(0, -2, 0);
+            //obj->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, 270, 0) * D2R);
+        }
         //ResourceManager::main->WaitAll();
 
         while (!dxe::Engine::GetEngineList().empty())
@@ -106,4 +118,6 @@ void Release()
     dxe::Engine::DeleteEngineAll();
     dxe::SceneManager::DeleteAll();
     Debug::Console::Close();
+    ShowCursor(TRUE);
+
 }

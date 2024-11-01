@@ -20,6 +20,11 @@ void Mesh::SetName(const std::string& name)
     this->name = name;
 }
 
+void Mesh::SetSubIndex(int index)
+{
+    subMeshIndex = index;
+}
+
 void Mesh::SetBound(const BoundingBox& bound)
 {
     this->_bound = bound;

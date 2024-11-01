@@ -50,6 +50,7 @@ namespace dxe
         bool CheckNeedLocalChangedUpdate() const;
 		bool CheckNeedLocalToWorldUpdate() const;
 		void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
+        void LookUp(const Vector3& dir, const Vector3& up);
 
 		bool isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
 		bool isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.

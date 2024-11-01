@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExternalIncludePath>$(SolutionDir)plugins\includes;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)plugins\includes;$(SolutionDir)plugins\includes\imgui\backends;$(SolutionDir)plugins\includes\imgui;$(SolutionDir)plugins\includes\directx\DirectXTex;$(SolutionDir)plugins\includes\directx\directx;$(SolutionDir)plugins\includes\directx\wsl;$(SolutionDir)plugins\includes\directx\dxguids;$(SolutionDir)shareds\constants\headers;$(SolutionDir)shareds\engines\headers;$(SolutionDir)shareds\plugins\includes\tracy;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)plugins\libs;$(LibraryPath)</LibraryPath>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
     <CopyLocalProjectReference>false</CopyLocalProjectReference>
@@ -195,6 +195,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\plugins\includes\tracy\tracy\Tracy.hpp" />
+    <ClInclude Include="..\plugins\includes\tracy\tracy\TracyD3D12.hpp" />
     <ClInclude Include="..\shareds\constants\headers\convert_assimp.h" />
     <ClInclude Include="..\shareds\constants\headers\convert_directx.h" />
     <ClInclude Include="..\shareds\constants\headers\convert_math.h" />
@@ -277,6 +279,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\plugins\includes\tracy\TracyClient.cpp" />
     <ClCompile Include="..\shareds\constants\sources\convert_assimp.cpp" />
     <ClCompile Include="..\shareds\constants\sources\debug_console.cpp" />
     <ClCompile Include="..\shareds\constants\sources\graphic_config.cpp" />

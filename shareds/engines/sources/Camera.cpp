@@ -46,14 +46,34 @@ void Camera::Start()
     Component::Start();
 }
 
+Vector2 prevPos;
+Vector3 angle = Vector3::Zero;
+
 void Camera::Update()
 {
     Component::Update();
+
+    if (Input::main->GetMouseDown(KeyCode::RightMouse))
+        prevPos = Input::main->GetMousePosition();
+    if (Input::main->GetMouse(KeyCode::RightMouse))
+    {
+        auto pos = (Input::main->GetMousePosition() - prevPos);
+        auto movePos = -(((Vector3(0, 1, 0) * pos.x) + (Vector3(1, 0, 0) * pos.y)) * 0.01f);
+
+        angle += movePos;
+
+        gameObject.lock()->transform->localEuler(angle);
+        //gameObject.lock()->transform->LookUp(movePos, Vector3(0, 1, 0));
+        prevPos = Input::main->GetMousePosition();
+    }
+
     auto r = gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0));
     r += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
 
     r.Normalize(r);
     gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + r * 0.01f);
+
+    
 }
 
 void Camera::LateUpdate()

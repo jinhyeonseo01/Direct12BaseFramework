@@ -344,6 +344,7 @@ void GraphicManager::ClearCurrentCommand()
     // 이번 렌더 주기동안 사용할 list를 마련해주시고용
     DXAssert(allocator->Reset());
     DXAssert(list->Reset(allocator.Get(), nullptr));
+
 }
 
 void GraphicManager::FinishAndExecuteCurrentCommand()
@@ -499,7 +500,7 @@ void GraphicManager::CreateCommandQueueListAlloc()
 
     DXAssert(_device->CreateCommandQueue(ComPtrAddr(commandQueueDesc), ComPtrIDAddr(_commandQueue)));
 
-    
+
     for (int i = 0; i < commandListCount; i++)
     {
         ComPtr<ID3D12CommandAllocator> commandAllocator;

@@ -554,6 +554,7 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
 		return 0;
 	}
 
+    
 	void Engine::WindowLocalCallback(WinEvent& winEvent)
 	{
 		InputEvent eventDesc;
@@ -725,6 +726,16 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
 			eventDesc.mouse.posX = static_cast<float>(LOWORD(winEvent.lParam));
 			eventDesc.mouse.posY = static_cast<float>(HIWORD(winEvent.lParam));
 			eventDesc.mouse.isInClient = true;
+            if(!isInClientMouse)
+            {
+                isInClientMouse = true;
+                TRACKMOUSEEVENT tme;
+                tme.cbSize = sizeof(tme);
+                tme.dwFlags = TME_LEAVE;
+                tme.hwndTrack = winEvent.hWnd;
+                TrackMouseEvent(&tme);
+                ShowCursor(FALSE);
+            }
 			break;
 		}
 		case WM_MOUSEWHEEL:
@@ -746,11 +757,13 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
 			eventDesc.type = InputType::Mouse;
 			eventDesc.mouse.posX = static_cast<float>(LOWORD(winEvent.lParam));
 			eventDesc.mouse.posY = static_cast<float>(HIWORD(winEvent.lParam));
+            
 			break;
 		}
 		case WM_MOUSELEAVE:
 		{
-			Debug::log << "1234\n";
+            isInClientMouse = false;
+            ShowCursor(TRUE);
 			break;
 		}
 		case WM_KEYUP:

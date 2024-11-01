@@ -15,12 +15,13 @@ namespace dxe
         int _boneAllocator = 0;
 
     public:
-        std::string name;
+        std::wstring name = L"none";
+
         std::vector<std::shared_ptr<Mesh>> _meshList;
         std::vector<std::shared_ptr<Bone>> _boneList;
         std::vector<std::shared_ptr<ModelNode>> _nodeList;
 
-        std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshNameToMeshTable;
+        std::unordered_multimap<std::string, std::shared_ptr<Mesh>> _meshNameToMeshTable;
         std::unordered_map<std::string, std::shared_ptr<Bone>> _boneNameToBoneTable;
         std::unordered_map<std::string, std::shared_ptr<ModelNode>> _boneNameToNodeTable;
         std::unordered_map<std::string, std::shared_ptr<ModelNode>> _nodeNameToNodeTable;
@@ -30,15 +31,16 @@ namespace dxe
 
         int isSkinned = false;
 
-        void Init(std::shared_ptr<AssimpLoadPack> pack);
-        void SetName(const std::string& name);
+        void Init(std::shared_ptr<AssimpPack> pack);
+        void SetName(const std::wstring& name);
 
 
         std::shared_ptr<Mesh> AddMesh(const std::shared_ptr<Mesh>& mesh);
         std::shared_ptr<ModelNode> AddNode(const std::shared_ptr<ModelNode>& parentNode, aiNode* currentNode);
         std::shared_ptr<Bone> AddBone(std::shared_ptr<Bone> bone);
 
-        std::shared_ptr<Mesh> GetMeshByName(const std::string& name);
+        std::vector<std::shared_ptr<Mesh>> GetMeshsByName(const std::string& name);
+        std::shared_ptr<Mesh> GetMeshByNameSubIndex(const std::string& name, int index = 0);
         std::shared_ptr<ModelNode> GetNodeByName(const std::string& name);
 
         bool ContainsBone(const std::string& name);

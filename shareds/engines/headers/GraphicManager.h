@@ -145,6 +145,12 @@ namespace dxe
 
         GraphicManager();
         virtual ~GraphicManager();
+
+
+    public:
+#ifdef TRACY_ENABLE
+        tracy::D3D12QueueCtx _tracyCTX;
+#endif
     };
 
 }

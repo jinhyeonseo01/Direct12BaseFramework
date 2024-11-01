@@ -7,18 +7,19 @@
 
 namespace dxe
 {
-    class AssimpLoadPack : public std::enable_shared_from_this<AssimpLoadPack>
+    class AssimpPack : public std::enable_shared_from_this<AssimpPack>
     {
     public:
         std::wstring name;
+        std::wstring path;
         const aiScene* scene = nullptr;
         std::shared_ptr<Assimp::Importer> importer;
 
-        AssimpLoadPack();
-        virtual ~AssimpLoadPack();
+        AssimpPack();
+        virtual ~AssimpPack();
 
-        std::shared_ptr<AssimpLoadPack> Init();
-        std::shared_ptr<AssimpLoadPack> LoadAsync(std::wstring path, std::wstring name);
+        std::shared_ptr<AssimpPack> Init();
+        std::shared_ptr<AssimpPack> LoadAsync(std::wstring path, std::wstring name);
 
     public:
         std::shared_ptr<std::jthread> asyncLoadThread;
@@ -30,11 +31,15 @@ namespace dxe
 	public:
         static ResourceManager* main;
 
-        std::shared_ptr<Model> modelList;
-        std::shared_ptr<Texture> textureList;
-        std::shared_ptr<Shader> shaderList;
+        std::vector<std::shared_ptr<Model>> modelList;
+        std::vector<std::shared_ptr<Texture>> textureList;
+        std::vector<std::shared_ptr<Shader>> shaderList;
+	    std::vector<std::shared_ptr<AssimpPack>> assimpPackList;
 
-	    std::vector<std::shared_ptr<AssimpLoadPack>> _aiPackList;
+        std::unordered_map<std::wstring, std::shared_ptr<Model>> modelTable;
+        std::unordered_map<std::wstring, std::shared_ptr<Texture>> textureTable;
+        std::unordered_map<std::wstring, std::shared_ptr<Shader>> shaderTable;
+        std::unordered_map<std::wstring, std::shared_ptr<AssimpPack>> assimpPackTable;
 
 	public:
         ResourceManager();
@@ -42,7 +47,16 @@ namespace dxe
         void Init();
         bool IsLoading();
         bool WaitAll();
-        std::shared_ptr<AssimpLoadPack> LoadModel(std::wstring path, std::wstring name);
-	    void LoadTexture(std::wstring path, std::wstring name);
+
+
+        std::shared_ptr<AssimpPack> LoadAssimpPack(const std::wstring& path, const std::wstring& name);
+        std::shared_ptr<Model> LoadModel(std::shared_ptr<AssimpPack> pack);
+        std::shared_ptr<Texture> LoadTexture(std::wstring path, std::wstring name);
+        std::shared_ptr<Shader> LoadShader(std::wstring path, std::wstring name);
+
+        std::shared_ptr<Model> GetModel(std::wstring name);
+        std::shared_ptr<AssimpPack> GetAssimpPack(std::wstring name);
+        std::shared_ptr<Shader> GetTexture(std::wstring name);
+        std::shared_ptr<Texture> GetShader(std::wstring name);
 	};
 }

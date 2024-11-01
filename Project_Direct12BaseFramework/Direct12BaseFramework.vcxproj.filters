@@ -46,6 +46,9 @@
     <Filter Include="Engine\shader">
       <UniqueIdentifier>{95759722-dea5-4dcc-b807-edad8d82ccc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Profiler">
+      <UniqueIdentifier>{def7343f-8a58-4a84-8d29-b3a8634d7c50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shareds\constants\headers\convert_math.h">
@@ -228,6 +231,12 @@
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\plugins\includes\tracy\tracy\Tracy.hpp">
+      <Filter>Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\plugins\includes\tracy\tracy\TracyD3D12.hpp">
+      <Filter>Profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct12BaseFramework.cpp">
@@ -394,6 +403,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\stdafx.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\plugins\includes\tracy\TracyClient.cpp">
+      <Filter>Profiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

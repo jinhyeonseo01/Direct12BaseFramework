@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Transform.h"
 #include "GameObject.h"
+#include "MeshRenderer.h"
 
 
 namespace dxe
@@ -111,9 +112,25 @@ namespace dxe
 		return false;
 	}
 
-    std::shared_ptr<GameObject> Scene::CreateGameObject(const std::shared_ptr<Model>& model)
+    std::shared_ptr<GameObject> Scene::CreateGameObjects(const std::shared_ptr<Model>& model, ModelNode* node)
     {
+        if (node == nullptr)
+            return nullptr;
 
+	    auto currentObj = CreateGameObject(std::to_wstring(node->name));
+        currentObj->transform->SetLocalSRTMatrix(node->transformMatrix);
+        if(node->meshNameList.size() != 0)
+        {
+            auto mr = currentObj->AddComponent<MeshRenderer>();
+            auto meshs = model->GetMeshsByName(node->meshNameList[0]);
+            mr->mesh = meshs[0];
+        }
+        for (auto child : node->childs)
+        {
+            auto childObj = CreateGameObjects(model, child);
+            childObj->SetParent(currentObj);
+        }
+        return currentObj;
     }
 
     std::shared_ptr<GameObject> Scene::Find(std::wstring name, bool includeDestroy)

@@ -28,7 +28,6 @@ namespace dxe
 		static std::vector<std::shared_ptr<Engine>> _engineList;
 		static int _mainEngineIndex;
 
-
 	public:
 		static HINSTANCE _processInstance;
 		static std::chrono::time_point<std::chrono::steady_clock> _processStartClock;
@@ -64,6 +63,7 @@ namespace dxe
 
 		bool isOpenWindow = false;
 		bool isActiveWindow = false;
+        bool isInClientMouse = false;
 
 	public:
         std::shared_ptr<GraphicManager> graphic;
