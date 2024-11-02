@@ -24,11 +24,6 @@ namespace dxe
         void BeforeRendering() override;
         void Rendering() override;
         void AfterRendering() override;
-
-    public:
-        std::vector<std::shared_ptr<Material>> materials;
-        std::shared_ptr<Mesh> mesh;
-        std::shared_ptr<Texture> texture;
     };
 }
 

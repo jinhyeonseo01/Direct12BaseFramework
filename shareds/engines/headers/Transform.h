@@ -44,12 +44,15 @@ namespace dxe
 		Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
 		Matrix localToWorldMatrix = Matrix::Identity;
 		bool GetLocalToWorldMatrix(Matrix& localToWorldMatrix);
+        bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix);
 		bool GetLocalSRTMatrix(Matrix& localSRT);
         bool SetLocalSRTMatrix(Matrix& localSRT);
 		bool CheckNeedLocalSRTUpdate() const;
         bool CheckNeedLocalChangedUpdate() const;
 		bool CheckNeedLocalToWorldUpdate() const;
 		void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
+        bool BottomUpLocalToWorldUpdate();
+
         void LookUp(const Vector3& dir, const Vector3& up);
 
 		bool isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화

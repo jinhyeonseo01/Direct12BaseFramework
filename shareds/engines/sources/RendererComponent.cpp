@@ -78,3 +78,20 @@ void RendererComponent::AfterRendering()
 {
     Component::AfterRendering();
 }
+
+void RendererComponent::AddMesh(std::vector<std::shared_ptr<Mesh>> meshList)
+{
+    for (auto& mesh : meshList)
+        this->meshList.push_back(mesh);
+}
+
+void RendererComponent::AddMateiral(std::vector<std::shared_ptr<Material>> materialList)
+{
+    for (auto& material : materialList)
+        this->materialList.push_back(material);
+}
+
+void RendererComponent::SetModel(std::shared_ptr<Model> model)
+{
+    this->model = model;
+}

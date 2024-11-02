@@ -44,10 +44,20 @@ void CBufferPool::AddCBuffer(std::string name, std::shared_ptr<CBuffer> cbuffer)
 
 void CBufferPool::AddCBuffer(std::string name, int size, int count)
 {
-    auto cbuffer = std::make_shared<CBuffer>();
-    cbuffer->Init(size, count);
-    _cbufferTable.emplace(name, cbuffer);
-    _cbufferIndexTable.emplace(name, 0);
+    if(!_cbufferTable.contains(name))
+    {
+        auto cbuffer = std::make_shared<CBuffer>();
+        cbuffer->Init(size, count);
+        _cbufferTable.emplace(name, cbuffer);
+        _cbufferIndexTable.emplace(name, 0);
+    }
+    else  if (_cbufferTable[name]->_cbufferCount < count) // 더 많은 양으로 설정될 경우
+    {
+        auto cbuffer = std::make_shared<CBuffer>();
+        cbuffer->Init(size, count);
+        _cbufferTable[name] = cbuffer;
+        _cbufferIndexTable[name] = 0;
+    }
 }
 
 CBufferView CBufferPool::PopCBuffer(std::string name, int size, int count)

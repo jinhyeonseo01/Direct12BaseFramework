@@ -57,20 +57,33 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
 
             //--------- Vertex 등록 ---------
             Vertex vert;
+            Matrix fliper(
+                1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                0,0,0,1
+            );
             for(int j=0; j< currentAIMesh->mNumVertices; j++)
             {
                 vert = {};
-                vert.position = convert_assimp::Format(currentAIMesh->mVertices[j]);
-                vert.normal = convert_assimp::Format(currentAIMesh->mNormals[j]);
+                vert.position = Vector3::Transform(convert_assimp::Format(currentAIMesh->mVertices[j]), fliper);
+                //vert.position.x = -vert.position.x;
+                //vert.position.z = -vert.position.z;
+                vert.normal = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mNormals[j]), fliper);
                 if (currentAIMesh->HasVertexColors(0))
                     vert.color = convert_assimp::Format(currentAIMesh->mColors[0][j]);
                 if (currentAIMesh->HasTextureCoords(0))
                 {
-                    vert.tangent = convert_assimp::Format(currentAIMesh->mTangents[j]);
-                    vert.bitangent = convert_assimp::Format(currentAIMesh->mBitangents[j]);
+                    vert.tangent = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mTangents[j]), fliper);
+                    vert.bitangent = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mBitangents[j]), fliper);
                     for (int k = 0; k < 8; k++)
                         if (currentAIMesh->HasTextureCoords(k))
+                        {
                             vert.uvs[k] = convert_assimp::Format(currentAIMesh->mTextureCoords[k][j]);
+                            auto temp = vert.uvs[k].x;
+                            //vert.uvs[k].x = 1 - vert.uvs[k].y;
+                            //vert.uvs[k].y = 1 - temp;
+                        }
                 }
                 vert.boneWeight = Vector4::Zero;
                 vert.boneId = Vector4(-1, -1, -1, -1);
@@ -136,8 +149,8 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                     }
                     // 수색 성공시 갱신.
                     if(findIndex != -1) {
-                        reinterpret_cast<float*>(&currentVertex.boneId)[findIndex] = bone->boneId;
-                        reinterpret_cast<float*>(&currentVertex.boneWeight)[findIndex] = currentAIBone->mWeights[k].mWeight;
+                        reinterpret_cast<float*>(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->boneId);
+                        reinterpret_cast<float*>(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[k].mWeight;
                     }
                 }
             }
@@ -171,7 +184,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
         {
             auto& bone = _boneList[i];
             auto node = GetNodeByName(bone->nodeName);
-            if(node != nullptr)
+            if (node != nullptr)
                 node->SetBone(bone);
         }
     }
@@ -180,7 +193,24 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
     if(_nodeList.size() != 0)
         this->rootNode = _nodeList[0];
     if (_boneList.size() != 0)
-        this->rootBoneNode = GetNodeByName(_boneList[0]->nodeName);
+    {
+        auto currentNode = (this->rootBoneNode = GetNodeByName(_boneList[0]->nodeName)).get();
+        while (currentNode != nullptr)
+        {
+            if (currentNode->isBone)
+                this->rootBoneNode = currentNode->shared_from_this();
+            currentNode = currentNode->parent;
+        }
+    }
+    /*
+    if (this->rootBoneNode != nullptr && this->rootBoneNode->parent != nullptr)
+    {
+        Debug::log << this->rootBoneNode->parent->transformMatrix << "\n";
+        this->rootBoneNode->parent->transformMatrix = Matrix::CreateRotationY(180 * D2R) * this->rootBoneNode->parent->transformMatrix;
+        Debug::log << this->rootBoneNode->parent->transformMatrix << "\n";
+    }
+    else*/
+    rootNode->transformMatrix = Matrix::CreateRotationY(180 * D2R) * rootNode->transformMatrix;
     isSkinned = _boneList.size() != 0;
 }
 
@@ -203,8 +233,6 @@ std::shared_ptr<ModelNode> Model::AddNode(const std::shared_ptr<ModelNode>& pare
     if (currentNode == nullptr)
         return nullptr;
     auto name = std::string(currentNode->mName.C_Str(), currentNode->mName.length);
-    //if (name == "RootNode")
-        //return AddNode(parentNode, currentNode->mChildren[0]);
     
     auto trans = convert_assimp::Format(currentNode->mTransformation);
     auto thisNode = std::make_shared<ModelNode>();
@@ -346,4 +374,7 @@ void ModelNode::SetBone(const std::shared_ptr<Bone>& bone)
     }
     this->boneID = bone->boneId;
     this->isBone = true;
+    //Matrix m;
+    //bone->.Invert(m);
+    //this->transformMatrix = this->transformMatrix * bone->offsetTransform;
 }

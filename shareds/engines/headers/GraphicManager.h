@@ -81,7 +81,7 @@ namespace dxe
     public:
         SelectorInfo vertexInfo_Full{};
 
-        std::vector<std::shared_ptr<Shader>> shaderList;
+        Shader* currentShader = nullptr;
 
     public:
         bool _isRelease = false;
@@ -130,6 +130,7 @@ namespace dxe
         void RenderPrepare();
         // 렌더링 마무리
         void RenderFinish();
+        void ClearPipelineState();
 
 
         ComPtr<ID3D12GraphicsCommandList4> GetResourceCommandList();

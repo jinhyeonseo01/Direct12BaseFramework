@@ -146,7 +146,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorTable::GetCurrentGroupGPUHandle(int offset
 void DescriptorTable::SetNextGroupHandle()
 {
     _currentGroupIndex++;
-    assert(_currentGroupIndex < _groupHandleCount);
+    assert(_currentGroupIndex < _groupCount);
 
     unsigned int destRange = _groupHandleCount;
     unsigned int srcRange = _groupHandleCount;

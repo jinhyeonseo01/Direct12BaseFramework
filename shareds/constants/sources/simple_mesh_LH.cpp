@@ -143,11 +143,11 @@ void Quaternion::LookRotation(const Vector3& forward, const Vector3& up, Quatern
 }
 
 
- /****************************************************************************
- *
- * Viewport
- *
- ****************************************************************************/
+/****************************************************************************
+*
+* Viewport
+*
+****************************************************************************/
 
 #if defined(__d3d11_h__) || defined(__d3d11_x_h__)
 static_assert(sizeof(DirectX::SimpleMath::Viewport) == sizeof(D3D11_VIEWPORT), "Size mismatch");
@@ -187,35 +187,35 @@ RECT Viewport::ComputeDisplayArea(DXGI_SCALING scaling, UINT backBufferWidth, UI
     case 2 /*DXGI_SCALING_ASPECT_RATIO_STRETCH*/:
         // Output fills the window area but respects the original aspect ratio, using pillar boxing or letter boxing as required
         // Note: This scaling option is not supported for legacy Win32 windows swap chains
+    {
+        assert(backBufferHeight > 0);
+        const float aspectRatio = float(backBufferWidth) / float(backBufferHeight);
+
+        // Horizontal fill
+        float scaledWidth = float(outputWidth);
+        float scaledHeight = float(outputWidth) / aspectRatio;
+        if (scaledHeight >= float(outputHeight))
         {
-            assert(backBufferHeight > 0);
-            const float aspectRatio = float(backBufferWidth) / float(backBufferHeight);
-
-            // Horizontal fill
-            float scaledWidth = float(outputWidth);
-            float scaledHeight = float(outputWidth) / aspectRatio;
-            if (scaledHeight >= float(outputHeight))
-            {
-                // Do vertical fill
-                scaledWidth = float(outputHeight) * aspectRatio;
-                scaledHeight = float(outputHeight);
-            }
-
-            const float offsetX = (float(outputWidth) - scaledWidth) * 0.5f;
-            const float offsetY = (float(outputHeight) - scaledHeight) * 0.5f;
-
-            rct.left = static_cast<LONG>(offsetX);
-            rct.top = static_cast<LONG>(offsetY);
-            rct.right = static_cast<LONG>(offsetX + scaledWidth);
-            rct.bottom = static_cast<LONG>(offsetY + scaledHeight);
-
-            // Clip to display window
-            rct.left = std::max<LONG>(0, rct.left);
-            rct.top = std::max<LONG>(0, rct.top);
-            rct.right = std::min<LONG>(outputWidth, rct.right);
-            rct.bottom = std::min<LONG>(outputHeight, rct.bottom);
+            // Do vertical fill
+            scaledWidth = float(outputHeight) * aspectRatio;
+            scaledHeight = float(outputHeight);
         }
-        break;
+
+        const float offsetX = (float(outputWidth) - scaledWidth) * 0.5f;
+        const float offsetY = (float(outputHeight) - scaledHeight) * 0.5f;
+
+        rct.left = static_cast<LONG>(offsetX);
+        rct.top = static_cast<LONG>(offsetY);
+        rct.right = static_cast<LONG>(offsetX + scaledWidth);
+        rct.bottom = static_cast<LONG>(offsetY + scaledHeight);
+
+        // Clip to display window
+        rct.left = std::max<LONG>(0, rct.left);
+        rct.top = std::max<LONG>(0, rct.top);
+        rct.right = std::min<LONG>(outputWidth, rct.right);
+        rct.bottom = std::min<LONG>(outputHeight, rct.bottom);
+    }
+    break;
 
     case DXGI_SCALING_NONE:
     default:

@@ -48,16 +48,16 @@ namespace dxe
         "TEXCOORD",
         "TEXCOORD",
         "TEXCOORD",
-        "BONE_IDs",
-        "BONE_ID",
-        "BONE_ID",
-        "BONE_ID",
-        "BONE_ID",
-        "BONE_Ws",
-        "BONE_W",
-        "BONE_W",
-        "BONE_W",
-        "BONE_W"
+        "BONEIDs",
+        "BONEID",
+        "BONEID",
+        "BONEID",
+        "BONEID",
+        "BONEWs",
+        "BONEW",
+        "BONEW",
+        "BONEW",
+        "BONEW"
     };
 
 

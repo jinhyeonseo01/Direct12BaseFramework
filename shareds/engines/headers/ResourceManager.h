@@ -51,12 +51,12 @@ namespace dxe
 
         std::shared_ptr<AssimpPack> LoadAssimpPack(const std::wstring& path, const std::wstring& name);
         std::shared_ptr<Model> LoadModel(std::shared_ptr<AssimpPack> pack);
-        std::shared_ptr<Texture> LoadTexture(std::wstring path, std::wstring name);
-        std::shared_ptr<Shader> LoadShader(std::wstring path, std::wstring name);
+        std::shared_ptr<Texture> LoadTexture(std::wstring path, std::wstring name, bool mipmap = false);
+        std::shared_ptr<Shader> LoadShader(std::wstring path, std::wstring name, std::vector<std::shared_ptr<RenderTexture>> rtgs);
 
         std::shared_ptr<Model> GetModel(std::wstring name);
         std::shared_ptr<AssimpPack> GetAssimpPack(std::wstring name);
-        std::shared_ptr<Shader> GetTexture(std::wstring name);
-        std::shared_ptr<Texture> GetShader(std::wstring name);
+        std::shared_ptr<Texture> GetTexture(std::wstring name);
+        std::shared_ptr<Shader> GetShader(std::wstring name);
 	};
 }

@@ -48,17 +48,23 @@ void Camera::Start()
 
 Vector2 prevPos;
 Vector3 angle = Vector3::Zero;
+bool cameraControl = false;
 
 void Camera::Update()
 {
     Component::Update();
 
     if (Input::main->GetMouseDown(KeyCode::RightMouse))
+    {
+        cameraControl = !cameraControl;
         prevPos = Input::main->GetMousePosition();
-    if (Input::main->GetMouse(KeyCode::RightMouse))
+        //ShowCursor(cameraControl ? TRUE : FALSE);
+        Engine::GetMainEngine()->SetCursorHide(cameraControl);
+    }
+    if (cameraControl)//Input::main->GetMouse(KeyCode::RightMouse) && 
     {
         auto pos = (Input::main->GetMousePosition() - prevPos);
-        auto movePos = -(((Vector3(0, 1, 0) * pos.x) + (Vector3(1, 0, 0) * pos.y)) * 0.01f);
+        auto movePos = (((Vector3(0, 1, 0) * pos.x) + (Vector3(1, 0, 0) * pos.y)) * 0.003f);
 
         angle += movePos;
 

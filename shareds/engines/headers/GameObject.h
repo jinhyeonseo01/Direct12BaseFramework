@@ -126,6 +126,7 @@ namespace dxe
 		bool RemoveChild(const std::shared_ptr<GameObject>& obj);
 		bool RemoveAtChild(int index);
 		bool SetParent(const std::shared_ptr<GameObject>& nextParentObj);
+        void SetRootParent(const std::shared_ptr<GameObject>& rootParent);
 
 		bool IsInParent(const std::shared_ptr<GameObject>& obj);
 

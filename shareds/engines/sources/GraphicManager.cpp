@@ -475,16 +475,6 @@ void GraphicManager::InitShader()
         VertexProp::bone_weights,
     };
     vertexInfo_Full = Vertex::GetSelectorInfo(props);
-
-    shaderList.reserve(128);
-
-    {//Test
-        std::shared_ptr<Shader> shader =  Shader::Load(L"forward.hlsl");
-        shader->SetMSAADisable();
-        shader->SetRenderTargets(_swapChainRT);
-        shader->Init();
-        shaderList.push_back(shader);
-    }
 }
 
 
@@ -552,6 +542,9 @@ void GraphicManager::CreateCBufferPool()
         _cbufferPoolList[i] = std::make_shared<CBufferPool>();
         _cbufferPoolList[i]->_cbufferDescriptorHeapCount = 4096;
         _cbufferPoolList[i]->AddCBuffer("TransformParams", sizeof(TransformParams), 1024);
+        _cbufferPoolList[i]->AddCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 1024);
+        _cbufferPoolList[i]->AddCBuffer("BoneParams", sizeof(BoneParams), 128);
+
         _cbufferPoolList[i]->Init();
     }
 }

@@ -60,9 +60,25 @@ namespace dxe
 
 	void Scene::Init()
 	{
+
 	}
 
-	void Scene::LoadJsonObject(Scene& scene, std::wstring json)
+    void Scene::Update()
+    {
+
+    }
+
+    void Scene::RenderingBegin()
+    {
+
+    }
+
+    void Scene::RenderingEnd()
+    {
+
+    }
+
+    void Scene::LoadJsonObject(Scene& scene, std::wstring json)
 	{
 	}
 
@@ -114,16 +130,20 @@ namespace dxe
 
     std::shared_ptr<GameObject> Scene::CreateGameObjects(const std::shared_ptr<Model>& model, ModelNode* node)
     {
-        if (node == nullptr)
+        if (node == nullptr || model == nullptr)
             return nullptr;
 
 	    auto currentObj = CreateGameObject(std::to_wstring(node->name));
         currentObj->transform->SetLocalSRTMatrix(node->transformMatrix);
+
         if(node->meshNameList.size() != 0)
         {
-            auto mr = currentObj->AddComponent<MeshRenderer>();
-            auto meshs = model->GetMeshsByName(node->meshNameList[0]);
-            mr->mesh = meshs[0];
+            auto meshRenderer = currentObj->AddComponent<MeshRenderer>();
+            auto meshList = model->GetMeshsByName(node->meshNameList[0]);
+
+            meshRenderer->AddMesh(meshList);
+            meshRenderer->SetModel(model);
+            
         }
         for (auto child : node->childs)
         {

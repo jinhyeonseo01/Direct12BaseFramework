@@ -135,7 +135,7 @@ void Shader::Init()
     _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size()) };
 
     _pipelineDesc.RTVFormats[0] = GraphicManager::instance->setting.screenFormat;
-    _pipelineDesc.NumRenderTargets = std::min(8, renderTargetCount);
+    _pipelineDesc.NumRenderTargets = std::max(std::min(8, renderTargetCount), 1);
     for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
         _pipelineDesc.RTVFormats[i] = RTVForamts[i];
 
@@ -318,6 +318,11 @@ void Shader::Init()
 
 }
 
+void Shader::SetShaderSetting(const ShaderInfo& info)
+{
+    _info = info;
+}
+
 void Shader::SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts)
 {
     renderTargetCount = rts.size();
@@ -333,7 +338,11 @@ void Shader::SetMSAADisable()
 
 void Shader::SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command)
 {
-    command->SetPipelineState(_pipelineState.Get());
+    if (GraphicManager::instance->currentShader != this)
+    {
+        GraphicManager::instance->currentShader = this;
+        command->SetPipelineState(_pipelineState.Get());
+    }
 }
 
 

@@ -60,7 +60,7 @@ namespace dxe
         D3D12_STENCIL_OP _stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
         D3D12_STENCIL_OP _stencilPassOp = D3D12_STENCIL_OP_KEEP;
 
-        CullingType cullingType = CullingType::NONE;
+        CullingType cullingType = CullingType::BACK;
 
         FrontWise _wise = FrontWise::CW;
 
@@ -173,6 +173,7 @@ namespace dxe
         bool isMsaaDisable = false;
 
         void Init();
+        void SetShaderSetting(const ShaderInfo& info);
         void SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts);
         void SetMSAADisable();
         void SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command);

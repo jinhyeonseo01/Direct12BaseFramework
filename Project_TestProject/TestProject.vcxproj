@@ -150,12 +150,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Study1Scene.cpp" />
     <ClCompile Include="TestProject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Project_Direct12BaseFramework\Direct12BaseFramework.vcxproj">
       <Project>{667200fd-24e7-4f62-9543-003889e45ddc}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Study1Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

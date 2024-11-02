@@ -76,8 +76,11 @@ namespace dxe
     struct TransformParams
     {
         Matrix WorldMatrix = Matrix::Identity;
-        Matrix ViewMatrix = Matrix::Identity;
-        Matrix ProjectionMatrix = Matrix::Identity;
+        unsigned int isSkinned = false;
+    };
+    struct BoneParams
+    {
+        Matrix boneMatrix[256];
     };
     struct DefaultMaterialParams
     {

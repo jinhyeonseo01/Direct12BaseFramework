@@ -55,6 +55,7 @@ void GraphicManager::RenderPrepare()
 
         FanceWaitSync(_currentCommandListIndex);
         ClearCurrentCommand();
+        ClearPipelineState();
         GetCurrentCBufferPool()->Reset();
         GetCurrentDescriptorTable()->Reset();
 
@@ -90,4 +91,9 @@ void GraphicManager::RenderFinish()
         FanceAppend(_currentCommandListIndex);
         ChangeNextCommand();
     }
+}
+
+void GraphicManager::ClearPipelineState()
+{
+    currentShader = nullptr;
 }

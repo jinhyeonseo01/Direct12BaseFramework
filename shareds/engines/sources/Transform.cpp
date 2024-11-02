@@ -122,7 +122,7 @@ Vector3 Transform::worldPosition()
 	if(parent)
 	{
 		Matrix mat;
-		parent->transform->GetLocalToWorldMatrix(mat);
+		parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
 		return Vector3::Transform(localPosition, mat);
 	}
 	return localPosition;
@@ -134,7 +134,7 @@ const Vector3& Transform::worldPosition(const Vector3& worldPos)
 	if (parent)
 	{
 		Matrix mat;
-		parent->transform->GetLocalToWorldMatrix(mat);
+		parent->transform->GetLocalToWorldMatrix_BottomUp(mat);
 		localPosition = Vector3::Transform(worldPos, mat.Invert());
 	}
 	else
@@ -182,14 +182,6 @@ Quaternion Transform::worldRotation()
 
 const Quaternion& Transform::worldRotation(const Quaternion& quaternion)
 {
-	/*
-	Quaternion result;
-	localRotation.Inverse(result);
-	result = result * worldRotation(); // 부모 쿼터니언
-	result.Inverse(result);
-	localRotation = quaternion * result;
-	localRotation.Normalize();
-	*/
 	auto parent = gameObject.lock()->parent.lock();
 	if (parent)
 	{
@@ -216,6 +208,19 @@ bool Transform::GetLocalToWorldMatrix(Matrix& localToWorldMatrix)
 	return isLocalToWorldChanged;
 }
 
+bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix)
+{
+    if (CheckNeedLocalToWorldUpdate())
+    {
+        auto root = gameObject.lock()->rootParent.lock();
+        root->transform->BottomUpLocalToWorldUpdate();
+        localToWorldMatrix = this->localToWorldMatrix;
+        return isLocalToWorldChanged;
+    }
+    localToWorldMatrix = this->localToWorldMatrix;
+    return isLocalToWorldChanged;
+}
+
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
 	isLocalSRTChanged = CheckNeedLocalSRTUpdate();
@@ -227,11 +232,13 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 		Matrix matScale = Matrix::CreateScale(localScale);
 		Matrix matRotation = Matrix::CreateFromQuaternion(localRotation);
 		Matrix matTranslation = Matrix::CreateTranslation(localPosition);
-        _prevLocalSRTMatrix = localSRTMatrix = matScale * matRotation * matTranslation;
+        localSRTMatrix = matScale * matRotation * matTranslation;
+        //_prevLocalSRTMatrix = localSRTMatrix;
+        isLocalSRTChanged = true;
 	}
-    if(CheckNeedLocalChangedUpdate())
+    if(_prevLocalSRTMatrix != localSRTMatrix)
     {
-        _prevLocalSRTMatrix = localSRTMatrix;
+        //_prevLocalSRTMatrix = localSRTMatrix;
         isLocalSRTChanged = true;
     }
 	localSRT = localSRTMatrix;
@@ -244,9 +251,9 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
     Quaternion rotation;
     Vector3 scale;
     // 행렬을 위치, 회전, 스케일로 분해
+    localSRTMatrix = localSRT;
     if(localSRT.Decompose(scale, rotation, position))
     {
-        localSRTMatrix = localSRT;
         localScale = scale;
         localRotation = rotation;
         localPosition = position;
@@ -255,6 +262,7 @@ bool Transform::SetLocalSRTMatrix(Matrix& localSRT)
         _prevLocalScale = localScale;
         return true;
     }
+    Debug::log << "분해 실패\n";
     return false;
 }
 
@@ -267,7 +275,7 @@ bool Transform::CheckNeedLocalSRTUpdate() const
 
 bool Transform::CheckNeedLocalChangedUpdate() const
 {
-    return CheckNeedLocalSRTUpdate() || (_prevLocalSRTMatrix != localToWorldMatrix);
+    return CheckNeedLocalSRTUpdate() || (_prevLocalSRTMatrix != localSRTMatrix);
 }
 
 bool Transform::CheckNeedLocalToWorldUpdate() const
@@ -289,8 +297,11 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
 	bool isLocalUpdate = GetLocalSRTMatrix(localSRT);
 	bool isFinalUpdate = isLocalUpdate || isParentUpdate;
 
+    if (isLocalUpdate)
+        _prevLocalSRTMatrix = localSRT;
 	if (isFinalUpdate)
 		localToWorldMatrix = localSRT * parentLocalToWorld;
+
 	isLocalToWorldChanged = isFinalUpdate;
 
 	auto& childs = gameObject.lock()->_childs;
@@ -302,6 +313,29 @@ void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool
 	}
 }
 
+bool Transform::BottomUpLocalToWorldUpdate()
+{
+    auto parent = this->gameObject.lock()->parent.lock();
+    if(parent)
+    {
+        bool localChange = GetLocalSRTMatrix(_prevLocalSRTMatrix);;
+        if (parent->transform->BottomUpLocalToWorldUpdate()) {
+            localToWorldMatrix = localSRTMatrix * parent->transform->localToWorldMatrix;
+            return true;
+        }
+        if(localChange)
+            return true;
+    }
+    else if (CheckNeedLocalChangedUpdate())
+    {
+        Matrix local;
+        GetLocalSRTMatrix(_prevLocalSRTMatrix);
+        localToWorldMatrix = localSRTMatrix;
+        return true;
+    }
+    return false;
+}
+
 void Transform::LookUp(const Vector3& dir, const Vector3& up)
 {
     Matrix mat = XMMatrixLookToLH(localPosition, dir, up);
@@ -310,18 +344,15 @@ void Transform::LookUp(const Vector3& dir, const Vector3& up)
 
 Vector3 Transform::LocalToWorld_Position(const Vector3& value)
 {
-	Matrix& mat = localToWorldMatrix;
-	if (CheckNeedLocalToWorldUpdate())
-		GetLocalToWorldMatrix(mat);
-
+	Matrix mat;
+    GetLocalToWorldMatrix_BottomUp(mat);
 	return Vector3::Transform(value, mat);
 }
 
 Vector3 Transform::LocalToWorld_Direction(const Vector3& value)
 {
-	Matrix& mat = localToWorldMatrix;
-	if (CheckNeedLocalToWorldUpdate())
-		GetLocalToWorldMatrix(mat);
+	Matrix mat;
+    GetLocalToWorldMatrix_BottomUp(mat);
 
 	return Vector3::TransformNormal(value, mat);
 }
@@ -333,18 +364,16 @@ Quaternion Transform::LocalToWorld_Quaternion(const Quaternion& value)
 
 Vector3 Transform::WorldToLocal_Position(const Vector3& value)
 {
-	Matrix mat = localToWorldMatrix;
-	if (CheckNeedLocalToWorldUpdate())
-		GetLocalToWorldMatrix(mat);
+	Matrix mat;
+    GetLocalToWorldMatrix_BottomUp(mat);
 	mat.Invert(mat);
 	return Vector3::Transform(value, mat);
 }
 
 Vector3 Transform::WorldToLocal_Direction(const Vector3& value)
 {
-	Matrix mat = localToWorldMatrix;
-	if (CheckNeedLocalToWorldUpdate())
-		GetLocalToWorldMatrix(mat);
+	Matrix mat;
+    GetLocalToWorldMatrix_BottomUp(mat);
 	mat.Invert(mat);
 	Vector3 vec = Vector3::TransformNormal(value, mat);
 	vec.Normalize(vec);

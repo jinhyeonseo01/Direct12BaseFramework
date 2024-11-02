@@ -340,6 +340,7 @@ bool GameObject::SetParent(const std::shared_ptr<GameObject>& nextParentObj)
 
 	if (nextParentObj != nullptr && nextParentObj->IsInParent(thisObj)) // step 1.
 		return false;
+    auto prevRootParent = this->rootParent;
 	if(prevParentObj != nullptr) // step 2. 부모연결 끊고 최상단으로 올리기
 	{
 		prevParentObj->RemoveChild(thisObj);
@@ -355,4 +356,18 @@ bool GameObject::SetParent(const std::shared_ptr<GameObject>& nextParentObj)
 			this->Destroy();
 		nextParentObj->AddChild(thisObj);
 	}
+    if(prevRootParent.lock() != this->rootParent.lock())
+    {
+        SetRootParent(this->rootParent.lock());
+    }
+}
+
+void GameObject::SetRootParent(const std::shared_ptr<GameObject>& rootParent)
+{
+    this->rootParent = rootParent;
+    for(auto& child : _childs)
+    {
+        if (child.lock())
+            child.lock()->SetRootParent(rootParent);
+    }
 }

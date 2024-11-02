@@ -53,7 +53,13 @@ namespace dxe
 	{
 		return Engine::_mainEngineIndex = (index = std::clamp(index, 0, static_cast<int>(Engine::_engineList.size() - 1)));
 	}
-	std::shared_ptr<Engine> Engine::AppendEngine(std::shared_ptr<Engine> engine)
+
+    std::shared_ptr<Engine> Engine::GetMainEngine()
+    {
+        return GetEngine(_mainEngineIndex);
+    }
+
+    std::shared_ptr<Engine> Engine::AppendEngine(std::shared_ptr<Engine> engine)
 	{
 		auto findEngine = std::ranges::find(Engine::_engineList, engine);
 		if (findEngine == Engine::_engineList.end())
@@ -107,7 +113,20 @@ namespace dxe
 			return nullptr;
 		return *findEngine;
 	}
-	void Engine::Release()
+
+    void Engine::SetCursorHide(bool hide)
+    {
+        cursorHide = hide;
+        if (cursorHide)
+            ShowCursor(cursorHide ? FALSE : TRUE);
+    }
+
+    bool Engine::GetCursorHide() const
+    {
+        return cursorHide;
+    }
+
+    void Engine::Release()
 	{
 		// Static Line에 엔진 제거
 		CloseWindow();
@@ -729,12 +748,16 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
             if(!isInClientMouse)
             {
                 isInClientMouse = true;
+                if (cursorHide)
+                    ShowCursor(FALSE);
+                else
+                    ShowCursor(TRUE);
+
                 TRACKMOUSEEVENT tme;
                 tme.cbSize = sizeof(tme);
                 tme.dwFlags = TME_LEAVE;
                 tme.hwndTrack = winEvent.hWnd;
                 TrackMouseEvent(&tme);
-                ShowCursor(FALSE);
             }
 			break;
 		}
@@ -763,7 +786,8 @@ WS_CHILDWINDOW : WS_CHILD랑 동일
 		case WM_MOUSELEAVE:
 		{
             isInClientMouse = false;
-            ShowCursor(TRUE);
+            if(cursorHide)
+                ShowCursor(TRUE);
 			break;
 		}
 		case WM_KEYUP:

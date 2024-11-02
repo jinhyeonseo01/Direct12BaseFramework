@@ -36,6 +36,7 @@ namespace dxe
 	public:
 		static std::shared_ptr<Engine> GetEngine(int index = -1);
 		static int SetMainEngine(int index);
+        static std::shared_ptr<Engine> GetMainEngine();
 		static std::shared_ptr<Engine> AppendEngine(std::shared_ptr<Engine> engine);
 		static bool DeleteEngine(int index);
 		static bool DeleteEngine(std::shared_ptr<Engine> engine);
@@ -64,6 +65,10 @@ namespace dxe
 		bool isOpenWindow = false;
 		bool isActiveWindow = false;
         bool isInClientMouse = false;
+
+        bool cursorHide = false;
+        void SetCursorHide(bool hide);
+        bool GetCursorHide() const;
 
 	public:
         std::shared_ptr<GraphicManager> graphic;

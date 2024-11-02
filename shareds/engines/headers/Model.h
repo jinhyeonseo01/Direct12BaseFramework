@@ -55,7 +55,7 @@ namespace dxe
         void CreateGraphicResource();
     };
 
-    class ModelNode
+    class ModelNode : public std::enable_shared_from_this<ModelNode>
     {
     public:
         ModelNode();
@@ -65,6 +65,8 @@ namespace dxe
         ModelNode* parent = nullptr;
         std::vector<ModelNode*> childs;
         Matrix transformMatrix = Matrix::Identity;
+
+        Matrix calcLocalToWorldMatrix = Matrix::Identity;
 
         bool isBone = false;
         int boneID = -1;

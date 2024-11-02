@@ -23,26 +23,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Initialize(hInstance);
 	
 
-    auto scene = SceneManager::CreateScene(L"Test Scene");
-    auto obj1 = scene->CreateGameObject(L"Hello");
-    auto obj2 = scene->CreateGameObject(L"Hello2");
-    auto obj3 = scene->CreateGameObject(L"Hello3");
-    auto obj4 = scene->CreateGameObject(L"Hello4");
-    Debug::log << SceneManager::_sceneList.size() << "\n";
-    for (auto& b : SceneManager::_sceneList)
-        Debug::log << b->name << "\n";
-	//for (auto& a : scene->_gameObjectList)
-        //Debug::log << a->names << "\n";
-    obj2->SetParent(obj1);
-    obj3->SetParent(obj2);
-	obj4->SetParent(obj1);
-
-    obj1->Debug();
-    std::vector<std::shared_ptr<GameObject>> vec;
-    obj1->GetChildsAllByName(vec, L"Hello4");
-    Debug::log << vec.size() << "\n";
-
-    obj1->Debug();
 
 
     float* b = new float[100*9];

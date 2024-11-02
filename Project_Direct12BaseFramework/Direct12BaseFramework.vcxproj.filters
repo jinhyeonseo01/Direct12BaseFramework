@@ -239,9 +239,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Direct12BaseFramework.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
       <Filter>Constant\Sources</Filter>
     </ClCompile>
@@ -407,6 +404,9 @@
     <ClCompile Include="..\plugins\includes\tracy\TracyClient.cpp">
       <Filter>Profiler</Filter>
     </ClCompile>
+    <ClCompile Include="Direct12BaseFramework.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc">
@@ -425,5 +425,13 @@
     <FxCompile Include="..\shareds\engines\shaders\forward.hlsl">
       <Filter>Engine\shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\shareds\engines\shaders\skyBox.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shareds\constants\headers\SimpleMath_LH.inl">
+      <Filter>Constant\Headers</Filter>
+    </None>
   </ItemGroup>
 </Project>

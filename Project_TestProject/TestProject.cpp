@@ -8,6 +8,8 @@
 #include "Camera.h"
 #include "MeshRenderer.h"
 #include "ResourceManager.h"
+#include "Scene.h"
+#include "Study1Scene.h"
 
 
 using namespace dxe;
@@ -40,35 +42,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             engine = nullptr;
         }
 
-        {
-            auto scene = SceneManager::CreateScene(L"Test Scene");
-
-            auto cameraObj = scene->CreateGameObject(L"Camera");
-            cameraObj->transform->worldPosition(Vector3(0, 0, -0.5f));
-            cameraObj->AddComponent<Camera>();
-
-            /*auto obj1 = scene->CreateGameObject(L"Render Test");
-            obj1->transform->worldPosition(Vector3(0.5f, 0, 0.1f));
-            obj1->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, 45, 0) * D2R);
-            auto meshRender = obj1->AddComponent<MeshRenderer>();*/
-
-        }
-
-        //ResourceManager::main->LoadAssimpPack(L"Ellen.fbx", L"Ellen");
-        ResourceManager::main->LoadAssimpPack(L"Kind.fbx", L"Kind");
-        ResourceManager::main->LoadAssimpPack(L"ter.obj", L"ter1");
-        //ResourceManager::main->LoadAssimpPack(L"ter.fbx", L"ter2");
-        {
-            ResourceManager::main->WaitAll();
-            auto model = ResourceManager::main->GetModel(L"ter1");
-            model->CreateGraphicResource();
-
-            auto obj = SceneManager::_currentScene->CreateGameObjects(model, model->rootNode.get());
-            //obj->transform->localScale = obj->transform->localScale * 0.1f;
-            obj->transform->localPosition = Vector3(0, -2, 0);
-            //obj->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(0, 270, 0) * D2R);
-        }
-        //ResourceManager::main->WaitAll();
+        auto scene = SceneManager::CreateScene<Study1Scene>(L"Test Scene");
 
         while (!dxe::Engine::GetEngineList().empty())
         {

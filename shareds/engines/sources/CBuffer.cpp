@@ -6,7 +6,7 @@
 
 void CBufferView::SetData(void* data, int size)
 {
-    assert(size < _cbufferSize);
+    assert(size <= _cbufferSize);
     std::memcpy(_cbufferAddress, data, size);
 }
 

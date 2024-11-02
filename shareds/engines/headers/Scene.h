@@ -19,7 +19,10 @@ namespace dxe
 	public:
 		void SetName(std::wstring name);
 		void Reset(std::shared_ptr<Scene> prevScene);
-		void Init();
+		virtual void Init();
+        virtual void Update();
+        virtual void RenderingBegin();
+        virtual void RenderingEnd();
 	public:
 		std::wstring name;
 

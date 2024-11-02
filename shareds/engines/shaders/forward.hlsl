@@ -12,14 +12,15 @@ cbuffer ObjectParams : register(b4)
 
 };
 
-//cbuffer BoneParams : register(b3)
-//{
-//    row_major matrix boneMatrix[256];
-//};
+cbuffer BoneParams : register(b3)
+{
+    row_major matrix bone[256];
+};
 
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
+    unsigned int isSkinned;
 };
 
 cbuffer DefaultMaterialParams : register(b1)
@@ -40,31 +41,52 @@ struct VS_IN
 {
     float3 pos : POSITION;
     float3 normal : NORMAL;
-    float3 uv : TEXCOORD;
+    float3 uv : TEXCOORD0;
     float4 color : COLOR;
+    float4 boneIDs : BONEIDs;
+    float4 boneWs : BONEWs;
 };
 
 struct VS_OUT
 {
     float4 pos : SV_Position;
-    float3 worldPos : POSITION;
+    float4 worldPos : POSITION;
     float3 worldNormal : NORMAL;
     float4 color : COLOR;
-    float2 uv : TEXCOORD;
+    float2 uv : TEXCOORD0;
 };
 
 
-VS_OUT VS_Main(VS_IN input, uint vertexID : SV_VertexID)
+VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
     VS_OUT output = (VS_OUT) 0;
 
-    // 월드 좌표 계산
-    float4 worldPos = mul(float4(input.pos, 1.0f), WorldMatrix);
-    output.worldPos = worldPos.xyz;
-    //output.worldPos = input.pos;
+    output.worldPos = float4(input.pos, 1.0f);
 
-    // 뷰 및 투영 변환 적용
-    float4 viewPos = mul(worldPos, ViewMatrix);
+    if(isSkinned != 0)
+    {
+        matrix boneMatrix = float4x4(0, 0, 0, 0,
+                                0, 0, 0, 0,
+                                0, 0, 0, 0,
+                                0, 0, 0, 0);
+        
+        if(input.boneWs.x > 0.0001f)
+            boneMatrix += bone[(int)input.boneIDs.x] * input.boneWs.x;
+        if(input.boneWs.y > 0.0001f)
+            boneMatrix += bone[(int)input.boneIDs.y] * input.boneWs.y;
+        if(input.boneWs.z > 0.0001f)
+            boneMatrix += bone[(int)input.boneIDs.z] * input.boneWs.z;
+        if(input.boneWs.w > 0.0001f)
+            boneMatrix += bone[(int)input.boneIDs.w] * input.boneWs.w;
+
+        output.worldPos = mul(output.worldPos, boneMatrix);
+    }
+    else
+    {
+        output.worldPos = mul(output.worldPos, WorldMatrix);
+    }
+
+    float4 viewPos = mul(output.worldPos, ViewMatrix);
 
     // 노멀 변환 (평행 이동 제외)
     //output.worldNormal = normalize(mul(float4(input.normal, 0.0f), WorldMatrix));
@@ -72,7 +94,6 @@ VS_OUT VS_Main(VS_IN input, uint vertexID : SV_VertexID)
     output.uv = input.uv.xy;
     output.color = input.color;
     output.pos = mul(viewPos, ProjectionMatrix);
-
     return output;
 }
 
@@ -80,12 +101,12 @@ VS_OUT VS_Main(VS_IN input, uint vertexID : SV_VertexID)
 //[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float3 color2 = input.color;
+    float4 color2 = input.color;
 
     float4 AlbedoColor = test.Sample(sampler_aniso_16, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
-
-    return float4(color2, 1.0f) * pow(AlbedoColor, 1.0 / 2.2) * color3;
+    //return input.color;
+    return pow(AlbedoColor, 1.0 / 1.0);
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }
