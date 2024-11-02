@@ -28,7 +28,7 @@ cbuffer DefaultMaterialParams : register(b1)
     float4 color3;
 };
 
-Texture2D test : register(t3);
+Texture2D _BaseMap : register(t1);
 
 SamplerState sampler_normal : register(s0);
 SamplerState sampler_no_mip : register(s1);
@@ -103,7 +103,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 color2 = input.color;
 
-    float4 AlbedoColor = test.Sample(sampler_aniso_16, input.uv);
+    float4 AlbedoColor = _BaseMap.Sample(sampler_aniso_16, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;

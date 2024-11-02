@@ -115,17 +115,6 @@ void Camera::Destroy()
 void Camera::BeforeRendering()
 {
     Component::BeforeRendering();
-    _aspect = GraphicManager::instance->setting.screenInfo.width / GraphicManager::instance->setting.screenInfo.height;
-
-    cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(_fovy*D2R, _aspect, _near, _far);
-    cameraInfo.viewMatrix = XMMatrixLookToLH(gameObject.lock()->transform->worldPosition(),
-        gameObject.lock()->transform->forward(),
-        gameObject.lock()->transform->up());
-    
-    auto cameraBuffer = GraphicManager::instance->GetCurrentCBufferPool()->PopCBuffer("CameraParams", sizeof(CameraParams), 1);
-    cameraBuffer.SetData(&cameraInfo, sizeof(CameraParams));
-    
-    GraphicManager::instance->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
 }
 
 void Camera::Rendering()

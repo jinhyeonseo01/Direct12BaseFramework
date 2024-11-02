@@ -161,7 +161,7 @@ void Engine::RenderingPipeline()
     //if (false)
 	{
         graphic->RenderPrepare();
-
+        scene->RenderingBegin();
 	}
 
     for (int i = gameObjects.size() - 1; i >= 0; --i)
@@ -192,9 +192,23 @@ void Engine::RenderingPipeline()
 		}
 		//GetAcrive -> prevRendering
 	}
+    for (int i = gameObjects.size() - 1; i >= 0; --i)
+    {
+        std::shared_ptr<GameObject>& currentObject = gameObjects[i];
+
+        if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady()) {
+
+            for (auto& component : currentObject->_components)
+            {
+                component->AfterRendering();
+            }
+        }
+        //GetAcrive -> prevRendering
+    }
 
     //if(false)
 	{
+        scene->RenderingEnd();
         graphic->RenderFinish();
 	}
 

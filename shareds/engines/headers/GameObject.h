@@ -58,6 +58,24 @@ namespace dxe
 			}
 			return count;
 		}
+        template<class T, class = std::enable_if_t<std::is_convertible_v<T*, Component*>>>
+        int GetComponentsWithChilds(std::vector<std::shared_ptr<T>>& vec)
+        {
+            int count = 0;
+            for (int i = 0; i < _components.size(); i++)
+            {
+                auto ptr = std::dynamic_pointer_cast<T>(_components[i]);
+                if (ptr != nullptr)
+                {
+                    vec.push_back(ptr);
+                    ++count;
+                }
+            }
+            for (auto& child : _childs)
+                if (child.lock())
+                    child.lock()->GetComponentsWithChilds(vec);
+            return count;
+        }
 
 		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, Component*>>>
 		std::shared_ptr<T> AddComponent()

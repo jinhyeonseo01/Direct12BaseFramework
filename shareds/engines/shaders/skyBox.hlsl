@@ -1,16 +1,15 @@
 
 
+cbuffer TransformParams : register(b2)
+{
+    row_major matrix WorldMatrix;
+    unsigned int isSkinned;
+};
 
 cbuffer CameraParams : register(b0)
 {
     row_major matrix ViewMatrix;
     row_major matrix ProjectionMatrix;
-};
-
-cbuffer TransformParams : register(b2)
-{
-    row_major matrix WorldMatrix;
-    unsigned int isSkinned;
 };
 
 Texture2D skyTexture : register(t0);
@@ -33,8 +32,8 @@ struct VS_OUT
 VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
     VS_OUT output = (VS_OUT) 0;
-
-    float4 viewPos = mul(float4(input.pos, 1.0f), ViewMatrix);
+    
+    float4 viewPos = mul(mul(float4(input.pos, 1.0f), WorldMatrix), ViewMatrix);
     output.uv = input.uv.xy;
     output.pos = mul(viewPos, ProjectionMatrix);
     return output;
@@ -45,5 +44,5 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 AlbedoColor =skyTexture.Sample(sampler_no_mip, input.uv);
-    return pow(AlbedoColor, 1.0 / 1.0);
+    return pow(AlbedoColor, 1.0 / 2.2);
 }

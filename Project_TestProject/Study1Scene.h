@@ -1,4 +1,5 @@
 #pragma once
+#include "Material.h"
 #include "Scene.h"
 
 class Study1Scene : public Scene
@@ -13,5 +14,11 @@ public:
     void Update() override;
     void RenderingBegin() override;
     void RenderingEnd() override;
+
+
+
+public:
+    std::shared_ptr<Material> skyMaterial;
+    std::shared_ptr<GameObject> camera;
 };
 

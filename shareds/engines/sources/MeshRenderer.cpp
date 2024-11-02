@@ -10,6 +10,7 @@
 
 MeshRenderer::MeshRenderer()
 {
+
 }
 
 MeshRenderer::~MeshRenderer()
@@ -35,14 +36,6 @@ void MeshRenderer::Destroy()
 void MeshRenderer::Init()
 {
     RendererComponent::Init();
-
-    std::shared_ptr<Material> material = std::make_shared<Material>();
-    material->shader = ResourceManager::main->GetShader(L"forward");
-
-    material->SetData("test", ResourceManager::main->LoadTexture(L"test2.png", L"test", true));
-    material->SetData("color", Vector4(0, 0, 1, 1));
-
-    AddMateiral({ material });
 }
 
 void MeshRenderer::Start()

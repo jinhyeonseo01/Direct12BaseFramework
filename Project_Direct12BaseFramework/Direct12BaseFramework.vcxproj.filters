@@ -237,6 +237,9 @@
     <ClInclude Include="..\plugins\includes\tracy\tracy\TracyD3D12.hpp">
       <Filter>Profiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\MeshSample.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
@@ -405,6 +408,9 @@
       <Filter>Profiler</Filter>
     </ClCompile>
     <ClCompile Include="Direct12BaseFramework.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\MeshSample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
