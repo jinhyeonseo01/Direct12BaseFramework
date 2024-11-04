@@ -25,7 +25,7 @@ namespace dxe
         void SetBound(const Vector3& min, const Vector3& max);
         void CalculateBound();
         void Init(std::vector<Vertex> _vertexList, std::vector<uint32_t> _indexBuffer);
-        bool Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, float& dis);
+        bool Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, float& dis, Vector3& normal);
         bool Intersects(std::shared_ptr<Transform> trans, const BoundingBox& worldBox);
 
         int indexCount = 0;
@@ -44,6 +44,7 @@ namespace dxe
 
         ComPtr<ID3D12Resource>		_vertexResource;
         ComPtr<ID3D12Resource>		_indexResource;
+
     };
 }
 

@@ -61,8 +61,8 @@ Vector3 Transform::forward(const Vector3& dir)
 		return _forward;
 	}
 	Quaternion quat = worldRotation();
-	_right = Vector3::Transform(Vector3(1, 0, 0), quat);
-	_up = Vector3::Transform(Vector3(0, 1, 0), quat);
+	//_right = Vector3::Transform(Vector3(1, 0, 0), quat);
+	//_up = Vector3::Transform(Vector3(0, 1, 0), quat);
 	_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
 	return _forward;
 }
@@ -81,9 +81,9 @@ Vector3 Transform::up(const Vector3& dir)
 	}
 	//쿼터니언 기반으로 다시 원래값 받아와야함.
 	Quaternion quat = worldRotation();
-	_right = Vector3::Transform(Vector3(1, 0, 0), quat);
+	//_right = Vector3::Transform(Vector3(1, 0, 0), quat);
 	_up = Vector3::Transform(Vector3(0, 1, 0), quat);
-	_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
+	//_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
 	return _up;
 }
 
@@ -100,8 +100,8 @@ Vector3 Transform::right(const Vector3& dir)
 	}
 	Quaternion quat = worldRotation();
 	_right = Vector3::Transform(Vector3(1, 0, 0), quat);
-	_up = Vector3::Transform(Vector3(0, 1, 0), quat);
-	_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
+	//_up = Vector3::Transform(Vector3(0, 1, 0), quat);
+	//_forward = Vector3::Transform(Vector3(0, 0, 1), quat);
 	return _right;
 }
 
@@ -212,8 +212,7 @@ bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix)
 {
     if (CheckNeedLocalToWorldUpdate())
     {
-        auto root = gameObject.lock()->rootParent.lock();
-        root->transform->BottomUpLocalToWorldUpdate();
+        BottomUpLocalToWorldUpdate();
         localToWorldMatrix = this->localToWorldMatrix;
         return isLocalToWorldChanged;
     }
@@ -323,8 +322,10 @@ bool Transform::BottomUpLocalToWorldUpdate()
             localToWorldMatrix = localSRTMatrix * parent->transform->localToWorldMatrix;
             return true;
         }
-        if(localChange)
+        if (localChange) {
+            localToWorldMatrix = localSRTMatrix;
             return true;
+        }
     }
     else if (CheckNeedLocalChangedUpdate())
     {
@@ -338,8 +339,7 @@ bool Transform::BottomUpLocalToWorldUpdate()
 
 void Transform::LookUp(const Vector3& dir, const Vector3& up)
 {
-    Matrix mat = XMMatrixLookToLH(localPosition, dir, up);
-    SetLocalSRTMatrix(mat);
+    worldRotation(LookToQuaternion(worldPosition(),dir, up));
 }
 
 Vector3 Transform::LocalToWorld_Position(const Vector3& value)

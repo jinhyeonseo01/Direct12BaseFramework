@@ -130,8 +130,10 @@ namespace dxe
 
     std::shared_ptr<GameObject> Scene::CreateGameObjects(const std::shared_ptr<Model>& model, ModelNode* node)
     {
-        if (node == nullptr || model == nullptr)
+        if (model == nullptr)
             return nullptr;
+        if (node == nullptr)
+            node = model->rootNode.get();
 
 	    auto currentObj = CreateGameObject(std::to_wstring(node->name));
         currentObj->transform->SetLocalSRTMatrix(node->transformMatrix);
@@ -165,7 +167,7 @@ namespace dxe
 		return *iter;
 	}
 
-	int Scene::Find(std::wstring name, std::vector<std::shared_ptr<GameObject>> vec, bool includeDestroy)
+	int Scene::Finds(std::wstring name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy)
 	{
 		if (vec.capacity() < (vec.size() / 2))
 			vec.reserve(vec.size());

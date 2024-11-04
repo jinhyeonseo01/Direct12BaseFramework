@@ -14,7 +14,7 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
-
+    Release();
 }
 
 AssimpPack::AssimpPack()
@@ -97,6 +97,19 @@ void ResourceManager::Init()
 {
     
     
+}
+
+void ResourceManager::Release()
+{
+    modelList.clear();
+    textureList.clear();
+    shaderList.clear();
+    assimpPackList.clear();
+
+    modelTable.clear();
+    textureTable.clear();
+    shaderTable.clear();
+    assimpPackTable.clear();
 }
 
 bool ResourceManager::IsLoading()

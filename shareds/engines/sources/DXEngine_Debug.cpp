@@ -126,6 +126,17 @@ void Engine::DebugInit()
     _debugCommandList.push_back(command);
     command.command = "fm";
     _debugCommandList.push_back(command);
+
+    command.command = "clear";
+    command.detail = L"콘솔창 클리어";
+    command.func = std::function([&](std::vector<std::wstring>& args) {
+        auto engine = GetEngine(_mainEngineIndex);
+        auto scene = SceneManager::_currentScene;
+
+        Debug::log.ClearContext();
+
+        });
+    _debugCommandList.push_back(command);
 }
 
 void Engine::DebugPipeline()

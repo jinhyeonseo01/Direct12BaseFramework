@@ -43,7 +43,7 @@ void CBuffer::CreateCBufferResource(int bufferSize, int count)
     D3D12_HEAP_PROPERTIES heapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Buffer(_cbufferTotalSize);
 
-    GraphicManager::instance->_device->CreateCommittedResource(
+    GraphicManager::main->_device->CreateCommittedResource(
         &heapProperty,
         D3D12_HEAP_FLAG_NONE,
         &desc,
@@ -63,10 +63,10 @@ void CBuffer::CreateCBufferView(int count)
     cbufferDHDesc.NumDescriptors = count;
     cbufferDHDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     cbufferDHDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    GraphicManager::instance->_device->CreateDescriptorHeap(&cbufferDHDesc, IID_PPV_ARGS(&_cbufferDescriptorHeap));
+    GraphicManager::main->_device->CreateDescriptorHeap(&cbufferDHDesc, IID_PPV_ARGS(&_cbufferDescriptorHeap));
 
     auto cpuHandleBegin = _cbufferDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    auto handleSize = GraphicManager::instance->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    auto handleSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     _cbufferCPUDescriptHandle.resize(count);
     for(int i=0;i< count;i++)
     {
@@ -75,7 +75,7 @@ void CBuffer::CreateCBufferView(int count)
         cbvDesc.BufferLocation = _cbufferResource->GetGPUVirtualAddress() + static_cast<unsigned long long int>(_cbufferStrideSize) * i;
         cbvDesc.SizeInBytes = _cbufferStrideSize;
 
-        GraphicManager::instance->_device->CreateConstantBufferView(&cbvDesc, _cbufferCPUDescriptHandle[i]);
+        GraphicManager::main->_device->CreateConstantBufferView(&cbvDesc, _cbufferCPUDescriptHandle[i]);
     }
 
 }

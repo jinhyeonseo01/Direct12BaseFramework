@@ -9,7 +9,7 @@
 
 
 
-GraphicManager* GraphicManager::instance = nullptr;
+GraphicManager* GraphicManager::main = nullptr;
 
 
 void GraphicManager::SetHWnd(const HWND& hWnd)
@@ -40,13 +40,26 @@ std::shared_ptr<DescriptorTable> GraphicManager::GetCurrentDescriptorTable()
 
 void GraphicManager::Init()
 {
-    if (instance == nullptr)
-        instance = this;
+    if (main == nullptr)
+        main = this;
 #ifdef _DEBUG
     {
         ComPtr<ID3D12Debug6> _d3dDebug;
-        DXSuccess(D3D12GetDebugInterface(ComPtrIDAddr(_d3dDebug)));
-        _d3dDebug->EnableDebugLayer();
+        switch (setting.debugLevel)
+        {
+        case DebugLevel::fast:
+            break;
+        case DebugLevel::normal:
+            DXSuccess(D3D12GetDebugInterface(ComPtrIDAddr(_d3dDebug)));
+            _d3dDebug->EnableDebugLayer();
+            break;
+        case DebugLevel::full:
+            DXSuccess(D3D12GetDebugInterface(ComPtrIDAddr(_d3dDebug)));
+            _d3dDebug->EnableDebugLayer();
+            _d3dDebug->SetEnableGPUBasedValidation(TRUE);
+            _d3dDebug->SetEnableSynchronizedCommandQueueValidation(TRUE);
+            break;
+        }
     }
     //OutputDebugString
 #endif
@@ -85,21 +98,11 @@ void GraphicManager::Release()
     {
         WaitSync();
 
-#ifdef _DEBUG
-        {
-            ComPtr<IDXGIDebug1> _d3dDebug;
-            DXSuccess(DXGIGetDebugInterface1(0, ComPtrIDAddr(_d3dDebug)));
-            _d3dDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
-        }
-#endif
-
         _rootSignature.reset();
         _renderTargetGroupTable.clear();
 
         _swapChainBuffers_Res.clear();
         _swapChainRT.clear();
-        _factory.Reset();
-        _device.Reset();
         _swapChain.Reset();
         _fence.Reset();
         _adapterList.clear();
@@ -108,13 +111,28 @@ void GraphicManager::Release()
         _commandAllocators.clear();
         _commandLists.clear();
         _commandListFences.clear();
-
         for (auto& c : _commandListFenceEvents)
             CloseHandle(c);
         _commandListFenceEvents.clear();
 
         _resourceCommandAllocator.Reset();
         _resourceCommandList.Reset();
+
+#ifdef _DEBUG
+        {
+            ComPtr<IDXGIDebug1> _d3dDebug;
+            DXSuccess(DXGIGetDebugInterface1(0, ComPtrIDAddr(_d3dDebug)));
+            _d3dDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
+
+            Microsoft::WRL::ComPtr<ID3D12DebugDevice> debugDevice;
+            if (SUCCEEDED(_device->QueryInterface(IID_PPV_ARGS(&debugDevice)))) {
+                debugDevice->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+            }
+        }
+#endif
+
+        _factory.Reset();
+        _device.Reset();
     }
     _isRelease = true;
 }

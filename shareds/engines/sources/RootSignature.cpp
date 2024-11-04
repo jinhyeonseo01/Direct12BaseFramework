@@ -121,7 +121,7 @@ void RootSignature::Init()
     ComPtr<ID3DBlob> error;
 
     D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-    GraphicManager::instance->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), ComPtrIDAddr(_rootSignature));
+    GraphicManager::main->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), ComPtrIDAddr(_rootSignature));
 
 
     InitCompute();
@@ -188,5 +188,5 @@ void RootSignature::InitCompute()
     ComPtr<ID3DBlob> error;
 
     D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-    GraphicManager::instance->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), ComPtrIDAddr(_computeRootSignature));
+    GraphicManager::main->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), ComPtrIDAddr(_computeRootSignature));
 }

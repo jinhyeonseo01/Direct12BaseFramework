@@ -105,7 +105,7 @@ namespace dxe
 
 		bool operator==(const Vertex& other) const;
 
-        void WriteBuffer(float* buffer, int& offset, const std::vector<VertexProp>& selector) const;
+        void WriteBuffer(float* buffer, int& offset, const std::vector<VertexProp>& selector);
 
         static SelectorInfo GetSelectorInfo(const std::vector<VertexProp>& props);
 	};

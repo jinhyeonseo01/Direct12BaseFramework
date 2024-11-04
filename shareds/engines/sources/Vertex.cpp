@@ -79,10 +79,14 @@ namespace dxe
         return (position == other.position) && (normal == other.normal);
     }
 
-    void Vertex::WriteBuffer(float* buffer, int& offset, const std::vector<VertexProp>& selector) const
+    void Vertex::WriteBuffer(float* buffer, int& offset, const std::vector<VertexProp>& selector)
     {
         size_t size = selector.size();
         size_t index = 0;
+        boneId.x = (boneId.x == -1 ? 0 : boneId.x);
+        boneId.y = (boneId.y == -1 ? 0 : boneId.y);
+        boneId.z = (boneId.z == -1 ? 0 : boneId.z);
+        boneId.w = (boneId.w == -1 ? 0 : boneId.w);
         while (index < size)
         {
             auto& select = selector[index];

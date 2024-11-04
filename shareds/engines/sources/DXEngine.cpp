@@ -140,6 +140,8 @@ namespace dxe
 			_engineMainThread->request_stop();
 		_engineMainThread.release();
 
+        resource->Release();
+        graphic->Release();
 		Debug::log << std::format("엔진 종료 (이름:{})", std::to_string(_titleName)) << "\n";
 	}
 

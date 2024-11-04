@@ -151,7 +151,7 @@ int GameObject::GetChilds(std::vector<std::shared_ptr<GameObject>>& vec)
 	return count;
 }
 
-int GameObject::GetChildsByName(std::vector<std::shared_ptr<GameObject>>& vec, const std::wstring& name)
+int GameObject::GetChildsByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec)
 {
 	int count = 0;
 	for (auto& c : _childs)
@@ -182,7 +182,7 @@ int GameObject::GetChildsAll(std::vector<std::shared_ptr<GameObject>>& vec)
 	return count;
 }
 
-int GameObject::GetChildsAllByName(std::vector<std::shared_ptr<GameObject>>& vec, const std::wstring& name)
+int GameObject::GetChildsAllByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec)
 {
 	int count = 1;
 	if(this->name == name)
@@ -193,7 +193,7 @@ int GameObject::GetChildsAllByName(std::vector<std::shared_ptr<GameObject>>& vec
 		auto currentObj = c.lock();
 		if (currentObj)
 		{
-			count += currentObj->GetChildsAllByName(vec, name);
+			count += currentObj->GetChildsAllByName(name, vec);
 		}
 	}
 	return count;

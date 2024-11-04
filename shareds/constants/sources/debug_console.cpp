@@ -84,7 +84,7 @@ namespace Debug
 				log.asyncWriteThread = std::thread{ []() {
 					log.AsyncWriteFunction();
 				} };
-				log.asyncWriteThread.detach();
+				//log.asyncWriteThread.detach();
 			}
 		}
 		//HWND_TOP
@@ -98,6 +98,7 @@ namespace Debug
 		{
 			log.active.store(false);
 			log.runningAsyncWriteThread.store(false);
+            log.asyncWriteThread.join();
 			FreeConsole();
 		}
 	}

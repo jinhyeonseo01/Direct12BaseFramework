@@ -38,6 +38,7 @@ public:
     static std::shared_ptr<Texture> Link(std::shared_ptr<RenderTexture> renderTexture, DXGI_FORMAT format);
     static std::shared_ptr<Texture> Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width, uint32_t height, int mipLevels = 1);
 
+    Vector4 GetPixel(int x, int y, int channal = 4) const;
 
     void CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format);
 
@@ -62,4 +63,5 @@ public:
     float _clearColor[4];
     Vector2 _size = Vector2(0,0);
     int mipLevels = 1;
+    DXGI_FORMAT imageFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 };

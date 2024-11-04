@@ -32,12 +32,19 @@ namespace dxe
         NonSync
     };
 
+    enum class DebugLevel
+    {
+        fast,
+        normal,
+        full
+    };
+
     class GraphicSetting
     {
     public:
         //전체화면, 테두리 없음, 창모드
-        //msaa enable
-        //msaa level
+        DebugLevel debugLevel = DebugLevel::normal;
+
 
         bool aaActive = true;
         AAType aaType = AAType::MSAA;
@@ -50,9 +57,16 @@ namespace dxe
         //DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
         DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
+        //std::wstring shaderRootPath = L"../shareds/engines/shaders/";
+        std::wstring shaderRootPath = L"./shaders/";
+
+        std::vector<D3D_SHADER_MACRO> shaderMacro
+        {
+            {"Test", "1"},
+            {nullptr, nullptr}
+        };
+
     public:
-        std::wstring enginePath = L"../shareds/engines/";
-        std::wstring engineShaderPath = L"../shareds/engines/shaders/";
 
     public:
         

@@ -54,7 +54,7 @@ void Camera::Update()
 {
     Component::Update();
 
-    if (Input::main->GetMouseDown(KeyCode::RightMouse))
+    if (Input::main->GetMouseDown(KeyCode::RightMouse) && false)
     {
         cameraControl = !cameraControl;
         prevPos = Input::main->GetMousePosition();
@@ -72,14 +72,6 @@ void Camera::Update()
         //gameObject.lock()->transform->LookUp(movePos, Vector3(0, 1, 0));
         prevPos = Input::main->GetMousePosition();
     }
-
-    auto r = gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0));
-    r += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
-
-    r.Normalize(r);
-    gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + r * 0.01f);
-
-    
 }
 
 void Camera::LateUpdate()

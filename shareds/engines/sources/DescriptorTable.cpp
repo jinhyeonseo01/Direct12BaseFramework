@@ -39,21 +39,21 @@ void DescriptorTable::Init(const std::vector<D3D12_DESCRIPTOR_RANGE>& descRange,
     _groupHandleCount = handleOffset; // 그룹의 핸들 갯수
     _groupCount = maxGroupCount; // 그룹 갯수
     _descriptorHeapTotalCount = _groupHandleCount * _groupCount;
-    _descriptorHandleSize = GraphicManager::instance->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    _descriptorHandleSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     D3D12_DESCRIPTOR_HEAP_DESC CBV_HeapDesc = {};
     CBV_HeapDesc.NumDescriptors = _descriptorHeapTotalCount;
     CBV_HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     CBV_HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;  // Ensure shader visibility if needed
 
-    DXAssert(GraphicManager::instance->_device->CreateDescriptorHeap(&CBV_HeapDesc, ComPtrIDAddr(_descriptorHeap)));
+    DXAssert(GraphicManager::main->_device->CreateDescriptorHeap(&CBV_HeapDesc, ComPtrIDAddr(_descriptorHeap)));
 
     CBV_HeapDesc = {};
     CBV_HeapDesc.NumDescriptors = _groupHandleCount;
     CBV_HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     CBV_HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;  // Ensure shader visibility if needed
 
-    DXAssert(GraphicManager::instance->_device->CreateDescriptorHeap(&CBV_HeapDesc, ComPtrIDAddr(_tempDescriptorHeap)));
+    DXAssert(GraphicManager::main->_device->CreateDescriptorHeap(&CBV_HeapDesc, ComPtrIDAddr(_tempDescriptorHeap)));
 }
 
 void DescriptorTable::Reset()
@@ -103,13 +103,13 @@ void DescriptorTable::SetCPUHandle(int groupIndex, int offsetIndex, const D3D12_
 
     unsigned int destRange = 1;
     unsigned int srcRange = 1;
-    GraphicManager::instance->_device->CopyDescriptors(
+    GraphicManager::main->_device->CopyDescriptors(
         1, &descriptorHandle, &destRange,
         1, &handle, &srcRange,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE tempDescriptorHandle(_tempDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), offsetIndex, _descriptorHandleSize);
-    GraphicManager::instance->_device->CopyDescriptors(
+    GraphicManager::main->_device->CopyDescriptors(
         1, &tempDescriptorHandle, &destRange,
         1, &handle, &srcRange,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -153,7 +153,7 @@ void DescriptorTable::SetNextGroupHandle()
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE prevDescriptorHandle(_tempDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), 0, _descriptorHandleSize);
     CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(_descriptorHeap->GetCPUDescriptorHandleForHeapStart(), _groupHandleCount * _currentGroupIndex, _descriptorHandleSize);
-    GraphicManager::instance->_device->CopyDescriptors(
+    GraphicManager::main->_device->CopyDescriptors(
         1, &descriptorHandle, &destRange,
         1, &prevDescriptorHandle, &srcRange,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);

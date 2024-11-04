@@ -7,7 +7,7 @@
 
 namespace dxe
 {
-	class SceneManager : public EObject
+	class SceneManager
 	{
 	public:
 

@@ -45,6 +45,7 @@ namespace dxe
         ResourceManager();
         virtual ~ResourceManager();
         void Init();
+        void Release();
         bool IsLoading();
         bool WaitAll();
 

@@ -247,9 +247,11 @@
     <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\SoundManager.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
+    <ClInclude Include="..\shareds\engines\headers\Terrain.h" />
     <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
     <ClInclude Include="..\shareds\engines\headers\Vertex.h" />
+    <ClInclude Include="DXEngine_Setting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp">
@@ -329,6 +331,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Terrain.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Texture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Vertex.cpp" />
@@ -350,6 +353,15 @@
     </FxCompile>
     <FxCompile Include="..\shareds\engines\shaders\skyBox.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shaders\terrain.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shaders\ui.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

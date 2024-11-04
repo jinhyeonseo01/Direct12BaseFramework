@@ -77,7 +77,7 @@ void CBufferPool::Init()
     {
         Debug::log << (cbufferInfo.second.name) << "\n";
     }
-    _cbufferDescriptorSize = GraphicManager::instance->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    _cbufferDescriptorSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void CBufferPool::Reset()

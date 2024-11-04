@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="Study1Scene.cpp" />
     <ClCompile Include="TestProject.cpp" />
   </ItemGroup>
@@ -159,6 +161,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="Study1Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

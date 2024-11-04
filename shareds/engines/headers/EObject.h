@@ -42,8 +42,6 @@ namespace dxe
 		}
 		static bool RemoveGuid(const std::wstring& guid)
 		{
-            for (auto& a : _EObjectTable)
-                Debug::log << a.first << "\n";
 			auto iter = _EObjectTable.find(guid);
 
 			if (iter != _EObjectTable.end())

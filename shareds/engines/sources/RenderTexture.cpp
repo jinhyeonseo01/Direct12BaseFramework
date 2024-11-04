@@ -25,7 +25,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
 {
     auto texture = std::make_shared<RenderTexture>();
-    auto device = GraphicManager::instance->_device;
+    auto device = GraphicManager::main->_device;
 
     texture->SetState(state);
     texture->SetClearColor(clearColor);
@@ -52,8 +52,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     else if (state == ResourceState::RTV)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-        desc.SampleDesc.Count = GraphicManager::instance->setting.GetMSAACount();
-        desc.SampleDesc.Quality = GraphicManager::instance->setting.GetMSAAQuality();
+        desc.SampleDesc.Count = GraphicManager::main->setting.GetMSAACount();
+        desc.SampleDesc.Quality = GraphicManager::main->setting.GetMSAAQuality();
         desc.MipLevels = 1;
         desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
         resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;
@@ -87,7 +87,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Link(ComPtr<ID3D12Resource> resour
 
 void RenderTexture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format)
 {
-    auto device = GraphicManager::instance->_device;
+    auto device = GraphicManager::main->_device;
     _resource = resource;
     SetFormat(format);
 

@@ -13,5 +13,7 @@ namespace std
 	/// </summary>
 	/// <param names="x">int °ª</param>
 	/// <returns></returns>
-	inline char sign(const int& x) { return (x > 0) - (x < 0); }
+	inline int sign(const int& x) { return (x > 0) - (x < 0); }
+    inline double sign(const double& x) { return (x > 0) - (x < 0); }
+    inline float sign(const float& x) { return (x > 0) - (x < 0); }
 }

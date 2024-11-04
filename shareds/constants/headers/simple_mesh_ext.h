@@ -72,5 +72,43 @@ namespace DirectX
 
             return Vector3(pitch, yaw, roll);
         }
+        inline Quaternion CreateRotationZXY(float rollZ, float pitchX, float yawY) {
+            // Z, X, Y 각 축에 대한 회전 쿼터니언 생성
+            Quaternion rotationZ = Quaternion::CreateFromAxisAngle(Vector3::UnitZ, rollZ);   // Z축 회전 (Roll)
+            Quaternion rotationX = Quaternion::CreateFromAxisAngle(Vector3::UnitX, pitchX);  // X축 회전 (Pitch)
+            Quaternion rotationY = Quaternion::CreateFromAxisAngle(Vector3::UnitY, yawY);    // Y축 회전 (Yaw)
+
+            // Z -> X -> Y 순서로 결합된 최종 회전 쿼터니언 생성
+            Quaternion finalRotation = rotationY * rotationX * rotationZ;
+            //Quaternion finalRotation = rotationZ * rotationX * rotationY;
+            return finalRotation;
+        }
+        inline Quaternion CreateRotationZXY(const Vector3& euler) {
+            return CreateRotationZXY(euler.z, euler.x, euler.y);
+        }
+        inline Quaternion LookToQuaternion(const Vector3& position, const Vector3& targetDirection, const Vector3& up = Vector3::UnitY)
+        {
+            // forward 벡터 정규화
+            Vector3 forward = targetDirection;
+            forward.Normalize();
+
+            // 오른쪽(right) 벡터 계산
+            Vector3 right = up.Cross(forward);
+            right.Normalize();
+
+            // 새로운 up 벡터 재계산
+            Vector3 recalculatedUp = forward.Cross(right);
+
+            // 회전 행렬 구성
+            Matrix lookToMatrix(
+                right.x, right.y, right.z, 0.0f,
+                recalculatedUp.x, recalculatedUp.y, recalculatedUp.z, 0.0f,
+                forward.x, forward.y, forward.z, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+            );
+
+            // 회전 행렬에서 쿼터니언 생성
+            return Quaternion::CreateFromRotationMatrix(lookToMatrix);
+        }
     }
 }

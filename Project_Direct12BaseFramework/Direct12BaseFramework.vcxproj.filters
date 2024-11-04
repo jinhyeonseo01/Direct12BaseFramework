@@ -237,8 +237,14 @@
     <ClInclude Include="..\plugins\includes\tracy\tracy\TracyD3D12.hpp">
       <Filter>Profiler</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\MeshSample.h">
+    <ClInclude Include="DXEngine_Setting.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Terrain.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\MeshSample.h">
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -410,8 +416,11 @@
     <ClCompile Include="Direct12BaseFramework.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\MeshSample.cpp">
+    <ClCompile Include="..\shareds\engines\sources\Terrain.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\MeshSample.cpp">
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -432,6 +441,12 @@
       <Filter>Engine\shader</Filter>
     </FxCompile>
     <FxCompile Include="..\shareds\engines\shaders\skyBox.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shaders\terrain.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shaders\ui.hlsl">
       <Filter>Engine\shader</Filter>
     </FxCompile>
   </ItemGroup>

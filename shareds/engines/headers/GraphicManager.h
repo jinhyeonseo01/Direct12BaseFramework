@@ -19,7 +19,7 @@ namespace dxe
     class GraphicManager : public std::enable_shared_from_this<GraphicManager>
     {
     public:
-        static GraphicManager* instance;
+        static GraphicManager* main;
         GraphicSetting setting;
         std::weak_ptr<Engine> _engine;
         HWND hWnd;

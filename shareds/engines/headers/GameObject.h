@@ -135,9 +135,9 @@ namespace dxe
 		std::shared_ptr<GameObject> GetChild(int index);
 		std::shared_ptr<GameObject> GetChildByName(const std::wstring& name);
 		int GetChilds(std::vector<std::shared_ptr<GameObject>>& vec);
-		int GetChildsByName(std::vector<std::shared_ptr<GameObject>>& vec, const std::wstring& name);
+		int GetChildsByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec);
 		int GetChildsAll(std::vector<std::shared_ptr<GameObject>>& vec);
-		int GetChildsAllByName(std::vector<std::shared_ptr<GameObject>>& vec, const std::wstring& name);
+		int GetChildsAllByName(const std::wstring& name, std::vector<std::shared_ptr<GameObject>>& vec);
 
 		//bool AddChild(std::shared_ptr<GameObject> obj); // 순환참조 검사 해야함. root parent 가져오는 코드 필요할듯.
 		bool AddChild(const std::shared_ptr<GameObject>& obj);

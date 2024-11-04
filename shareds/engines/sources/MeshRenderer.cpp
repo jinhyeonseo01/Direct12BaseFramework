@@ -95,9 +95,9 @@ void MeshRenderer::Rendering()
         if (!mesh)
             continue;
 
-        auto list = GraphicManager::instance->GetCurrentCommandList();
-        auto pool = GraphicManager::instance->GetCurrentCBufferPool();
-        auto table = GraphicManager::instance->GetCurrentDescriptorTable();
+        auto list = GraphicManager::main->GetCurrentCommandList();
+        auto pool = GraphicManager::main->GetCurrentCBufferPool();
+        auto table = GraphicManager::main->GetCurrentDescriptorTable();
 
         material->shader.lock()->SetPipeline(list);
 
@@ -123,7 +123,7 @@ void MeshRenderer::Rendering()
         table->SetCurrentGroupHandle(material->shader.lock(), "DefaultMaterialParams", cbuffer2.handle);
 
         
-        GraphicManager::instance->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
+        GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
 
         auto a = table->GetCurrentGroupGPUHandle(0);
         list->SetGraphicsRootDescriptorTable(1, a);

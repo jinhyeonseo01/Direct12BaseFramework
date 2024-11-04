@@ -1,5 +1,6 @@
 #pragma once
 #include "Material.h"
+#include "MeshRenderer.h"
 #include "Scene.h"
 
 class Study1Scene : public Scene
@@ -20,5 +21,6 @@ public:
 public:
     std::shared_ptr<Material> skyMaterial;
     std::shared_ptr<GameObject> camera;
+    std::vector<std::shared_ptr<MeshRenderer>> boxMRs;
 };
 

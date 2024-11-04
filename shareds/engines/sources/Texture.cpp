@@ -14,7 +14,7 @@ Texture::Texture()
 Texture::~Texture()
 {
     if(_SRV_CPUHandle.ptr != 0)
-        GraphicManager::instance->_textureHandlePool->HandleFree(_SRV_CPUHandle);
+        GraphicManager::main->_textureHandlePool->HandleFree(_SRV_CPUHandle);
 }
 
 void Texture::SetState(ResourceState state)
@@ -26,7 +26,7 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
                                          const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, Vector4 clearColor)
 {
     auto texture = std::make_shared<Texture>();
-    auto device = GraphicManager::instance->_device;
+    auto device = GraphicManager::main->_device;
 
     texture->SetState(ResourceState::SRV);
     texture->SetClearColor(clearColor);
@@ -88,9 +88,11 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
 {
     //상혁님 코드 참조
     auto texture = std::make_shared<Texture>();
-    auto device = GraphicManager::instance->_device;
+    auto device = GraphicManager::main->_device;
 
     std::wstring ext = std::filesystem::path(path).extension();
+    std::wstring fileName = std::filesystem::path(path).filename();
+    Debug::log << "텍스쳐 로드중 : " << fileName << "\n";
 
     HRESULT loadSuccess;
     if (ext == L".dds" || ext == L".DDS")
@@ -103,7 +105,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         loadSuccess = LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
     if (!DXSuccess(loadSuccess))
     {
-        Debug::log << "해당 경로에 텍스쳐 없음\n";
+        Debug::log << "해당 경로에 텍스쳐 없음\n"<<path<<"\n";
         return nullptr;
     }
     if (!(ext == L".dds" || ext == L".DDS") && createMipMap)
@@ -122,6 +124,10 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         texture->_image.Release();
         texture->_image = std::move(mipmapImage);
     }
+    /*ScratchImage flippedImage;
+    DXAssert(FlipRotate(texture->_image.GetImages(), texture->_image.GetImageCount(), texture->_image.GetMetadata(),
+        TEX_FR_FLIP_VERTICAL, flippedImage));
+    texture->_image = std::move(flippedImage);*/
 
     DXAssert(CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
 
@@ -147,7 +153,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         IID_PPV_ARGS(textureUploadHeap.GetAddressOf())
     ));
 
-    auto resourceCommandList = GraphicManager::instance->GetResourceCommandList();
+    auto resourceCommandList = GraphicManager::main->GetResourceCommandList();
 
     // 텍스쳐용 리소스 생성
     D3D12_HEAP_PROPERTIES heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
@@ -197,10 +203,11 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
     resourceCommandList.Get()->ResourceBarrier(1, &barrier);  // 원하는 최종 상태로 전환
 
-    GraphicManager::instance->SetResource();
+    GraphicManager::main->SetResource();
+    Debug::log << "텍스쳐 로드 완료 : " << fileName << "\n";
 
 
-    texture->_SRV_CPUHandle = GraphicManager::instance->_textureHandlePool->HandleAlloc();
+    texture->_SRV_CPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
     
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
     SRVDesc.Format = metadata.format;
@@ -213,6 +220,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     texture->_SRV_ViewDesc = SRVDesc;
     texture->mipLevels = metadata.mipLevels;
     texture->SetSize(Vector2(metadata.width, metadata.height));
+    texture->imageFormat = texture->_image.GetMetadata().format;
     device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
 
     return texture;
@@ -241,9 +249,28 @@ std::shared_ptr<Texture> Texture::Link(ComPtr<ID3D12Resource> resource, DXGI_FOR
     return texture;
 }
 
+Vector4 Texture::GetPixel(int x, int y, int channal) const
+{
+    int pixelSize = BitsPerPixel(imageFormat);
+    if (x < 0 || x >= static_cast<int>(_size.x)
+        || y < 0 || y >= static_cast<int>(_size.y))
+        return Vector4(0, 0, 0, 0);
+    int index = (y * static_cast<int>(_size.x) + x) * (pixelSize / 8);
+    unsigned char* currentPixel = &(_image.GetPixels()[index]);
+    Vector4 color = Vector4(0,0,0,0);
+    unsigned long long int data = 0;
+    for (int i = 0; i < channal; i++)
+    {
+        data = 0;
+        std::memcpy((void*)&data, currentPixel + i * channal, (pixelSize / channal / 8));
+        (&color.x)[i] = data / (float)(std::pow(2, pixelSize));
+    }
+    return color;
+}
+
 void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format)
 {
-    auto device = GraphicManager::instance->_device;
+    auto device = GraphicManager::main->_device;
     _resource = resource;
     /*
     if (_state == ResourceState::DSV)
@@ -289,7 +316,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
     }*/
     if (_state == ResourceState::RT_SRV || _state == ResourceState::SRV)
     {
-        _SRV_CPUHandle = GraphicManager::instance->_textureHandlePool->HandleAlloc();
+        _SRV_CPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;

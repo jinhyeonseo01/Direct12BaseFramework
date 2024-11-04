@@ -8,7 +8,7 @@
 void ShaderResourcePool::Init(int count, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 {
     _descriptorHeapCount = count;
-    _descriptorSize = GraphicManager::instance->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    _descriptorSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     _descriptorHeapAllocator.resize(_descriptorHeapCount);
     for (int i = 0; i < _descriptorHeapCount; i++)
         _descriptorHeapAllocator[i] = false;
@@ -19,7 +19,7 @@ void ShaderResourcePool::Init(int count, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
     SRV_HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     SRV_HeapDesc.Flags = flags;  // Ensure shader visibility if needed
 
-    DXAssert(GraphicManager::instance->_device->CreateDescriptorHeap(&SRV_HeapDesc, ComPtrIDAddr(_descriptorHeap)));
+    DXAssert(GraphicManager::main->_device->CreateDescriptorHeap(&SRV_HeapDesc, ComPtrIDAddr(_descriptorHeap)));
 }
 
 void ShaderResourcePool::Reset()

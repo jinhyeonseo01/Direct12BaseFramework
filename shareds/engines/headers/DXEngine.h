@@ -59,7 +59,7 @@ namespace dxe
 		std::wstring _iconPath{ L"configs/Icons/MainIcon.ico"};
 		std::wstring _iconSmallPath{ L"configs/Icons/SmallIcon.ico" };
 
-		DirectX::SimpleMath::Viewport _windowRect = Viewport(0,0,1920,1080);
+		DirectX::SimpleMath::Viewport _windowRect = Viewport(0,0,1280,720);
 		bool _windowFullScreen = false;
 
 		bool isOpenWindow = false;
@@ -83,7 +83,7 @@ namespace dxe
         bool _engineQuitFlag = false;
 
 		bool isFrameLock = true;
-		double targetFrame = 165;
+		double targetFrame = 60;
 		double currentFrame = 144;
 		double deltaTime = 0.016;
 
