@@ -64,4 +64,5 @@ public:
     Vector2 _size = Vector2(0,0);
     int mipLevels = 1;
     DXGI_FORMAT imageFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+
 };

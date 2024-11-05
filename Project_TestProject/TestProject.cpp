@@ -6,6 +6,7 @@
 #include <DXEngine.h>
 
 #include "Camera.h"
+#include "graphic_config.h"
 #include "MeshRenderer.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -36,7 +37,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
             engine->SetHandleName(L"main");
-            engine->SetWindowRect({ 400,200,1920,1080 });
+            engine->SetWindowRect({ 400,200,1280,720 });
             engine->EngineInit();
             engine->VisualInit();
             engine->EngineRun();
@@ -71,6 +72,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     catch (const std::exception& e)
     {
         Debug::log << "예외 발생: " << e.what() << "\n";
+        if(GraphicManager::main)
+            DXSuccess(GraphicManager::main->_device->GetDeviceRemovedReason());
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     Release();
@@ -89,7 +92,7 @@ void Initialize(HINSTANCE hInstance)
 void Release()
 {
     timeEndPeriod(1);
-    GraphicManager::main->WaitSync();
+    GraphicManager::main->TotalFenceWaitImmediate();
     dxe::SceneManager::DeleteAll();
     dxe::Engine::DeleteEngineAll();
     Debug::Console::Close();

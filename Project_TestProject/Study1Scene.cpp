@@ -78,11 +78,29 @@ void Study1Scene::Init()
     camera = cameraObj;
 
     //ResourceManager::main->LoadAssimpPack(L"Ellen.fbx", L"Ellen");
-    ResourceManager::main->LoadAssimpPack(L"Resources/Models/B.fbx", L"B");
-    ResourceManager::main->LoadAssimpPack(L"Resources/Models/box.obj", L"box");
-    ResourceManager::main->LoadAssimpPack(L"Resources/Models/SkyBox.obj", L"SkyBox");
-    ResourceManager::main->LoadAssimpPack(L"Resources/Models/Apache.fbx", L"Apache");
+    ResourceManager::main->LoadAssimpPack(L"resources/Models/B.fbx", L"B");
+    ResourceManager::main->LoadAssimpPack(L"resources/Models/box.obj", L"box");
+    ResourceManager::main->LoadAssimpPack(L"resources/Models/SkyBox.obj", L"SkyBox");
+    ResourceManager::main->LoadAssimpPack(L"resources/Models/Apache.fbx", L"Apache");
+
+    ResourceManager::main->LoadTexture(L"resources/Textures/menu.png", L"menu", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/Start.png", L"start", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/help.png", L"help", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/Info.png", L"info", true);
+
+    auto apacheTexture = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_White.png", L"ApacheTexture", true);
+    auto apacheTexture2 = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_Orange.png", L"ApacheTexture2", true);
+    auto apacheTexture3 = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_Camo_Green.png", L"ApacheTexture3", true);
+    auto apacheTexture4 = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_Purple.png", L"ApacheTexture4", true);
+
+    auto bTexture = ResourceManager::main->LoadTexture(L"resources/Textures/GroundStone.png", L"GroundStone", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/Grass01.png", L"Grass01", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/Grass02.png", L"Grass02", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/hm.png", L"hm", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/SkyBoxCubeMap2.png", L"skyTexture", false);
+
     ResourceManager::main->WaitAll();
+
 
     auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
     skyBox->CreateGraphicResource();
@@ -102,7 +120,7 @@ void Study1Scene::Init()
     menuMR->AddMesh({ quad });
     std::shared_ptr<Material> menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
-    menuMaterial->SetData("_BaseMap", ResourceManager::main->LoadTexture(L"Resources/Textures/menu.png", L"menu", true));
+    menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"menu"));
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, 0, 0.11);
     menu->transform->localScale = Vector3(2, 2, 2);
@@ -113,7 +131,7 @@ void Study1Scene::Init()
     menuMR->AddMesh({ quad });
     menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
-    menuMaterial->SetData("_BaseMap", ResourceManager::main->LoadTexture(L"Resources/Textures/Start.png", L"start", true));
+    menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"start"));
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, -0.5, 0.1);
     menu->transform->localScale = Vector3(400/1280.0, 150/720.0, 2);
@@ -124,7 +142,7 @@ void Study1Scene::Init()
     menuMR->AddMesh({ quad });
     menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
-    menuMaterial->SetData("_BaseMap", ResourceManager::main->LoadTexture(L"Resources/Textures/help.png", L"help", true));
+    menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"help"));
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, -0.8, 0.1);
     menu->transform->localScale = Vector3(400 / 1280.0, 150 / 720.0, 2);
@@ -135,7 +153,7 @@ void Study1Scene::Init()
     menuMR->AddMesh({ quad });
     menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
-    menuMaterial->SetData("_BaseMap", ResourceManager::main->LoadTexture(L"Resources/Textures/Info.png", L"info", true));
+    menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"info"));
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, 0, 2);
     menu->transform->localScale = Vector3(1000 * 2 / 1280.0, 600*2 / 720.0, 2);
@@ -149,10 +167,6 @@ void Study1Scene::Init()
     apache->SetParent(rootObject);
     auto player = rootObject->AddComponent<PlayerComponent>();
 
-    auto apacheTexture = ResourceManager::main->LoadTexture(L"Resources/Textures/Apache_Texture_White.png", L"ApacheTexture", true);
-    auto apacheTexture2 = ResourceManager::main->LoadTexture(L"Resources/Textures/Apache_Texture_Orange.png", L"ApacheTexture2", true);
-    auto apacheTexture3 = ResourceManager::main->LoadTexture(L"Resources/Textures/Apache_Texture_Camo_Green.png", L"ApacheTexture3", true);
-    auto apacheTexture4 = ResourceManager::main->LoadTexture(L"Resources/Textures/Apache_Texture_Purple.png", L"ApacheTexture4", true);
     std::vector<std::shared_ptr<MeshRenderer>> meshRenderers;
     apache->GetComponentsWithChilds(meshRenderers);
     for(int i=0;i<meshRenderers.size();i++)
@@ -160,7 +174,7 @@ void Study1Scene::Init()
         std::shared_ptr<Material> material = std::make_shared<Material>();
         material->shader = ResourceManager::main->GetShader(L"forward");
         material->SetData("color", Vector4(0, 0, 1, 1));
-        material->SetData("_BaseMap", apacheTexture);
+        material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture"));
         meshRenderers[i]->AddMateiral({ material });
     }
 
@@ -170,10 +184,6 @@ void Study1Scene::Init()
     b->transform->localPosition = -Vector3(1, 0, 1) * 50 + Vector3(0, -20, 0);
     b->SetParent(rootObject);
 
-    auto bTexture = ResourceManager::main->LoadTexture(L"Resources/Textures/GroundStone.png", L"GroundStone", true);
-    ResourceManager::main->LoadTexture(L"Resources/Textures/Grass01.png", L"Grass01", true);
-    ResourceManager::main->LoadTexture(L"Resources/Textures/Grass02.png", L"Grass02", true);
-    ResourceManager::main->LoadTexture(L"Resources/Textures/hm.png", L"hm", true);
     meshRenderers.clear();
     b->GetComponentsWithChilds(meshRenderers);
     for (int i = 0; i < meshRenderers.size(); i++)
@@ -201,7 +211,7 @@ void Study1Scene::Init()
             std::shared_ptr<Material> material = std::make_shared<Material>();
             material->shader = ResourceManager::main->GetShader(L"forward");
             material->SetData("color", Vector4(0, 0, 1, 1));
-            material->SetData("_BaseMap", apacheTexture);
+            material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture"));
             meshRenderers[i]->AddMateiral({ material });
             boxMRs.push_back(meshRenderers[i]);
         }
@@ -230,7 +240,7 @@ void Study1Scene::Init()
             std::shared_ptr<Material> material = std::make_shared<Material>();
             material->shader = ResourceManager::main->GetShader(L"forward");
             material->SetData("color", Vector4(0, 0, 1, 1));
-            material->SetData("_BaseMap", apacheTexture2);
+            material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture2"));
             meshRenderers[i]->AddMateiral({ material });
         }
 
@@ -241,7 +251,7 @@ void Study1Scene::Init()
 
     skyMaterial = std::make_shared<Material>();
     skyMaterial->shader = ResourceManager::main->GetShader(L"sky");
-    skyMaterial->SetData("skyTexture", ResourceManager::main->LoadTexture(L"Resources/Textures/SkyBoxCubeMap2.png", L"skyTexture", false));
+    skyMaterial->SetData("skyTexture", ResourceManager::main->GetTexture(L"skyTexture"));
 }
 
 void Study1Scene::Update()

@@ -135,7 +135,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\DebugDLL\*" "$(OutDir)"</Command>
+      <Command>xcopy /Y /E "$(SolutionDir)plugins\dlls\DebugDLL\*" "$(OutDir)"
+xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,7 +160,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(SolutionDir)plugins\dlls\ReleaseDLL\*" "$(OutDir)"</Command>
+      <Command>xcopy /Y /E "$(SolutionDir)plugins\dlls\ReleaseDLL\*" "$(OutDir)"
+xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

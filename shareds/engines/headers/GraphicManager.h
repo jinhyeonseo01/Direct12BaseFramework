@@ -110,11 +110,14 @@ namespace dxe
         void RefreshSwapChain();
         void RefreshRequest();
 
-        void WaitSync();
-        void SetResource();
+        void TotalFenceWaitImmediate();
+        void ResourceSet();
+        void TotalFenceAppend();
+        void TotalFenceWait();
 
-        void FanceAppend(int index);
-        void FanceWaitSync(int index);
+        void CommandListFenceAppend(int index);
+        void CommandListFenceWait(int index);
+        void CommandListFenceWaitImmediate(int index);
 
 
         void ChangeNextCommand();

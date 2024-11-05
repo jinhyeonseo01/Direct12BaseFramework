@@ -53,7 +53,7 @@ void GraphicManager::RenderPrepare()
         if (_refreshReserve)
             Refresh();
 
-        FanceWaitSync(_currentCommandListIndex);
+        CommandListFenceWait(_currentCommandListIndex);
         ClearCurrentCommand();
         ClearPipelineState();
         GetCurrentCBufferPool()->Reset();
@@ -88,7 +88,7 @@ void GraphicManager::RenderFinish()
         FinishAndExecuteCurrentCommand();
         SwapChainExecute();
 
-        FanceAppend(_currentCommandListIndex);
+        CommandListFenceAppend(_currentCommandListIndex);
         ChangeNextCommand();
     }
 }

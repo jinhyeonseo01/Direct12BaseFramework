@@ -102,7 +102,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     else if (ext == L".hdr" || ext == L".HDR")
         loadSuccess = LoadFromHDRFile(path.c_str(), nullptr, texture->_image);
     else // png, jpg, jpeg, bmp
-        loadSuccess = LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, texture->_image);
+        loadSuccess = LoadFromWICFile(path.c_str(), WIC_FLAGS_IGNORE_SRGB, nullptr, texture->_image);
     if (!DXSuccess(loadSuccess))
     {
         Debug::log << "해당 경로에 텍스쳐 없음\n"<<path<<"\n";
@@ -203,9 +203,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
     resourceCommandList.Get()->ResourceBarrier(1, &barrier);  // 원하는 최종 상태로 전환
 
-    GraphicManager::main->SetResource();
-    Debug::log << "텍스쳐 로드 완료 : " << fileName << "\n";
-
+    GraphicManager::main->ResourceSet();
 
     texture->_SRV_CPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
     
@@ -221,7 +219,9 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     texture->mipLevels = metadata.mipLevels;
     texture->SetSize(Vector2(metadata.width, metadata.height));
     texture->imageFormat = texture->_image.GetMetadata().format;
+
     device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
+    Debug::log << "텍스쳐 로드 완료 : " << fileName << "\n";
 
     return texture;
 }

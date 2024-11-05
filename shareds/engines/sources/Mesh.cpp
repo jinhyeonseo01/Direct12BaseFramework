@@ -201,7 +201,7 @@ void Mesh::CreateVertexBuffer()
         GraphicManager::main->GetResourceCommandList()->CopyResource(_vertexResource.Get(), _uploadBuffer.Get());
         D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(_vertexResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
         GraphicManager::main->GetResourceCommandList()->ResourceBarrier(1, &barrier2);
-        GraphicManager::main->SetResource(); // 어차피 여기서 execute 할거기 때문에 업로드 힙 없애도 됨 ㅇㅇ..
+        GraphicManager::main->ResourceSet(); // 어차피 여기서 execute 할거기 때문에 업로드 힙 없애도 됨 ㅇㅇ..
     }
 
 
@@ -214,7 +214,7 @@ void Mesh::CreateIndexBuffer()
 {
     indexCount = _indexBuffer.size();
     auto bufferSize = indexCount * sizeof(uint32_t);
-    GraphicManager::main->SetResource();
+    GraphicManager::main->ResourceSet();
     {
         auto resourceCommandList = GraphicManager::main->GetResourceCommandList();
 
@@ -256,7 +256,7 @@ void Mesh::CreateIndexBuffer()
         GraphicManager::main->GetResourceCommandList()->CopyResource(_indexResource.Get(), _uploadBuffer.Get());
         D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(_indexResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
         GraphicManager::main->GetResourceCommandList()->ResourceBarrier(1, &barrier2);
-        GraphicManager::main->SetResource(); // 어차피 여기서 execute 할거기 때문에 업로드 힙 없애도 됨 ㅇㅇ..
+        GraphicManager::main->ResourceSet(); // 어차피 여기서 execute 할거기 때문에 업로드 힙 없애도 됨 ㅇㅇ..
     }
 
     _indexBufferView.BufferLocation = _indexResource->GetGPUVirtualAddress();

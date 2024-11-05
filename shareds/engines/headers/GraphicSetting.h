@@ -57,7 +57,7 @@ namespace dxe
         //DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
         DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-        std::wstring shaderRootPath = L"../shareds/engines/shaders/";
+        std::wstring shaderRootPath = L"./resources/shaders/";
         //std::wstring shaderRootPath = L"./shaders/";
 
         std::vector<D3D_SHADER_MACRO> shaderMacro

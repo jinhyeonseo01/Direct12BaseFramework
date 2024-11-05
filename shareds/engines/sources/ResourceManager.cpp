@@ -32,7 +32,7 @@ std::shared_ptr<AssimpPack> AssimpPack::Init()
     return shared_from_this();
 }
 
-std::shared_ptr<AssimpPack> AssimpPack::LoadAsync(std::wstring path, std::wstring name)
+std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring name, bool async)
 {
     auto pathString = std::to_string(path);
     this->name = name;
@@ -90,6 +90,8 @@ std::shared_ptr<AssimpPack> AssimpPack::LoadAsync(std::wstring path, std::wstrin
         }
         pack->loadComplate.store(true);
     }, this, std::placeholders::_1, pathString));
+    if (!async)
+        this->asyncLoadThread->join();
     return shared_from_this();
 }
 
@@ -131,15 +133,31 @@ bool ResourceManager::WaitAll()
         if (currentLoad)
             assimpPackList[i]->asyncLoadThread->join();
     }
+    for (int i = 0; i < texturePackList.size(); i++)
+    {
+        bool currentLoad = !texturePackList[i]->loadComplate.load();
+        if (currentLoad)
+            texturePackList[i]->asyncLoadThread->join();
+    }
     return true;
 }
 
-std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& path, const std::wstring& name)
+std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& path, const std::wstring& name, bool async)
 {
-    auto pack = std::make_shared<AssimpPack>()->Init()->LoadAsync(path, name);
+    auto pack = std::make_shared<AssimpPack>()->Init()->Load(path, name, async);
     assimpPackList.push_back(pack);
     assimpPackTable[name] = pack;
     return pack;
+}
+
+std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPacks(std::vector<std::pair<std::wstring, std::wstring>> packs)
+{
+    return nullptr;
+}
+
+std::shared_ptr<AssimpPack> ResourceManager::LoadTextures(std::vector<std::pair<std::wstring, std::wstring>> packs, bool mipmap)
+{
+    return nullptr;
 }
 
 std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pack)
@@ -152,12 +170,22 @@ std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pa
     return model;
 }
 
-std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::wstring name, bool mipmap)
+std::shared_ptr<TexturePack> ResourceManager::LoadTexture(std::wstring path, std::wstring name, bool mipmap, bool async)
 {
-    auto texture = Texture::Load(path, true);
-    textureList.push_back(texture);
-    textureTable[name] = texture;
-    return texture;
+    auto texturePack = std::make_shared<TexturePack>();
+    texturePackList.push_back(texturePack);
+    texturePack->asyncLoadThread = std::make_shared<std::jthread>([=](std::shared_ptr<TexturePack> pack)
+        {
+            pack->loadComplate.store(false);
+            auto texture = Texture::Load(path, true);
+            ResourceManager::main->textureList.push_back(texture);
+            ResourceManager::main->textureTable[name] = texture;
+            pack->texture = texture.get();
+            pack->loadComplate.store(true);
+        }, texturePack);
+    if (!async)
+        texturePack->asyncLoadThread->join();
+    return texturePack;
 }
 
 

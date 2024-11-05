@@ -84,7 +84,7 @@ void GraphicManager::Init()
 void GraphicManager::Refresh()
 {
     //리소스 힙 디스크립트 힙
-    WaitSync();
+    TotalFenceWaitImmediate();
     RefreshSwapChain();
     RefreshRenderTargetGroups();
 
@@ -96,7 +96,7 @@ void GraphicManager::Release()
 {
     if (!_isRelease)
     {
-        WaitSync();
+        TotalFenceWaitImmediate();
 
         _rootSignature.reset();
         _renderTargetGroupTable.clear();
@@ -308,11 +308,34 @@ void GraphicManager::RefreshRequest()
     _refreshReserve = true;
 }
 
-void GraphicManager::WaitSync()
+void GraphicManager::TotalFenceWaitImmediate()
+{
+    TotalFenceAppend();
+    TotalFenceWait();
+}
+
+void GraphicManager::ResourceSet()
+{
+    auto resourceCommandList = GetResourceCommandList();
+    resourceCommandList->Close();
+
+    std::array<ID3D12CommandList*, 1> commandListArray{ resourceCommandList.Get() };
+    GetCommandQueue()->ExecuteCommandLists(commandListArray.size(), commandListArray.data());
+
+    TotalFenceWaitImmediate(); //Gpu에게 작업 맡긴 뒤에 Lock 검
+
+    GetResourceCommandAllocator()->Reset();
+    GetResourceCommandList()->Reset(GetResourceCommandAllocator().Get(), nullptr);
+}
+
+void GraphicManager::TotalFenceAppend()
 {
     _fenceValue++;
     _commandQueue->Signal(_fence.Get(), _fenceValue);
+}
 
+void GraphicManager::TotalFenceWait()
+{
     if (_fence->GetCompletedValue() < _fenceValue)
     {
         _fence->SetEventOnCompletion(_fenceValue, _fenceEvent);
@@ -321,27 +344,19 @@ void GraphicManager::WaitSync()
     }
 }
 
-void GraphicManager::SetResource()
+void GraphicManager::CommandListFenceWaitImmediate(int index)
 {
-    auto resourceCommandList = GetResourceCommandList();
-    resourceCommandList->Close();
-
-    std::array<ID3D12CommandList*, 1> commandListArray{ resourceCommandList.Get() };
-    GetCommandQueue()->ExecuteCommandLists(commandListArray.size(), commandListArray.data());
-
-    WaitSync(); //Gpu에게 작업 맡긴 뒤에 Lock 검
-
-    GetResourceCommandAllocator()->Reset();
-    GetResourceCommandList()->Reset(GetResourceCommandAllocator().Get(), nullptr);
+    CommandListFenceAppend(index);
+    CommandListFenceWait(index);
 }
 
-void GraphicManager::FanceAppend(int index)
+void GraphicManager::CommandListFenceAppend(int index)
 {
     _commandListFenceValue[index] += 1;
     _commandQueue->Signal(_commandListFences[index].Get(), _commandListFenceValue[index]);
 }
 
-void GraphicManager::FanceWaitSync(int index)
+void GraphicManager::CommandListFenceWait(int index)
 {
     if (_commandListFences[index]->GetCompletedValue() < _commandListFenceValue[index])
     {
