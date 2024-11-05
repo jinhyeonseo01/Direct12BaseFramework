@@ -36,11 +36,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
             engine->SetHandleName(L"main");
-            engine->SetWindowRect({ 0,0,1280,720 });
+            engine->SetWindowRect({ 400,200,1920,1080 });
             engine->EngineInit();
             engine->VisualInit();
             engine->EngineRun();
-            engine->SetWindowRect({ 0,0,1280,720 });
             engine = nullptr;
         }
 

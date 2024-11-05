@@ -337,8 +337,8 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
             
 			HWND hWnd = CreateWindowW(_handleName.data(), _titleName.data(),
                 windowSettingFlag,
-                graphic->setting.screenInfo.x, graphic->setting.screenInfo.y,
-                graphic->setting.screenInfo.width, graphic->setting.screenInfo.height, //CW_USEDEFAULT //this->_windowRect.width, this->_windowRect.height
+                _windowRect.x, _windowRect.y,
+                _windowRect.width, _windowRect.height, //CW_USEDEFAULT //this->_windowRect.width, this->_windowRect.height
 				nullptr, nullptr,
 				Engine::_processInstance, nullptr);
 			for(auto& speckey : globalSpecialKey)
