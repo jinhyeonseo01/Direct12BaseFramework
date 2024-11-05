@@ -46,31 +46,6 @@ namespace dxe
         Screen, // FinalColor = 1 - (1 - SrcColor) * (1 - DestColor)
     };
 
-
-    class ShaderInfo
-    {
-    public:
-        bool _zTest = true;
-        bool _zWrite = true;
-        CompOper _zComp = CompOper::LEqual;
-        bool _stencilTest = false;
-        int _stencilIndex = 0;
-        CompOper _stencilComp = CompOper::Always;
-        D3D12_STENCIL_OP _stencilFailOp = D3D12_STENCIL_OP_KEEP;
-        D3D12_STENCIL_OP _stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-        D3D12_STENCIL_OP _stencilPassOp = D3D12_STENCIL_OP_KEEP;
-
-        CullingType cullingType = CullingType::BACK;
-
-        FrontWise _wise = FrontWise::CW;
-
-        BlendType _blendType[8] = { BlendType::AlphaBlend };
-
-        int _renderQueue = 2000;
-        RenderQueueType _renderQueueType = RenderQueueType::Opaque;
-    };
-
-
     class ShaderStructPropertyInfo
     {
     public:
@@ -153,6 +128,38 @@ namespace dxe
         std::vector<char> _shaderPrecompiledBuffer;
         D3D12_SHADER_BYTECODE _shaderByteCode = {};
     };
+
+    class ShaderInfo
+    {
+    public:
+        bool _zTest = true;
+        bool _zWrite = true;
+        CompOper _zComp = CompOper::LEqual;
+        bool _stencilTest = false;
+        int _stencilIndex = 0;
+        CompOper _stencilComp = CompOper::Always;
+        D3D12_STENCIL_OP _stencilFailOp = D3D12_STENCIL_OP_KEEP;
+        D3D12_STENCIL_OP _stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+        D3D12_STENCIL_OP _stencilPassOp = D3D12_STENCIL_OP_KEEP;
+
+        CullingType cullingType = CullingType::BACK;
+        FrontWise _wise = FrontWise::CW;
+
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE _primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+        //D3D12_PRIMITIVE_TOPOLOGY _topologyType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        //D3D_PRIMITIVE_TOPOLOGY_POINTLIST
+        //D3D_PRIMITIVE_TOPOLOGY_LINELIST
+        //D3D_PRIMITIVE_TOPOLOGY_LINESTRIP
+        //D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+        //D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
+        //D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST
+
+        BlendType _blendType[8] = { BlendType::AlphaBlend };
+        int _renderQueue = 2000;
+        RenderQueueType _renderQueueType = RenderQueueType::Opaque;
+        bool isMsaaDisable = true;
+    };
+
     class Shader
     {
     public:
@@ -170,7 +177,6 @@ namespace dxe
 
         int renderTargetCount = 1;
         DXGI_FORMAT RTVForamts[8]{DXGI_FORMAT_R8G8B8A8_UNORM};
-        bool isMsaaDisable = false;
 
         void Init();
         void SetShaderSetting(const ShaderInfo& info);

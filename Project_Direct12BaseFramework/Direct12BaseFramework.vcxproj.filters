@@ -240,10 +240,10 @@
     <ClInclude Include="DXEngine_Setting.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\Terrain.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\MeshSample.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Terrain.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
@@ -416,10 +416,10 @@
     <ClCompile Include="Direct12BaseFramework.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\shareds\engines\sources\Terrain.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\MeshSample.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Terrain.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>

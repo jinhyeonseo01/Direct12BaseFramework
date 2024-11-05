@@ -3670,7 +3670,7 @@ inline bool Ray::Intersects(const BoundingSphere& sphere, _Out_ float& Dist) con
     return sphere.Intersects(position, direction, Dist);
 }
 
-inline bool Ray::Intersects(const BoundingBox& box, _Out_ float& Dist) const noexcept
+inline bool Ray::Intersects(const BoundingOrientedBox& box, _Out_ float& Dist) const noexcept
 {
     return box.Intersects(position, direction, Dist);
 }

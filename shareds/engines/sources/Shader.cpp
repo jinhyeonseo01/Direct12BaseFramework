@@ -139,11 +139,11 @@ void Shader::Init()
     for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
         _pipelineDesc.RTVFormats[i] = RTVForamts[i];
 
-    _pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    _pipelineDesc.PrimitiveTopologyType = _info._primitiveType;
     _pipelineDesc.SampleMask = UINT_MAX;
     _pipelineDesc.SampleDesc.Count = GraphicManager::main->setting.GetMSAACount();
     _pipelineDesc.SampleDesc.Quality = GraphicManager::main->setting.GetMSAAQuality();
-    if (isMsaaDisable)
+    if (_info.isMsaaDisable)
     {
         _pipelineDesc.SampleDesc.Count = 1;
         _pipelineDesc.SampleDesc.Quality = 0;
@@ -332,7 +332,7 @@ void Shader::SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts)
 
 void Shader::SetMSAADisable()
 {
-    isMsaaDisable = true;
+    _info.isMsaaDisable = true;
 }
 
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ResourceManager.h"
 
+#include "GraphicManager.h"
 #include "Model.h"
 
 
@@ -133,12 +134,6 @@ bool ResourceManager::WaitAll()
         if (currentLoad)
             assimpPackList[i]->asyncLoadThread->join();
     }
-    for (int i = 0; i < texturePackList.size(); i++)
-    {
-        bool currentLoad = !texturePackList[i]->loadComplate.load();
-        if (currentLoad)
-            texturePackList[i]->asyncLoadThread->join();
-    }
     return true;
 }
 
@@ -150,14 +145,26 @@ std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& 
     return pack;
 }
 
-std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPacks(std::vector<std::pair<std::wstring, std::wstring>> packs)
+std::vector<std::shared_ptr<AssimpPack>> ResourceManager::LoadAssimpPacks(
+    std::vector<std::pair<std::wstring, std::wstring>> packPairs, bool async)
 {
-    return nullptr;
+    std::vector<std::shared_ptr<AssimpPack>> packList;
+    for (auto& packInfo : packPairs)
+        packList .push_back(LoadAssimpPack(packInfo.first, packInfo.second, true));
+    if (!async)
+        for (auto& pack : packList)
+            if (!pack->loadComplate.load())
+                pack->asyncLoadThread->join();
+    return packList;
 }
 
-std::shared_ptr<AssimpPack> ResourceManager::LoadTextures(std::vector<std::pair<std::wstring, std::wstring>> packs, bool mipmap)
+std::vector<std::shared_ptr<Texture>> ResourceManager::LoadTextures(
+    std::vector<std::pair<std::wstring, std::wstring>> texturePairs, bool mipmap)
 {
-    return nullptr;
+    std::vector<std::shared_ptr<Texture>> textureList;
+    for (auto& textureInfo : texturePairs)
+        textureList.push_back(LoadTexture(textureInfo.first, textureInfo.second, mipmap));
+    return textureList;
 }
 
 std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pack)
@@ -170,22 +177,13 @@ std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pa
     return model;
 }
 
-std::shared_ptr<TexturePack> ResourceManager::LoadTexture(std::wstring path, std::wstring name, bool mipmap, bool async)
+std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::wstring name, bool mipmap)
 {
-    auto texturePack = std::make_shared<TexturePack>();
-    texturePackList.push_back(texturePack);
-    texturePack->asyncLoadThread = std::make_shared<std::jthread>([=](std::shared_ptr<TexturePack> pack)
-        {
-            pack->loadComplate.store(false);
-            auto texture = Texture::Load(path, true);
-            ResourceManager::main->textureList.push_back(texture);
-            ResourceManager::main->textureTable[name] = texture;
-            pack->texture = texture.get();
-            pack->loadComplate.store(true);
-        }, texturePack);
-    if (!async)
-        texturePack->asyncLoadThread->join();
-    return texturePack;
+    auto texture = Texture::Load(path, mipmap);
+    texture->SetName(name);
+    main->textureList.push_back(texture);
+    main->textureTable[name] = texture;
+    return texture;
 }
 
 

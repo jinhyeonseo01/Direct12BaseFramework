@@ -42,6 +42,22 @@ void Mesh::SetBound(const Vector3& min, const Vector3& max)
     SetBound(bound);
 }
 
+BoundingOrientedBox Mesh::GetOBB(const Quaternion& quat)
+{
+    return BoundingOrientedBox(_bound.Center, _bound.Extents, quat);
+}
+
+BoundingOrientedBox Mesh::GetWorldOBB(std::shared_ptr<Transform> trans)
+{
+    BoundingOrientedBox obb = GetOBB(Quaternion::Identity);
+    Matrix localToWorld = Matrix::Identity;
+    if (trans != nullptr) {
+        trans->GetLocalToWorldMatrix_BottomUp(localToWorld);
+        obb.Transform(obb, localToWorld);
+    }
+    return obb;
+}
+
 void Mesh::CalculateBound()
 {
     Vector3 min = Vector3(100,100,100);
@@ -65,7 +81,7 @@ void Mesh::CalculateBound()
     SetBound(min, max);
 }
 
-void Mesh::Init(std::vector<Vertex> _vertexList, std::vector<uint32_t> _indexBuffer)
+void Mesh::Init(const std::vector<Vertex>& _vertexList, const std::vector<uint32_t>& _indexBuffer)
 {
     this->_vertexList = _vertexList;
     this->_indexBuffer = _indexBuffer;
@@ -76,22 +92,26 @@ void Mesh::Init(std::vector<Vertex> _vertexList, std::vector<uint32_t> _indexBuf
 
 bool Mesh::Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, float& dis, Vector3& normal)
 {
-    BoundingOrientedBox finalBound;
-    BoundingOrientedBox obb = { this->_bound.Center, this->_bound.Extents, Vector4(0,0,0,1)};
+    BoundingOrientedBox worldOBB;
+    BoundingOrientedBox localOBB = GetOBB(Quaternion::Identity);
     Matrix localToWorld = Matrix::Identity;
     if (trans != nullptr) {
         trans->GetLocalToWorldMatrix_BottomUp(localToWorld);
-        obb.Transform(finalBound, localToWorld);
+        localOBB.Transform(worldOBB, localToWorld);
     }
-    bool hit = finalBound.Intersects(worldRay.position, worldRay.direction, dis);
+    bool hit = worldOBB.Intersects(worldRay.position, worldRay.direction, dis);
     if (hit && dis >= 0)
     {
-        auto intersectionPoint = worldRay.position + worldRay.direction * dis;
-        auto intersectionPoint2 = intersectionPoint;
+        auto worldHitPoint = worldRay.position + worldRay.direction * dis;
 
-        Matrix localToWorld2;
-        localToWorld.Invert(localToWorld2);
-        intersectionPoint2 = Vector3::Transform(intersectionPoint, localToWorld2);
+        Matrix worldToLocal;
+        localToWorld.Invert(worldToLocal);
+        Matrix scaleMatrix = Matrix::CreateScale(localOBB.Extents);
+        Matrix transMatrix = Matrix::CreateTranslation(localOBB.Center);
+        worldToLocal = worldToLocal * ((scaleMatrix * transMatrix).Invert());
+
+        auto localHitPoint = Vector3::Transform(worldHitPoint, worldToLocal);
+        localHitPoint.Normalize(localHitPoint);
 
         XMVECTOR normals[6] = {
         XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),   // +X
@@ -102,50 +122,41 @@ bool Mesh::Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, flo
         XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f)   // -Z
         };
 
-        // 변환 행렬에서 회전 성분을 추출
-        XMMATRIX obbRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&obb.Orientation));
-
-        // 가장 가까운 면의 법선을 찾기 위해 각 면의 거리를 비교
         float maxDot = -FLT_MAX;
         for (int i = 0; i < 6; ++i)
         {
-            // 법선 벡터를 회전 변환하여 OBB의 회전을 반영
-            Vector3 rotatedNormal = XMVector3TransformNormal(normals[i], obbRotation);
-
-            // 교차 지점에서의 법선 벡터는 레이 방향과 가장 일치하는 면의 법선
-            Vector3 pointToCenter = intersectionPoint2 - Vector3(obb.Center);
-            float dotProduct = pointToCenter.Dot(rotatedNormal);
-
+            float dotProduct = localHitPoint.Dot(normals[i]);
             if (dotProduct > maxDot)
             {
                 maxDot = dotProduct;
-                normal = rotatedNormal;
+                normal = normals[i];
             }
         }
         normal.Normalize(normal);
         normal = Vector3::TransformNormal(normal, localToWorld);
+        Debug::log << normal << "\n";
     }
 
     return hit;
 }
 
-bool Mesh::Intersects(std::shared_ptr<Transform> trans, const BoundingBox& worldBox)
+bool Mesh::Intersects(std::shared_ptr<Transform> trans, const BoundingOrientedBox& worldBox)
 {
-    BoundingBox finalBound = this->_bound;
+    BoundingOrientedBox finalBound = this->GetOBB(Quaternion::Identity);
 
     if (trans != nullptr) {
         Matrix localToWorld = Matrix::Identity;
         trans->GetLocalToWorldMatrix_BottomUp(localToWorld);
-        this->_bound.Transform(finalBound, localToWorld);
+        finalBound.Transform(finalBound, localToWorld);
     }
     return worldBox.Intersects(finalBound);
 }
 
 
-void Mesh::CreateBothBuffer()
+void Mesh::CreateBothBuffer(D3D12_PRIMITIVE_TOPOLOGY indexTopology)
 {
     CreateVertexBuffer();
-    CreateIndexBuffer();
+    CreateIndexBuffer(indexTopology);
 }
 
 void Mesh::CreateVertexBuffer()
@@ -210,8 +221,10 @@ void Mesh::CreateVertexBuffer()
     _vertexBufferView.SizeInBytes = static_cast<size_t>(bufferSize);
 }
 
-void Mesh::CreateIndexBuffer()
+void Mesh::CreateIndexBuffer(D3D12_PRIMITIVE_TOPOLOGY indexTopology)
 {
+    _indexTopology = indexTopology;
+
     indexCount = _indexBuffer.size();
     auto bufferSize = indexCount * sizeof(uint32_t);
     GraphicManager::main->ResourceSet();

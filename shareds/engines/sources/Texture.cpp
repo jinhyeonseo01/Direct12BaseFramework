@@ -22,6 +22,11 @@ void Texture::SetState(ResourceState state)
     _state = state;
 }
 
+void Texture::SetName(const std::wstring& name)
+{
+    this->name = name;
+}
+
 std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
                                          const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, Vector4 clearColor)
 {
@@ -92,8 +97,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
 
     std::wstring ext = std::filesystem::path(path).extension();
     std::wstring fileName = std::filesystem::path(path).filename();
-    Debug::log << "텍스쳐 로드중 : " << fileName << "\n";
-
+    Debug::log << "텍스쳐 로드 시작 : " << fileName << "\n";
     HRESULT loadSuccess;
     if (ext == L".dds" || ext == L".DDS")
         loadSuccess = LoadFromDDSFile(path.c_str(), DDS_FLAGS_NONE, nullptr, texture->_image);
@@ -103,6 +107,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         loadSuccess = LoadFromHDRFile(path.c_str(), nullptr, texture->_image);
     else // png, jpg, jpeg, bmp
         loadSuccess = LoadFromWICFile(path.c_str(), WIC_FLAGS_IGNORE_SRGB, nullptr, texture->_image);
+
     if (!DXSuccess(loadSuccess))
     {
         Debug::log << "해당 경로에 텍스쳐 없음\n"<<path<<"\n";
@@ -221,8 +226,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     texture->imageFormat = texture->_image.GetMetadata().format;
 
     device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
-    Debug::log << "텍스쳐 로드 완료 : " << fileName << "\n";
-
+    Debug::log << "텍스쳐 로드 성공 : " << fileName << "\n";
     return texture;
 }
 

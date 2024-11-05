@@ -26,15 +26,6 @@ namespace dxe
         std::atomic<bool> loadComplate{ false };
     };
 
-    class TexturePack
-    {
-    public:
-        std::wstring name;
-        std::atomic_bool loadComplate{ true };
-        std::shared_ptr<std::jthread> asyncLoadThread;
-        Texture* texture;
-    };
-
 	class ResourceManager
 	{
 	public:
@@ -42,7 +33,6 @@ namespace dxe
 
         std::vector<std::shared_ptr<Model>> modelList;
         std::vector<std::shared_ptr<Texture>> textureList;
-        std::vector<std::shared_ptr<TexturePack>> texturePackList;
         std::vector<std::shared_ptr<Shader>> shaderList;
 	    std::vector<std::shared_ptr<AssimpPack>> assimpPackList;
 
@@ -61,11 +51,12 @@ namespace dxe
 
 
         std::shared_ptr<AssimpPack> LoadAssimpPack(const std::wstring& path, const std::wstring& name, bool async = false);
-        std::shared_ptr<AssimpPack> LoadAssimpPacks(std::vector<std::pair<std::wstring,std::wstring>> packs);
+        std::vector<std::shared_ptr<AssimpPack>> LoadAssimpPacks(
+            std::vector<std::pair<std::wstring, std::wstring>> packPairs, bool async = false);
         std::shared_ptr<Model> LoadModel(std::shared_ptr<AssimpPack> pack);
-        std::shared_ptr<TexturePack> LoadTexture(std::wstring path, std::wstring name, bool mipmap = false,
-                                                 bool async = false);
-        std::shared_ptr<AssimpPack> LoadTextures(std::vector<std::pair<std::wstring, std::wstring>> packs, bool mipmap = false);
+        std::shared_ptr<Texture> LoadTexture(std::wstring path, std::wstring name, bool mipmap = false);
+        std::vector<std::shared_ptr<Texture>> LoadTextures(
+            std::vector<std::pair<std::wstring, std::wstring>> texturePairs, bool mipmap = false);
         std::shared_ptr<Shader> LoadShader(std::wstring path, std::wstring name, std::vector<std::shared_ptr<RenderTexture>> rtgs);
 
         std::shared_ptr<Model> GetModel(std::wstring name);

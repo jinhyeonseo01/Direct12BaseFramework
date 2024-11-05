@@ -170,8 +170,8 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
             mesh->SetName(meshName);
             mesh->Init(std::move(vertexs), std::move(indexs));
             mesh->SetBound(convert_assimp::Format(currentAIMesh->mAABB.mMin), convert_assimp::Format(currentAIMesh->mAABB.mMax));
-            //if (SimpleMath::Equals(Vector3(mesh->_bound.Extents).Length(), 0))
-            mesh->CalculateBound();
+            if (SimpleMath::Equals(Vector3(mesh->_bound.Extents).Length(), 0))
+                mesh->CalculateBound();
             AddMesh(mesh);
         }
     }

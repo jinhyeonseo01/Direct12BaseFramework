@@ -78,10 +78,12 @@ void Study1Scene::Init()
     camera = cameraObj;
 
     //ResourceManager::main->LoadAssimpPack(L"Ellen.fbx", L"Ellen");
-    ResourceManager::main->LoadAssimpPack(L"resources/Models/B.fbx", L"B");
-    ResourceManager::main->LoadAssimpPack(L"resources/Models/box.obj", L"box");
-    ResourceManager::main->LoadAssimpPack(L"resources/Models/SkyBox.obj", L"SkyBox");
-    ResourceManager::main->LoadAssimpPack(L"resources/Models/Apache.fbx", L"Apache");
+    ResourceManager::main->LoadAssimpPacks({
+        {L"resources/Models/B.fbx",L"B"},
+        {L"resources/Models/box.obj",L"box"},
+        {L"resources/Models/SkyBox.obj",L"SkyBox"},
+        {L"resources/Models/Apache.fbx", L"Apache"}
+        }, false);
 
     ResourceManager::main->LoadTexture(L"resources/Textures/menu.png", L"menu", true);
     ResourceManager::main->LoadTexture(L"resources/Textures/Start.png", L"start", true);

@@ -8,6 +8,8 @@
 class Texture : public std::enable_shared_from_this<Texture>
 {
 public:
+    std::wstring name;
+
     Texture();
     virtual ~Texture();
     ComPtr<ID3D12Resource> GetResource() { return _resource; }
@@ -27,6 +29,7 @@ public:
         _size = size;
     };
     void SetState(ResourceState state);
+    void SetName(const std::wstring& name);
 
     ResourceState					_state = ResourceState::SRV;
     ScratchImage			 		_image;
