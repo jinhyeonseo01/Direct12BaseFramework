@@ -222,7 +222,7 @@ bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix)
 
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
-	isLocalSRTChanged = CheckLocalSRTUpdate();
+	isLocalSRTChanged = false;
 	if (isLocalSRTChanged)
 	{
 		_prevLocalPosition = localPosition;
@@ -231,10 +231,7 @@ bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
         localSRTMatrix = Matrix::CreateScale(localScale) * Matrix::CreateFromQuaternion(localRotation) * Matrix::CreateTranslation(localPosition);
         isLocalSRTChanged = true;
 	}
-    if(_prevLocalSRTMatrix != localSRTMatrix)
-    {
-        isLocalSRTChanged = true;
-    }
+    isLocalSRTChanged |= _prevLocalSRTMatrix != localSRTMatrix;
     std::memcpy(&localSRT, &localSRTMatrix, sizeof(Matrix));
 	return isLocalSRTChanged;
 }
