@@ -13,30 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\과제1">
+      <UniqueIdentifier>{f2c8e4fa-f8bc-40c0-b417-42a8b5f6d4f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\과제2">
+      <UniqueIdentifier>{4682915d-8e54-45c1-b841-d2b637f00e1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestProject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Study1Scene.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\과제1</Filter>
     </ClCompile>
     <ClCompile Include="PlayerComponent.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\과제1</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\과제1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Study1Scene.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Bullet.h">
+      <Filter>소스 파일\과제1</Filter>
     </ClInclude>
     <ClInclude Include="PlayerComponent.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\과제1</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Study1Scene.h">
+      <Filter>소스 파일\과제1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

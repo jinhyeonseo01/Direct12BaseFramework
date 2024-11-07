@@ -47,9 +47,9 @@ namespace dxe
         bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix);
 		bool GetLocalSRTMatrix(Matrix& localSRT);
         bool SetLocalSRTMatrix(Matrix& localSRT);
-		bool CheckNeedLocalSRTUpdate() const;
-        bool CheckNeedLocalChangedUpdate() const;
-		bool CheckNeedLocalToWorldUpdate() const;
+		bool CheckLocalSRTUpdate() const;
+        bool CheckLocalMatrixUpdate() const;
+		bool CheckLocalToWorldMatrixUpdate() const;
 		void TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate = false);
         bool BottomUpLocalToWorldUpdate();
 

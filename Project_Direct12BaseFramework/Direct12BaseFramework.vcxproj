@@ -246,6 +246,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\Shader.h" />
     <ClInclude Include="..\shareds\engines\headers\ShaderResourcePool.h" />
     <ClInclude Include="..\shareds\engines\headers\singleton.h" />
+    <ClInclude Include="..\shareds\engines\headers\SkinnedHierarchy.h" />
     <ClInclude Include="..\shareds\engines\headers\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\shareds\engines\headers\SoundManager.h" />
     <ClInclude Include="..\shareds\engines\headers\stdafx.h" />
@@ -327,6 +328,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClCompile Include="..\shareds\engines\sources\Shader.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ShaderResourcePool.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Singleton.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\SkinnedHierarchy.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\SoundManager.cpp" />
     <ClCompile Include="..\shareds\engines\sources\stdafx.cpp">

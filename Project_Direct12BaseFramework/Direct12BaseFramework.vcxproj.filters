@@ -246,6 +246,9 @@
     <ClInclude Include="..\shareds\engines\headers\Terrain.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\SkinnedHierarchy.h">
+      <Filter>Engine\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
@@ -421,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Terrain.cpp">
       <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\SkinnedHierarchy.cpp">
+      <Filter>Engine\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

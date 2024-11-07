@@ -10,10 +10,20 @@
 
 Camera::Camera()
 {
+
 }
 
 Camera::~Camera()
 {
+
+}
+
+Vector3 Camera::GetScreenToWorldDirection(Vector2 mousePosition)
+{
+    //X = (X + 1) * Viewport.Width * 0.5 + Viewport.TopLeftX
+    //Y = (1 - Y) * Viewport.Height * 0.5 + Viewport.TopLeftY
+    //Z = Viewport.MinDepth + Z * (Viewport.MaxDepth - Viewport.MinDepth)
+    return Vector3();
 }
 
 void* Camera::Clone()

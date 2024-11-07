@@ -18,6 +18,13 @@ namespace dxe
 
         CameraParams cameraInfo;
 
+        Matrix _projectionMatrix;
+        Matrix _viewMatrix;
+        Matrix _viewProjectionMatrix;
+        Matrix _ndcToScreenSpaceMatrix;
+
+        Vector3 GetScreenToWorldDirection(Vector2 mousePosition);
+
     public:
 
         void* Clone() override;
