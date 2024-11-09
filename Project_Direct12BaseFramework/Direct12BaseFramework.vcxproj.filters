@@ -249,6 +249,9 @@
     <ClInclude Include="..\shareds\engines\headers\SkinnedHierarchy.h">
       <Filter>Engine\Component</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\JsonLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
@@ -427,6 +430,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\SkinnedHierarchy.cpp">
       <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\JsonLoader.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
