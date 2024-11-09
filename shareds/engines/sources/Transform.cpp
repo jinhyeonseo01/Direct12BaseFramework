@@ -222,7 +222,7 @@ bool Transform::GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix)
 
 bool Transform::GetLocalSRTMatrix(Matrix& localSRT)
 {
-	isLocalSRTChanged = false;
+	isLocalSRTChanged = CheckLocalSRTUpdate();
 	if (isLocalSRTChanged)
 	{
 		_prevLocalPosition = localPosition;
@@ -284,7 +284,6 @@ bool Transform::CheckLocalToWorldMatrixUpdate() const
 
 void Transform::TopDownLocalToWorldUpdate(const Matrix& parentLocalToWorld, bool isParentUpdate)
 {
-	Matrix localSRT;
 	bool isLocalUpdate = GetLocalSRTMatrix(_prevLocalSRTMatrix);
 	bool isFinalUpdate = isLocalUpdate || isParentUpdate;
 
