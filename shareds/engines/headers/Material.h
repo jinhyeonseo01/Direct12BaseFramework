@@ -3,10 +3,11 @@
 #include <memory>
 
 #include "DescriptorTable.h"
+#include "EObject.h"
 #include "Shader.h"
 #include "Texture.h"
 
-class Material
+class Material : public EObject
 {
 public:
     std::weak_ptr<Shader> shader;

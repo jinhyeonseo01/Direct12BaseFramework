@@ -109,6 +109,7 @@ void MeshRenderer::Rendering()
         auto cbuffer = pool->PopCBuffer("TransformParams");
         TransformParams data;
         gameObject.lock()->transform->GetLocalToWorldMatrix(data.WorldMatrix);
+        data.NormalMatrix = data.WorldMatrix.Invert().Transpose();
         data.isSkinned = 0;
         cbuffer.SetData(&data, sizeof(data));
         table->SetCurrentGroupHandle(material->shader.lock(), "TransformParams", cbuffer.handle);
@@ -117,7 +118,7 @@ void MeshRenderer::Rendering()
         auto cbuffer2 = pool->PopCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 512);
         DefaultMaterialParams data2;
         material->SetTextureDatas(table, material->shader.lock());
-        material->GetData("color", data2.color);
+        material->GetData("_Color", data2.color);
 
         cbuffer2.SetData(&data2, sizeof(data2));
         table->SetCurrentGroupHandle(material->shader.lock(), "DefaultMaterialParams", cbuffer2.handle);

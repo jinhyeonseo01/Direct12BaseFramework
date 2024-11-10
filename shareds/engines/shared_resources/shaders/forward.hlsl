@@ -20,12 +20,13 @@ cbuffer BoneParams : register(b3)
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
+    row_major matrix NormalMatrix;
     unsigned int isSkinned;
 };
 
 cbuffer DefaultMaterialParams : register(b1)
 {
-    float4 color3;
+    float4 _color;
 };
 
 Texture2D _BaseMap : register(t1);
@@ -90,7 +91,8 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 
     // 노멀 변환 (평행 이동 제외)
     //output.worldNormal = normalize(mul(float4(input.normal, 0.0f), WorldMatrix));
-    
+
+    output.worldNormal = normalize(mul(float4(input.normal, 0.0f), NormalMatrix));
     output.uv = input.uv.xy;
     output.color = input.color;
     output.pos = mul(viewPos, ProjectionMatrix);
@@ -101,12 +103,10 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 //[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color2 = input.color;
-
     float4 AlbedoColor = _BaseMap.Sample(sampler_aniso_16, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;
-    return pow(AlbedoColor, 1.0 / 1.0);
+    return pow(AlbedoColor, 1.0 / 1.0) * _color * (dot(input.worldNormal, normalize(float3(1,1,-1)))*0.5+0.5f);
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }

@@ -96,3 +96,4 @@ Matrix Material::SetData(std::string name, const Matrix& field)
 {
     return _propertyMatrixs[name] = field;
 }
+

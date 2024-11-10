@@ -242,7 +242,7 @@ void PlayerComponent::Update()
             back.lock()->transform->localRotation = back.lock()->transform->localRotation * Quaternion::CreateFromYawPitchRoll(0, Engine::GetMainEngine()->deltaTime * 20, 0);
 
         //각도 로직
-        auto worldDir = ((-gameObject.lock()->transform->forward()) * 3.0f + gameObject.lock()->transform->up() * 1.0f);
+        auto worldDir = ((-gameObject.lock()->transform->forward()) * 10.0f + gameObject.lock()->transform->up() * 3.0f);
         if(isPlayer)
             camera.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + worldDir);
 
@@ -287,11 +287,11 @@ void PlayerComponent::Update()
         //터레인 로직
         auto localPos = ter.lock()->transform->WorldToLocal_Position(gameObject.lock()->transform->worldPosition());
         Vector4 color = hmT.lock()->GetPixel(
-            (std::round(std::abs(localPos.x)) / 10000) * hmT.lock()->_size.x,
-            (1 - std::round(std::abs(localPos.z)) / 10000) * hmT.lock()->_size.y, 1
+            (std::round(std::abs(localPos.x)) / 100) * hmT.lock()->_size.x,
+            (1 - std::round(std::abs(localPos.z)) / 100) * hmT.lock()->_size.y, 1
         );
-        if (localPos.y - (color.x * 10000) <= 10)
-            localPos.y = (color.x * 10000) + 11;
+        if (localPos.y - (color.x * 100) < 0.1)
+            localPos.y = (color.x * 100) + 0.1;
         gameObject.lock()->transform->worldPosition(
             ter.lock()->transform->LocalToWorld_Position(localPos));
         //Debug::log << localPos.y - (color.x * 10000) <<"\n";

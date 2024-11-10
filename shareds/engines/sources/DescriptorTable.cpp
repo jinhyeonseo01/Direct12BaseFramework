@@ -33,6 +33,8 @@ void DescriptorTable::Init(const std::vector<D3D12_DESCRIPTOR_RANGE>& descRange,
             std::string key = semantic + std::to_string(registerOffset);
             str::trim(key);
             _registerToHandleOffsetTable.emplace(key, handleOffset);
+            if (semantic == 't')
+                _textureHandleFields.push_back(handleOffset);
             ++handleOffset;
         }
     }
@@ -150,6 +152,7 @@ void DescriptorTable::SetNextGroupHandle()
 
     unsigned int destRange = _groupHandleCount;
     unsigned int srcRange = _groupHandleCount;
+    //_noneTexture
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE prevDescriptorHandle(_tempDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), 0, _descriptorHandleSize);
     CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle(_descriptorHeap->GetCPUDescriptorHandleForHeapStart(), _groupHandleCount * _currentGroupIndex, _descriptorHandleSize);
@@ -157,4 +160,7 @@ void DescriptorTable::SetNextGroupHandle()
         1, &descriptorHandle, &destRange,
         1, &prevDescriptorHandle, &srcRange,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+    for (auto& i : _textureHandleFields)
+        SetCurrentGroupHandle(i, GraphicManager::main->_noneTexture->GetSRVHandle());
 }

@@ -508,6 +508,8 @@ void GraphicManager::InitShader()
         VertexProp::bone_weights,
     };
     vertexInfo_Full = Vertex::GetSelectorInfo(props);
+
+    _noneTexture = Texture::Load(L"resources/textures/noneTexture.png", false);
 }
 
 

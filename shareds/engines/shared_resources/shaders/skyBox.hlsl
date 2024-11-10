@@ -3,6 +3,7 @@
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
+    row_major matrix NormalMatrix;
     unsigned int isSkinned;
 };
 
@@ -19,6 +20,7 @@ SamplerState sampler_no_mip : register(s1);
 struct VS_IN
 {
     float3 pos : POSITION;
+    float3 normal : NORMAL;
     float3 uv : TEXCOORD0;
 };
 
@@ -32,8 +34,8 @@ struct VS_OUT
 VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
     VS_OUT output = (VS_OUT) 0;
-    
-    float4 viewPos = mul(mul(float4(input.pos, 1.0f), WorldMatrix), ViewMatrix);
+    float4 pos = float4(input.pos, 1.0f); //  + input.normal * -0.01
+    float4 viewPos = mul(mul(pos, WorldMatrix), ViewMatrix);
     output.uv = input.uv.xy;
     output.pos = mul(viewPos, ProjectionMatrix);
     return output;

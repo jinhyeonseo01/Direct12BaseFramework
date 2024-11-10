@@ -250,7 +250,7 @@
       <Filter>Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\JsonLoader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -432,7 +432,7 @@
       <Filter>Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\JsonLoader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -449,22 +449,25 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\shareds\engines\shaders\forward.hlsl">
-      <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shaders\skyBox.hlsl">
-      <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shaders\terrain.hlsl">
-      <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shaders\ui.hlsl">
-      <Filter>Engine\shader</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\shareds\constants\headers\SimpleMath_LH.inl">
       <Filter>Constant\Headers</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

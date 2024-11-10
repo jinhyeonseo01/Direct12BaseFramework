@@ -105,7 +105,7 @@ namespace dxe
 			return tf;
 		}
 		template<class T, typename = typename std::enable_if<std::is_convertible<T*, EObject*>::value>::type>
-		static std::shared_ptr<T> FindObjectByGuid(std::wstring& guid)
+		static std::shared_ptr<T> FindObjectByGuid(const std::wstring& guid)
 		{
 			if (_EObjectTable.contains(guid))
 			{

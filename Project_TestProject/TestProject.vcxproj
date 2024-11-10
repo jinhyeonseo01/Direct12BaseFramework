@@ -133,6 +133,10 @@
       <Command>xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(ProjectDir)resources\"
 xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -161,7 +165,9 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="Study1Scene.cpp" />
+    <ClCompile Include="Study2Scene.cpp" />
     <ClCompile Include="TestProject.cpp" />
+    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Project_Direct12BaseFramework\Direct12BaseFramework.vcxproj">
@@ -172,6 +178,8 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="Study1Scene.h" />
+    <ClInclude Include="Study2Scene.h" />
+    <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

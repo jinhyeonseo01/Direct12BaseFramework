@@ -55,7 +55,8 @@ std::shared_ptr<GameObject> GameObject::Init()
 	parent.reset();
 	_childs.reserve(16);
 	this->SetActiveSelf(true);
-	this->transform = this->AddComponent<Transform>();
+    if((this->transform = this->GetComponent<Transform>()) == nullptr)
+	    this->transform = this->AddComponent<Transform>();
 	return thisPtr;
 }
 

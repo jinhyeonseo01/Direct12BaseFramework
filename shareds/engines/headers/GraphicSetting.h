@@ -90,6 +90,7 @@ namespace dxe
     struct TransformParams
     {
         Matrix WorldMatrix = Matrix::Identity;
+        Matrix NormalMatrix = Matrix::Identity;
         unsigned int isSkinned = false;
     };
     struct BoneParams

@@ -69,6 +69,7 @@ namespace dxe
 
     public://DescriptorHeap
         std::shared_ptr<ShaderResourcePool> _textureHandlePool;
+        std::shared_ptr<Texture> _noneTexture;
 
     public://DescriptorHeap
         int _currentCBufferPoolIndex = -1;

@@ -34,9 +34,6 @@ void* Camera::Clone()
 
     cloneObject->gameObject = thisObject->gameObject;
     cloneObject->_first = thisObject->_first;
-    {
-
-    }
 
     return cloneObject.get();
 }
@@ -64,11 +61,16 @@ void Camera::Update()
 {
     Component::Update();
 
-    if (Input::main->GetMouseDown(KeyCode::RightMouse) && false)
+    if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
-        cameraControl = !cameraControl;
+        cameraControl = true;
         prevPos = Input::main->GetMousePosition();
         //ShowCursor(cameraControl ? TRUE : FALSE);
+        Engine::GetMainEngine()->SetCursorHide(cameraControl);
+    }
+    if (Input::main->GetMouseUp(KeyCode::RightMouse))
+    {
+        cameraControl = false;
         Engine::GetMainEngine()->SetCursorHide(cameraControl);
     }
     if (cameraControl)//Input::main->GetMouse(KeyCode::RightMouse) && 
@@ -76,11 +78,21 @@ void Camera::Update()
         auto pos = (Input::main->GetMousePosition() - prevPos);
         auto movePos = (((Vector3(0, 1, 0) * pos.x) + (Vector3(1, 0, 0) * pos.y)) * 0.003f);
 
+
         angle += movePos;
+        if (std::abs(angle.x) >= (90 * D2R))
+            angle.x = std::sign(angle.x) * 89.99f * D2R;
 
         gameObject.lock()->transform->localEuler(angle);
         //gameObject.lock()->transform->LookUp(movePos, Vector3(0, 1, 0));
         prevPos = Input::main->GetMousePosition();
+
+
+        auto r = gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0));
+        r += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
+
+        r.Normalize(r);
+        gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + Engine::GetMainEngine()->deltaTime *60 * r);
     }
 }
 

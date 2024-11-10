@@ -20,6 +20,7 @@ cbuffer BoneParams : register(b3)
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
+    row_major matrix NormalMatrix;
     unsigned int isSkinned;
 };
 

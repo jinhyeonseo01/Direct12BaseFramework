@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include "Study1Scene.h"
+#include "Study2Scene.h"
 #include <DXEngine.h>
 #include "GraphicManager.h"
 #include "Camera.h"
@@ -10,34 +10,32 @@
 #include "PlayerComponent.h"
 #include "Scene.h"
 
-void* Study1Scene::Clone()
+void* Study2Scene::Clone()
 {
     return Scene::Clone();
 }
 
-void Study1Scene::ReRef()
+void Study2Scene::ReRef()
 {
     Scene::ReRef();
 }
 
-Study1Scene::Study1Scene()
+Study2Scene::Study2Scene()
 {
 
 }
 
-Study1Scene::Study1Scene(std::wstring name) : Scene(name)
+Study2Scene::Study2Scene(std::wstring name) : Scene(name)
 {
 
 }
 
-Study1Scene::~Study1Scene()
+Study2Scene::~Study2Scene()
 {
 
 }
 
-std::shared_ptr<Mesh> quad;
-
-void Study1Scene::Init()
+void Study2Scene::Init()
 {
     Scene::Init();
     auto rtg = GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain);
@@ -63,7 +61,6 @@ void Study1Scene::Init()
 
     shader = ResourceManager::main->LoadShader(L"ui.hlsl", L"ui", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
-    info;
     info.cullingType = CullingType::NONE;
     info._zWrite = true;
     info._zTest = true;
@@ -76,6 +73,15 @@ void Study1Scene::Init()
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
     cameraObj->AddComponent<Camera>();
     camera = cameraObj;
+
+    ResourceManager::main->LoadAssimpPacks({ {L"resources/Models/SkyBox.obj",L"SkyBox"} }, true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/SkyBoxCubeMap2.png", L"skyTexture", false);
+    ResourceManager::main->WaitAll();
+
+    auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
+    skyBox->CreateGraphicResource();
+
+    /*
 
     //ResourceManager::main->LoadAssimpPack(L"Ellen.fbx", L"Ellen");
     ResourceManager::main->LoadAssimpPacks({
@@ -114,7 +120,7 @@ void Study1Scene::Init()
     boxModel->CreateGraphicResource();
 
 
-    
+
     quad = MeshSample::CreateQuad();
     quad->CreateBothBuffer();
     auto menu = CreateGameObject(L"menu");
@@ -126,7 +132,7 @@ void Study1Scene::Init()
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, 0, 0.11);
     menu->transform->localScale = Vector3(2, 2, 2);
-    
+
 
     menu = CreateGameObject(L"menu_start");
     menuMR = menu->AddComponent<MeshRenderer>();
@@ -136,7 +142,7 @@ void Study1Scene::Init()
     menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"start"));
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, -0.5, 0.1);
-    menu->transform->localScale = Vector3(400/1280.0, 150/720.0, 2);
+    menu->transform->localScale = Vector3(400 / 1280.0, 150 / 720.0, 2);
 
 
     menu = CreateGameObject(L"menu_help");
@@ -158,20 +164,20 @@ void Study1Scene::Init()
     menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"info"));
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, 0, 2);
-    menu->transform->localScale = Vector3(1000 * 2 / 1280.0, 600*2 / 720.0, 2);
+    menu->transform->localScale = Vector3(1000 * 2 / 1280.0, 600 * 2 / 720.0, 2);
 
-    
+
 
 
     auto rootObject = CreateGameObject(L"Apache");
     auto apache = CreateGameObjects(apacheModel, apacheModel->rootNode.get());
-    apache->transform->localScale = Vector3::One;
+    apache->transform->localScale = Vector3::One * 0.002f;
     apache->SetParent(rootObject);
     auto player = rootObject->AddComponent<PlayerComponent>();
 
     std::vector<std::shared_ptr<MeshRenderer>> meshRenderers;
     apache->GetComponentsWithChilds(meshRenderers);
-    for(int i=0;i<meshRenderers.size();i++)
+    for (int i = 0; i < meshRenderers.size(); i++)
     {
         std::shared_ptr<Material> material = std::make_shared<Material>();
         material->shader = ResourceManager::main->GetShader(L"forward");
@@ -182,7 +188,7 @@ void Study1Scene::Init()
 
     rootObject = CreateGameObject(L"B2");
     auto b = CreateGameObjects(bModel, bModel->rootNode.get());
-    b->transform->localScale = Vector3::One;
+    b->transform->localScale = Vector3::One * 0.01f;
     b->transform->localPosition = -Vector3(1, 0, 1) * 50 + Vector3(0, -20, 0);
     b->SetParent(rootObject);
 
@@ -200,7 +206,7 @@ void Study1Scene::Init()
     }
 
     srand(11);
-    for(int i=0;i<5;i++)
+    for (int i = 0; i < 5; i++)
     {
         rootObject = CreateGameObject(L"Box_" + i);
         auto box = CreateGameObjects(boxModel);
@@ -218,18 +224,18 @@ void Study1Scene::Init()
             boxMRs.push_back(meshRenderers[i]);
         }
         rootObject->transform->worldPosition(Vector3(-30 + (rand() % 60), 8 + (rand() % 6), -30 + (rand() % 60)));
-        rootObject->transform->worldRotation(Quaternion::CreateFromYawPitchRoll(Vector3((rand() % 360), (rand() % 360), (rand() % 360))*D2R));
-        auto scale = 1 + (rand() % 40)/10.0;
+        rootObject->transform->worldRotation(Quaternion::CreateFromYawPitchRoll(Vector3((rand() % 360), (rand() % 360), (rand() % 360)) * D2R));
+        auto scale = 1 + (rand() % 40) / 10.0;
         rootObject->transform->localScale = Vector3(scale, scale, scale);
         //boxMRs
     }
 
 
-    for(int i=0;i<7;i++)
+    for (int i = 0; i < 7; i++)
     {
         rootObject = CreateGameObject(L"Apache");
         apache = CreateGameObjects(apacheModel, apacheModel->rootNode.get());
-        apache->transform->localScale = Vector3::One * 2;
+        apache->transform->localScale = Vector3::One * 0.004f;
         apache->SetParent(rootObject);
         auto enemy = rootObject->AddComponent<PlayerComponent>();
         enemy->isPlayer = false;
@@ -248,21 +254,23 @@ void Study1Scene::Init()
 
     }
 
-    for(auto b : boxMRs)
+    for (auto b : boxMRs)
         player->boxs.push_back(b);
+
+*/
 
     skyMaterial = std::make_shared<Material>();
     skyMaterial->shader = ResourceManager::main->GetShader(L"sky");
     skyMaterial->SetData("skyTexture", ResourceManager::main->GetTexture(L"skyTexture"));
 }
 
-void Study1Scene::Update()
+void Study2Scene::Update()
 {
     Scene::Update();
 
 }
 
-void Study1Scene::RenderingBegin()
+void Study2Scene::RenderingBegin()
 {
     Scene::RenderingBegin();
 
@@ -298,17 +306,17 @@ void Study1Scene::RenderingBegin()
     list->IASetVertexBuffers(0, 1, &skyMesh->_vertexBufferView);
     list->IASetIndexBuffer(&skyMesh->_indexBufferView);
 
-    
+
     auto cbuffer = pool->PopCBuffer("TransformParams");
     TransformParams data;
-    
+
     data.isSkinned = 0;
     data.WorldMatrix = Matrix::CreateTranslation(camera->transform->worldPosition());
-    data.WorldMatrix = Matrix::CreateScale(Vector3(50,50,50)) * data.WorldMatrix;
+    data.WorldMatrix = Matrix::CreateScale(Vector3(50, 50, 50)) * data.WorldMatrix;
     data.NormalMatrix = data.WorldMatrix.Invert().Transpose();
     cbuffer.SetData(&data, sizeof(data));
     table->SetCurrentGroupHandle(skyShader, "TransformParams", cbuffer.handle);
-    
+
 
     auto cbuffer2 = pool->PopCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 512);
     DefaultMaterialParams data2;
@@ -330,7 +338,7 @@ void Study1Scene::RenderingBegin()
     table->SetNextGroupHandle();
 }
 
-void Study1Scene::RenderingEnd()
+void Study2Scene::RenderingEnd()
 {
     Scene::RenderingEnd();
 

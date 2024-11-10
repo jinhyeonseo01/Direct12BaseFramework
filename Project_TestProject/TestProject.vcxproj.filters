@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\과제2">
       <UniqueIdentifier>{4682915d-8e54-45c1-b841-d2b637f00e1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\모듈 개발">
+      <UniqueIdentifier>{24e03474-86ca-4f5a-8bee-4fcc68cd9838}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestProject.cpp">
@@ -33,6 +36,12 @@
     <ClCompile Include="Bullet.cpp">
       <Filter>소스 파일\과제1</Filter>
     </ClCompile>
+    <ClCompile Include="Study2Scene.cpp">
+      <Filter>소스 파일\과제2</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>소스 파일\모듈 개발</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h">
@@ -43,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="Study1Scene.h">
       <Filter>소스 파일\과제1</Filter>
+    </ClInclude>
+    <ClInclude Include="Study2Scene.h">
+      <Filter>소스 파일\과제2</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>소스 파일\모듈 개발</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

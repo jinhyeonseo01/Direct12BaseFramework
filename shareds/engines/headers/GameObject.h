@@ -4,7 +4,7 @@
 
 namespace dxe
 {
-	class GameObject : public dxe::EObject, public IDelayedDestroy
+	class GameObject : public EObject, public IDelayedDestroy
 	{
 	public:
 		GameObject();
@@ -91,6 +91,8 @@ namespace dxe
 		template<class T, class = std::enable_if_t<std::is_convertible_v<T*, Component*>>>
 		std::shared_ptr<T> AddComponent(const std::shared_ptr<T>& component)
 		{
+            if (component == nullptr)
+                return nullptr;
 			auto componentCast = std::dynamic_pointer_cast<Component>(component);
 			auto iter = std::ranges::find(_components, componentCast);
 			if(iter == this->_components.end())

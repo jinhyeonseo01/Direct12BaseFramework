@@ -23,6 +23,7 @@ void Model::CreateGraphicResource()
         mesh->CreateBothBuffer();
 }
 
+
 void Model::Init(std::shared_ptr<AssimpPack> pack)
 {
     _meshList.reserve(32);
@@ -36,7 +37,6 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
 
 
     //this->SetName(std::string(pack->scene->mName.C_Str(), pack->scene->mName.length));
-
     if(pack->scene->HasMeshes())
     {
 
@@ -67,6 +67,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
             {
                 vert = {};
                 vert.position = Vector3::Transform(convert_assimp::Format(currentAIMesh->mVertices[j]), fliper);
+                //Debug::log << vert.position << "\n";
                 //vert.position.x = -vert.position.x;
                 //vert.position.z = -vert.position.z;
                 vert.normal = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mNormals[j]), fliper);
@@ -167,6 +168,8 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
 
             auto meshName = std::string(currentAIMesh->mName.C_Str(), currentAIMesh->mName.length);
             str::trim(meshName);
+            if (meshName == "Scene")
+                meshName = std::to_string(pack->name);
             mesh->SetName(meshName);
             mesh->Init(std::move(vertexs), std::move(indexs));
             mesh->SetBound(convert_assimp::Format(currentAIMesh->mAABB.mMin), convert_assimp::Format(currentAIMesh->mAABB.mMax));

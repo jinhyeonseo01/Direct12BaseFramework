@@ -44,6 +44,7 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
         try
         {
             Debug::log << "모델 로드 중 : " << path << "\n";
+            pack->importer->SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0f);
             pack->scene = pack->importer->ReadFile(path + "\0",
                 
                 aiProcess_MakeLeftHanded | // 왼손 좌표계로 변경
@@ -61,7 +62,7 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
                 //aiProcess_Debone | 손실없이 뼈 제거. 걍 쓰지말자.
                 //aiProcess_RemoveComponent | // (animations, materials, light sources, cameras, textures, vertex components 제거
                 //aiProcess_PreTransformVertices | // root Node를 제외한 모든 하위 노드들 전부 평탄화. 계층 제거.
-                //aiProcess_ValidateDataStructure | // 연결 유효성 검사
+                aiProcess_ValidateDataStructure | // 연결 유효성 검사
                 //aiProcess_RemoveRedundantMaterials | // 중복이나 안쓰는거 제거
                  //aiProcess_FixInfacingNormals | //잘못 연결되서 고장난 노멀 재대로 수정
                 //aiProcess_FindDegenerates | //삼각형에서 점이 겹쳐버리면 라인이나 점이 되버리는데, 이걸 Line이나 Point로 변환하는거임. 안쓰는게 나음.
@@ -73,7 +74,8 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
                 //aiProcess_OptimizeGraph |//필요없는 노드를 삭제함. 노드가 태그로 쓰일때 누락되는 문제가 잇나봄, 안키는게 나을듯. 계층구조가 손실된다고 함.
                 aiProcess_TransformUVCoords | //UV에 대해서 변환처리 한다고 하는거같음. 텍스쳐 이상해지면 꺼버리도록
                 aiProcess_JoinIdenticalVertices | // 중복제거 후 인덱스 버퍼 기반으로 변환
-                aiProcess_SortByPType // 폴리곤을 타입별로 재정렬함. aiProcess_Triangulate 쓰면 어차피 삼각형만 남아서 필요 없음. 일단 넣어~ 
+                aiProcess_SortByPType | // 폴리곤을 타입별로 재정렬함. aiProcess_Triangulate 쓰면 어차피 삼각형만 남아서 필요 없음. 일단 넣어~ 
+                aiProcess_GlobalScale
             );
             if ((pack->scene == nullptr) || pack->scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || (pack->scene->mRootNode == nullptr))
             {
@@ -139,10 +141,14 @@ bool ResourceManager::WaitAll()
 
 std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& path, const std::wstring& name, bool async)
 {
-    auto pack = std::make_shared<AssimpPack>()->Init()->Load(path, name, async);
-    assimpPackList.push_back(pack);
-    assimpPackTable[name] = pack;
-    return pack;
+    if(!assimpPackTable.contains(name))
+    {
+        auto pack = std::make_shared<AssimpPack>()->Init()->Load(path, name, async);
+        assimpPackList.push_back(pack);
+        assimpPackTable[name] = pack;
+        return pack;
+    }
+    return nullptr;
 }
 
 std::vector<std::shared_ptr<AssimpPack>> ResourceManager::LoadAssimpPacks(
@@ -179,11 +185,15 @@ std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pa
 
 std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::wstring name, bool mipmap)
 {
-    auto texture = Texture::Load(path, mipmap);
-    texture->SetName(name);
-    main->textureList.push_back(texture);
-    main->textureTable[name] = texture;
-    return texture;
+    if (!main->textureTable.contains(name))
+    {
+        auto texture = Texture::Load(path, mipmap);
+        texture->SetName(name);
+        main->textureList.push_back(texture);
+        main->textureTable[name] = texture;
+        return texture;
+    }
+    return nullptr;
 }
 
 

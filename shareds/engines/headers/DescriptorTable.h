@@ -22,6 +22,7 @@ public:
 
     std::unordered_map<std::string, int> _registerToHandleOffsetTable;
     std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE> _recycleHandleTable;
+    std::vector<int> _textureHandleFields;
 
     ComPtr<ID3D12DescriptorHeap> _descriptorHeap;
     ComPtr<ID3D12DescriptorHeap> _tempDescriptorHeap;
