@@ -88,6 +88,8 @@ void MeshRenderer::Rendering()
 
     for(int i=0;i< materialList.size();i++)
     {
+        if (meshList.size() == 0)
+            break;
         auto material = materialList[i];//.lock()
         auto mesh = meshList[i % meshList.size()].lock();
         if (!material)

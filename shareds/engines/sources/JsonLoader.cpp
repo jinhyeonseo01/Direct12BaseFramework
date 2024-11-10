@@ -46,6 +46,7 @@ json JsonLoader::Load(std::wstring path)
             {
                 auto object = CreateObject<GameObject>(guid);
                 refGameObjectTable[guid] = objJson;
+                object->Init(false);
                 objs.push_back(object);
             }
             if (key == "Components")
@@ -164,7 +165,7 @@ json JsonLoader::Load(std::wstring path)
 
                 mr->AddMesh(mesh);
                 mr->SetModel(model);
-                Debug::log << meshInfo["meshName"].get<std::string>() << "\n";
+                //Debug::log << meshInfo["meshName"].get<std::string>() << "\n";
             }
         }
     }

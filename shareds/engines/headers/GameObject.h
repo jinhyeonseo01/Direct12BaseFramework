@@ -18,7 +18,7 @@ namespace dxe
 
 		virtual ~GameObject();
 
-		std::shared_ptr<GameObject> Init();
+		std::shared_ptr<GameObject> Init(bool createTransform = true);
 
 
 	public:

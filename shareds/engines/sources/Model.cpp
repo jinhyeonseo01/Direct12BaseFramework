@@ -36,7 +36,6 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
     _nodeNameToNodeTable.reserve(256);
 
 
-    //this->SetName(std::string(pack->scene->mName.C_Str(), pack->scene->mName.length));
     if(pack->scene->HasMeshes())
     {
 

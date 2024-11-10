@@ -48,15 +48,16 @@ GameObject::~GameObject()
 	_components.clear();
 }
 
-std::shared_ptr<GameObject> GameObject::Init()
+std::shared_ptr<GameObject> GameObject::Init(bool createTransform)
 {
 	auto thisPtr = std::dynamic_pointer_cast<GameObject>(this->shared_from_this());
 	rootParent = thisPtr;
 	parent.reset();
 	_childs.reserve(16);
 	this->SetActiveSelf(true);
-    if((this->transform = this->GetComponent<Transform>()) == nullptr)
-	    this->transform = this->AddComponent<Transform>();
+    if(createTransform)
+        if((this->transform = this->GetComponent<Transform>()) == nullptr)
+	        this->transform = this->AddComponent<Transform>();
 	return thisPtr;
 }
 
