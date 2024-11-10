@@ -20,4 +20,8 @@
 
 ![](docs/5.png)  
 
+![](docs/6.png)  
+
+![](docs/7.png)  
+
 </details>
