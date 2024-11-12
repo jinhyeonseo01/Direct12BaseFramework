@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Material.h"
 
-void Material::SetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shared_ptr<Shader> shader)
+void Material::GetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shared_ptr<Shader> shader)
 {
     for(auto& texture : _propertyTextures)
     {
         std::string name = texture.first;
-        table->SetCurrentGroupHandle(shader, name, texture.second.lock()->GetSRVHandle());
+        if(_propertyTextures[name].lock() != nullptr)
+            table->SetCurrentGroupHandle(shader, name, texture.second.lock()->GetSRVHandle());
     }
 }
 
@@ -61,7 +62,8 @@ Matrix Material::GetData(std::string name, Matrix& field)
 
 std::shared_ptr<Texture> Material::SetData(std::string name, const std::shared_ptr<Texture>& field)
 {
-    _propertyTextures[name] = field;
+    if(field != nullptr)
+        _propertyTextures[name] = field;
     return field;
 }
 

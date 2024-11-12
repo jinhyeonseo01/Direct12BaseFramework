@@ -119,7 +119,7 @@ void MeshRenderer::Rendering()
 
         auto cbuffer2 = pool->PopCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 512);
         DefaultMaterialParams data2;
-        material->SetTextureDatas(table, material->shader.lock());
+        material->GetTextureDatas(table, material->shader.lock());
         material->GetData("_Color", data2.color);
 
         cbuffer2.SetData(&data2, sizeof(data2));

@@ -454,20 +454,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
+    <Text Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
       <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
       <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
       <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
       <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
       <Filter>Engine\shader</Filter>
-    </FxCompile>
+    </Text>
   </ItemGroup>
 </Project>

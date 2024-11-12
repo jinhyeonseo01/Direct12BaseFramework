@@ -354,21 +354,26 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <None Include="..\shareds\constants\headers\SimpleMath_LH.inl" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
+    <Text Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

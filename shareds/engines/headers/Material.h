@@ -18,7 +18,7 @@ public:
     std::unordered_map<std::string, Matrix> _propertyMatrixs;
     std::unordered_map<std::string, std::weak_ptr<Texture>> _propertyTextures;
 
-    void SetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shared_ptr<Shader> shader);
+    void GetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shared_ptr<Shader> shader);
     int GetData(std::string name, int& field);
     float GetData(std::string name, float& field);
     Vector4 GetData(std::string name, Vector4& field);

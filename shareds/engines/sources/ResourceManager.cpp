@@ -145,6 +145,8 @@ std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& 
     if(!assimpPackTable.contains(name))
     {
         auto pack = std::make_shared<AssimpPack>()->Init()->Load(path, name, async);
+        if (pack == nullptr)
+            return nullptr;
         assimpPackList.push_back(pack);
         assimpPackTable[name] = pack;
         return pack;
@@ -176,6 +178,8 @@ std::vector<std::shared_ptr<Texture>> ResourceManager::LoadTextures(
 
 std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pack)
 {
+    if (pack == nullptr)
+        return nullptr;
     auto model = std::make_shared<Model>();
     model->SetName(pack->name);
     model->Init(pack->shared_from_this());
@@ -189,6 +193,8 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::ws
     if (!main->textureTable.contains(name))
     {
         auto texture = Texture::Load(path, mipmap);
+        if (texture == nullptr)
+            return nullptr;
         texture->SetName(name);
         main->textureList.push_back(texture);
         main->textureTable[name] = texture;
@@ -201,6 +207,8 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::ws
 std::shared_ptr<Shader> ResourceManager::LoadShader(std::wstring path, std::wstring name, std::vector<std::shared_ptr<RenderTexture>> rtgs)
 {
     auto shader = Shader::Load(path);
+    if (shader == nullptr)
+        return nullptr;
     shader->SetRenderTargets(rtgs);
     shaderTable[name] = shader;
     shaderList.push_back(shader);
