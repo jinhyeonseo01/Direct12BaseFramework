@@ -33,7 +33,7 @@ Vector4 Material::GetData(std::string name, Vector4& field)
     if (_propertyVectors.contains(name)) {
         return field = _propertyVectors[name];
     }
-    return field = Vector4(0,0,0,1);
+    return field = Vector4(1,1,1,1);
 }
 
 Vector3 Material::GetData(std::string name, Vector3& field)

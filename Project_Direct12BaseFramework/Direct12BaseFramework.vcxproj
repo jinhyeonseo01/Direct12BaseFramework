@@ -216,6 +216,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\Camera.h" />
     <ClInclude Include="..\shareds\engines\headers\CBuffer.h" />
     <ClInclude Include="..\shareds\engines\headers\CBufferPool.h" />
+    <ClInclude Include="..\shareds\engines\headers\CBuffer_struct.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
     <ClInclude Include="..\shareds\engines\headers\Component.h" />
     <ClInclude Include="..\shareds\engines\headers\DescriptorTable.h" />

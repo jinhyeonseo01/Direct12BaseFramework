@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Transform.h"
 #include "GameObject.h"
+#include "GraphicManager.h"
 #include "MeshRenderer.h"
 
 
@@ -56,6 +57,10 @@ namespace dxe
 
 	void Scene::Reset(std::shared_ptr<Scene> prevScene)
 	{
+        GraphicManager::main->Refresh();
+        _destroyObject.clear();
+        _gameObjectList.clear();
+        Init();
 	}
 
 	void Scene::Init()

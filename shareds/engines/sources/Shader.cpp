@@ -315,7 +315,12 @@ void Shader::Init()
     DXAssert(device->CreateGraphicsPipelineState(&_pipelineDesc, ComPtrIDAddr(_pipelineState)));
 
     Debug::log << "쉐이더 생성 완료\n";
+    ++_initCount;
+}
 
+bool Shader::IsNotInit()
+{
+    return _initCount == 0;
 }
 
 void Shader::SetShaderSetting(const ShaderInfo& info)

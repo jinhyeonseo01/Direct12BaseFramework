@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MeshRenderer.h"
 
+#include "CBuffer_struct.h"
 #include "GameObject.h"
 #include "GraphicManager.h"
 #include "Mesh.h"

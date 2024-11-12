@@ -169,6 +169,8 @@ namespace dxe
         std::unordered_map<std::string, std::shared_ptr<ShaderCode>> _shaderCodeTable;
         ShaderInfo _info;
         ShaderProfileInfo _profileInfo;
+
+        int _initCount = 0;
     public:
 
         ComPtr<ID3D12PipelineState>			_pipelineState;
@@ -179,6 +181,7 @@ namespace dxe
         DXGI_FORMAT RTVForamts[8]{DXGI_FORMAT_R8G8B8A8_UNORM};
 
         void Init();
+        bool IsNotInit();
         void SetShaderSetting(const ShaderInfo& info);
         void SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts);
         void SetMSAADisable();

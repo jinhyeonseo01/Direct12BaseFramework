@@ -56,7 +56,7 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
                 aiProcess_Triangulate | // 4각형 5각형을 3각형으로
                 //aiProcess_GenSmoothNormals | // Normal이 없으면 Smmoth Normal 생성
                 aiProcess_GenNormals | // Normal이 없으면 Normal 생성
-                 aiProcess_ImproveCacheLocality |// 삼각형 개선. 잘 되면 켜보기 캐시히트율을 위해 삼각형 재정렬함.
+                aiProcess_ImproveCacheLocality |// 삼각형 개선. 잘 되면 켜보기 캐시히트율을 위해 삼각형 재정렬함.
                 //aiProcess_GenUVCoords | // UV없으면 UV 계산하게[ 시키기
                 aiProcess_CalcTangentSpace | // 탄젠트 계산
                 //aiProcess_SplitLargeMeshes |// 매쉬가 너무 클때 쪼개는거 매쉬 클때 렌더링 유리.
@@ -65,7 +65,7 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
                 //aiProcess_PreTransformVertices | // root Node를 제외한 모든 하위 노드들 전부 평탄화. 계층 제거.
                 //aiProcess_ValidateDataStructure | // 연결 유효성 검사
                 //aiProcess_RemoveRedundantMaterials | // 중복이나 안쓰는거 제거
-                 //aiProcess_FixInfacingNormals | //잘못 연결되서 고장난 노멀 재대로 수정
+                aiProcess_FixInfacingNormals | //잘못 연결되서 고장난 노멀 재대로 수정
                 //aiProcess_FindDegenerates | //삼각형에서 점이 겹쳐버리면 라인이나 점이 되버리는데, 이걸 Line이나 Point로 변환하는거임. 안쓰는게 나음.
                  //aiProcess_FindInvalidData | //유효하지 않는 데이터 감지후 수정, 법선 UV를 제거함. 이렇게 제거하고 나면 aiProcess_GenNormals같은게 새롭게 생성해줄거임. 애니메이션에서도 이점이 있다고함.
                 //aiProcess_GenUVCoords  | //UV를 자체적으로 계산함. 모델링툴에서 생성하는걸 추천하고, UV가 없으면 새롭게 생성하는거임.
@@ -151,7 +151,7 @@ std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& 
         assimpPackTable[name] = pack;
         return pack;
     }
-    return nullptr;
+    return assimpPackTable[name];
 }
 
 std::vector<std::shared_ptr<AssimpPack>> ResourceManager::LoadAssimpPacks(
@@ -178,14 +178,18 @@ std::vector<std::shared_ptr<Texture>> ResourceManager::LoadTextures(
 
 std::shared_ptr<Model> ResourceManager::LoadModel(std::shared_ptr<AssimpPack> pack)
 {
-    if (pack == nullptr)
-        return nullptr;
-    auto model = std::make_shared<Model>();
-    model->SetName(pack->name);
-    model->Init(pack->shared_from_this());
-    modelList.push_back(model);
-    modelTable[model->name] = model;
-    return model;
+    if (!main->modelTable.contains(pack->name))
+    {
+        if (pack == nullptr)
+            return nullptr;
+        auto model = std::make_shared<Model>();
+        model->SetName(pack->name);
+        model->Init(pack->shared_from_this());
+        modelList.push_back(model);
+        modelTable[model->name] = model;
+        return model;
+    }
+    return main->modelTable[pack->name];
 }
 
 std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::wstring name, bool mipmap)
@@ -200,19 +204,23 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(std::wstring path, std::ws
         main->textureTable[name] = texture;
         return texture;
     }
-    return nullptr;
+    return main->textureTable[name];
 }
 
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(std::wstring path, std::wstring name, std::vector<std::shared_ptr<RenderTexture>> rtgs)
 {
-    auto shader = Shader::Load(path);
-    if (shader == nullptr)
-        return nullptr;
-    shader->SetRenderTargets(rtgs);
-    shaderTable[name] = shader;
-    shaderList.push_back(shader);
-    return shader;
+    if (!main->shaderTable.contains(name))
+    {
+        auto shader = Shader::Load(path);
+        if (shader == nullptr)
+            return nullptr;
+        shader->SetRenderTargets(rtgs);
+        shaderTable[name] = shader;
+        shaderList.push_back(shader);
+        return shader;
+    }
+    return main->shaderTable[name];
 }
 
 std::shared_ptr<Model> ResourceManager::GetModel(std::wstring name)

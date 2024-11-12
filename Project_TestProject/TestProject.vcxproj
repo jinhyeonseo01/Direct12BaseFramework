@@ -162,12 +162,13 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="PlayerComponent.cpp" />
-    <ClCompile Include="Study1Scene.cpp" />
-    <ClCompile Include="Study2Scene.cpp" />
+    <ClCompile Include="Project_Module\CameraController.cpp" />
+    <ClCompile Include="Project_Module\TestScene.cpp" />
+    <ClCompile Include="Project_Study1\Bullet.cpp" />
+    <ClCompile Include="Project_Study1\PlayerComponent.cpp" />
+    <ClCompile Include="Project_Study1\Study1Scene.cpp" />
+    <ClCompile Include="Project_Study2\Study2Scene.cpp" />
     <ClCompile Include="TestProject.cpp" />
-    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Project_Direct12BaseFramework\Direct12BaseFramework.vcxproj">
@@ -175,11 +176,13 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bullet.h" />
-    <ClInclude Include="PlayerComponent.h" />
-    <ClInclude Include="Study1Scene.h" />
-    <ClInclude Include="Study2Scene.h" />
-    <ClInclude Include="TestScene.h" />
+    <ClInclude Include="Module\CameraController.h" />
+    <ClInclude Include="Project_Module\CameraController.h" />
+    <ClInclude Include="Project_Module\TestScene.h" />
+    <ClInclude Include="Project_Study1\Bullet.h" />
+    <ClInclude Include="Project_Study1\PlayerComponent.h" />
+    <ClInclude Include="Project_Study1\Study1Scene.h" />
+    <ClInclude Include="Project_Study2\Study2Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

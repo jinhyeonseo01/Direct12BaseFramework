@@ -116,9 +116,7 @@ namespace dxe
 
     void Engine::SetCursorHide(bool hide)
     {
-        cursorHide = hide;
-        if (cursorHide)
-            ShowCursor(cursorHide ? FALSE : TRUE);
+        ShowCursor((cursorHide = hide) ? FALSE : TRUE);
     }
 
     bool Engine::GetCursorHide() const
@@ -750,6 +748,7 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
             if(!isInClientMouse)
             {
                 isInClientMouse = true;
+
                 if (cursorHide)
                     ShowCursor(FALSE);
                 else
@@ -788,8 +787,8 @@ WS_CHILDWINDOW : WS_CHILD¶û µ¿ÀÏ
 		case WM_MOUSELEAVE:
 		{
             isInClientMouse = false;
-            if(cursorHide)
-                ShowCursor(TRUE);
+            //if(cursorHide)
+            //    ShowCursor(TRUE);
 			break;
 		}
 		case WM_KEYUP:

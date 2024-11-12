@@ -28,6 +28,8 @@ namespace dxe
 		static std::shared_ptr<Scene> ChangeMainScene(std::wstring name);
 		static std::shared_ptr<Scene> ChangeMainScene(std::shared_ptr<Scene> scene);
 		static std::shared_ptr<Scene> GetScene(std::wstring name);
+        static std::shared_ptr<Scene> GetCurrentScene();
+        static std::shared_ptr<Scene> Reset();
         static void DeleteAll();
     };
 }

@@ -11,10 +11,10 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 
-#include "Study1Scene.h"
-#include "Study2Scene.h"
-#include "TestScene.h"
 
+#include "Project_Study1/Study1Scene.h"
+#include "Project_Study2/Study2Scene.h"
+#include "Project_Module/TestScene.h"
 
 using namespace dxe;
 
@@ -47,6 +47,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             engine = nullptr;
         }
 
+        //auto scene = SceneManager::CreateScene<Study1Scene>(L"Study1 Scene");
+        //auto scene = SceneManager::CreateScene<Study2Scene>(L"Study2 Scene");
         auto scene = SceneManager::CreateScene<TestScene>(L"Test Scene");
 
         while (!dxe::Engine::GetEngineList().empty())

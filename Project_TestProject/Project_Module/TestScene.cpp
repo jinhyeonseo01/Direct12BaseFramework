@@ -3,12 +3,12 @@
 #include <DXEngine.h>
 #include "GraphicManager.h"
 #include "Camera.h"
+#include "CameraController.h"
 #include "JsonLoader.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include "MeshSample.h"
-#include "PlayerComponent.h"
 #include "Scene.h"
 
 void* TestScene::Clone()
@@ -68,6 +68,7 @@ void TestScene::Init()
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
     cameraObj->AddComponent<Camera>();
+    cameraObj->AddComponent<CameraController>();
     camera = cameraObj;
 
     ResourceManager::main->LoadAssimpPacks({ {L"resources/Models/SkyBox.obj",L"SkyBox"} }, true);
@@ -81,7 +82,7 @@ void TestScene::Init()
     skyMaterial->SetData("skyTexture", ResourceManager::main->GetTexture(L"skyTexture"));
 
 
-    JsonLoader::Load(L"SampleScene.json");
+    JsonLoader::Load(L"resources/scenes/SampleScene.json");
 }
 
 void TestScene::Update()

@@ -2,116 +2,116 @@
   "references": {
     "GameObjects": [
       {
-        "name": "Sphere",
-        "guid": "dd492889-bcc3-45d8-81e3-da32648a2381",
+        "name": "Cube (1)",
+        "guid": "37be0864-94ac-45a1-b56e-580db78b0b21",
         "components": [
-          "e1ccbf8b-2a93-48d2-9746-9fa97ff8f156",
-          "cf81484b-9fc5-4fef-a559-9394d1d9b209",
-          "4d05c868-6897-45ef-b253-8f51ae731798",
-          "b2096f53-eea9-41e8-86b9-cf6db1469f01"
+          "72f176c8-f7a1-41c7-b2bc-c903d7abc379",
+          "2e63e607-ca03-42ad-8684-687ae9876b40",
+          "c01f76f7-3635-4d5a-a88d-e059ee73a94c",
+          "88a0a7a6-9f0d-48f9-af73-9f06325eff55"
         ],
         "childs": [],
         "parent": ""
       },
       {
-        "name": "Cube (1)",
-        "guid": "f5817bdb-f72e-4b83-831f-e3624cea7557",
+        "name": "Quad",
+        "guid": "a583c96a-06bb-4d17-88e9-8198ca09b53e",
         "components": [
-          "fc41b6f9-6133-4386-b095-4d6936f5519a",
-          "4181ef4c-4a30-4fbc-8011-cf48f83b3a3a",
-          "560b6f1c-e29c-4d3c-81ff-1afd5d603ac7",
-          "72549d5a-f9bb-4eb6-922f-bbe3d8037e0a"
+          "78c1b881-c271-41e7-ac5c-0bd8e9c0d642",
+          "65f47355-3ae9-4774-afd0-782efac95da6",
+          "176567e3-b0ee-4f93-b999-4ef8eee3f017",
+          "05427231-c9ba-4a94-9f35-af958f259dc3"
+        ],
+        "childs": [],
+        "parent": ""
+      },
+      {
+        "name": "Sphere",
+        "guid": "838da305-0875-4648-81a6-40fd98111dd6",
+        "components": [
+          "27d24faa-00d8-4377-8048-4948c62922b8",
+          "fd141739-f12b-43d5-860b-1f435c9a10b5",
+          "1c805de1-413f-41a5-8952-f5f8f6de28a3",
+          "27f73f26-60e7-490e-a00a-b673b62de36e"
         ],
         "childs": [],
         "parent": ""
       },
       {
         "name": "Directional Light",
-        "guid": "d82a1a9a-b2fa-4a08-aed8-3996e0e559d5",
+        "guid": "143bcb6e-7a32-45b2-ab08-24d0a2c18220",
         "components": [
-          "b690b02d-b8a1-4988-8574-50434229a957",
-          "9b21b03a-b786-497d-b021-b32c2f23006c"
+          "8715e2f5-7637-41a7-9e2f-105256946858",
+          "0adbe54f-e58a-40d8-a007-5da974e87126"
         ],
         "childs": [],
         "parent": ""
       },
       {
         "name": "Capsule",
-        "guid": "7eb7d1db-fd3f-4036-a123-ad6f0e4ab923",
+        "guid": "dd3be4ee-623d-4521-9f9c-363b912322a3",
         "components": [
-          "eb313f9f-6db6-4422-9eb3-36eedc583caf",
-          "d2401510-867c-48a6-b72c-6c99cf23cfe0",
-          "b2e29996-12bc-455d-b441-e4dfb73b97e2",
-          "4915dbfe-094f-4c36-b342-67b22f4e5f31"
+          "45a1b8a5-81c5-49cc-9774-6d88850c24bd",
+          "48ec2d51-f113-4d90-a65e-e6c25a8b0cd2",
+          "be9d9235-30f9-4014-a97f-54cde3fec2a2",
+          "b0a8854a-619d-4629-a4de-876830f491e1"
         ],
         "childs": [],
         "parent": ""
       },
       {
         "name": "Main Camera",
-        "guid": "ba8828be-4e6b-4295-ad8e-abded2902ad5",
+        "guid": "265bb16f-405f-4c71-bf32-a9cd5bacbb9d",
         "components": [
-          "d24bc03e-a1c3-4070-95d0-3aac4f90ff81",
-          "bab6e0cf-b513-4f40-9990-5894c5877dbe"
+          "f027be91-17c3-4e52-8b7f-1503e98f9bb4",
+          "f65d9be6-3564-431e-90d8-02d8d2c4529b"
         ],
         "childs": [],
         "parent": ""
       },
       {
         "name": "Cube",
-        "guid": "d831c9b3-42b1-4671-bbc6-edaafc155ae3",
+        "guid": "291ad243-e325-45c7-bd9a-1e0802cc4854",
         "components": [
-          "e6f5b22c-4f62-48c9-ab9e-43ed63a3c2c8",
-          "581affae-97f6-4487-b71f-cfd234867b0c",
-          "a7558355-f478-42f8-9c3b-c260a6b386dd",
-          "19c7d8a6-9ad0-4dac-bb60-0a0146a3e676"
+          "be5bbf1c-f4d9-49fe-baaa-e50d833c8396",
+          "4accc6d3-ab1b-496f-9aa0-3421123d11cc",
+          "f18f4683-47c9-49d8-923e-1106ea197b7a",
+          "37bb0012-b730-48d0-97bc-a5da50043f58"
         ],
         "childs": [],
         "parent": ""
       },
       {
         "name": "Cube2",
-        "guid": "50a85f4c-d9b1-4a33-95e0-646aabddeeba",
+        "guid": "89c14be7-9730-4375-a176-97992da58ee5",
         "components": [
-          "7e2e8b10-dbeb-4e88-bf31-07149e59006c",
-          "43764c57-fb35-4af0-9cb4-43d93d3798f0",
-          "f1ccfdee-5573-4137-9f2a-d236b2306eb5",
-          "dc9372ac-8af6-4049-a73f-97980b6d678d"
+          "96219ceb-68c9-4265-8c2e-4398219ba0fd",
+          "6191cd87-a00a-44a7-84d2-62260a5ce979",
+          "9cda1f45-9987-4c6a-a87b-631ecc50dc7b",
+          "4c2f204f-b255-4e2b-99d9-7bd38c7bd91b"
         ],
         "childs": [
-          "ba5f7464-42cc-4873-bf74-112bd459ee2e"
+          "f4e9665d-b220-42cf-ab97-22aac6af3908"
         ],
-        "parent": ""
-      },
-      {
-        "name": "Quad",
-        "guid": "036d15e0-dc2a-490a-9069-3b55c0c88775",
-        "components": [
-          "82c1cd14-7e3b-435b-8c42-dc6b217ad414",
-          "c6007e1c-a03a-4b22-acc5-56368c207c86",
-          "bfbdbc9e-cd89-40cf-8ae3-c378697ae831",
-          "2864045b-a9ab-478c-849a-dd4d33392da0"
-        ],
-        "childs": [],
         "parent": ""
       },
       {
         "name": "Cube2",
-        "guid": "ba5f7464-42cc-4873-bf74-112bd459ee2e",
+        "guid": "f4e9665d-b220-42cf-ab97-22aac6af3908",
         "components": [
-          "3f372a32-cc32-4bab-a5a4-a734bb5c61e1",
-          "5698dec3-cc75-4843-ba9f-53b28d2c4abf",
-          "5609c0a4-4115-4b9c-8cf0-6e762a9e3568",
-          "d5747018-03a7-4a7e-96f1-03ed2be66af0"
+          "6dfdcf0e-c9d5-4d94-92e9-50c8787c04a7",
+          "891680fb-e0e3-4e87-962f-d93c23d303e2",
+          "622fca17-1bd5-4206-bd58-77b39131485c",
+          "ee4c1e43-f804-49cb-8888-7bd1144c3d0c"
         ],
         "childs": [],
-        "parent": "50a85f4c-d9b1-4a33-95e0-646aabddeeba"
+        "parent": "89c14be7-9730-4375-a176-97992da58ee5"
       }
     ],
     "Materials": [
       {
         "name": "Lit",
-        "guid": "e2a1540b-8374-476a-89c7-54fe1534fe86",
+        "guid": "e68adcdf-e995-42e4-b0e0-f4f38d211014",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -664,7 +664,7 @@
       },
       {
         "name": "Lit",
-        "guid": "e2a1540b-8374-476a-89c7-54fe1534fe86",
+        "guid": "e68adcdf-e995-42e4-b0e0-f4f38d211014",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -1217,7 +1217,7 @@
       },
       {
         "name": "Lit",
-        "guid": "e2a1540b-8374-476a-89c7-54fe1534fe86",
+        "guid": "e68adcdf-e995-42e4-b0e0-f4f38d211014",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -1770,7 +1770,7 @@
       },
       {
         "name": "Lit",
-        "guid": "e2a1540b-8374-476a-89c7-54fe1534fe86",
+        "guid": "e68adcdf-e995-42e4-b0e0-f4f38d211014",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -2323,7 +2323,7 @@
       },
       {
         "name": "Lit",
-        "guid": "e2a1540b-8374-476a-89c7-54fe1534fe86",
+        "guid": "e68adcdf-e995-42e4-b0e0-f4f38d211014",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -2876,7 +2876,7 @@
       },
       {
         "name": "Lit",
-        "guid": "e2a1540b-8374-476a-89c7-54fe1534fe86",
+        "guid": "e68adcdf-e995-42e4-b0e0-f4f38d211014",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -3429,7 +3429,7 @@
       },
       {
         "name": "Body_texture",
-        "guid": "c37d79e2-a3be-4e39-a28d-a87de4976ff2",
+        "guid": "8f59a01b-d5ef-4374-abfa-cf23247b752a",
         "renderOrder": 2000,
         "culling": "back",
         "datas": {
@@ -3513,7 +3513,7 @@
             },
             {
               "name": "_Smoothness",
-              "data": 0.0
+              "data": 0.5
             },
             {
               "name": "_EnvironmentReflections",
@@ -3984,113 +3984,27 @@
     "Components": [
       {
         "type": "Transform",
-        "guid": "e1ccbf8b-2a93-48d2-9746-9fa97ff8f156",
+        "guid": "72f176c8-f7a1-41c7-b2bc-c903d7abc379",
         "position": [
-          0.77,
-          0.424,
-          -0.36
+          6.18,
+          -1.16,
+          7.86000061
         ],
         "rotation": [
-          0.0,
-          0.0,
-          0.0,
-          1.0
+          0.168913,
+          0.349483967,
+          -0.06421092,
+          0.919351041
         ],
         "scale": [
-          1.0,
-          1.0,
-          1.0
+          9.467728,
+          6.3146,
+          7.73226643
         ]
       },
       {
         "type": "MeshFilter",
-        "guid": "cf81484b-9fc5-4fef-a559-9394d1d9b209",
-        "mesh": {
-          "path": "./resources/Models/Sphere.fbx",
-          "fileName": "Sphere.fbx",
-          "modelName": "Sphere",
-          "meshName": "Sphere",
-          "boundCenter": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "boundExtent": [
-            0.5,
-            0.5,
-            0.5
-          ]
-        }
-      },
-      {
-        "type": "MeshRenderer",
-        "guid": "4d05c868-6897-45ef-b253-8f51ae731798",
-        "mesh": {
-          "path": "./resources/Models/Sphere.fbx",
-          "fileName": "Sphere.fbx",
-          "modelName": "Sphere",
-          "meshName": "Sphere",
-          "boundCenter": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "boundExtent": [
-            0.5,
-            0.5,
-            0.5
-          ]
-        },
-        "shadowCast": "On",
-        "materials": [
-          "e2a1540b-8374-476a-89c7-54fe1534fe86"
-        ]
-      },
-      {
-        "type": "SphereCollider",
-        "guid": "b2096f53-eea9-41e8-86b9-cf6db1469f01",
-        "aabbCenter": [
-          0.77,
-          0.424000025,
-          -0.36
-        ],
-        "aabbExtent": [
-          0.5,
-          0.5,
-          0.5
-        ],
-        "isTrigger": false,
-        "colliderType": "sphere",
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "radius": 0.5
-      },
-      {
-        "type": "Transform",
-        "guid": "fc41b6f9-6133-4386-b095-4d6936f5519a",
-        "position": [
-          5.87,
-          -0.54,
-          4.92
-        ],
-        "rotation": [
-          -0.0728511438,
-          0.8520285,
-          0.0454338565,
-          0.5164069
-        ],
-        "scale": [
-          4.430918,
-          4.070454,
-          6.145414
-        ]
-      },
-      {
-        "type": "MeshFilter",
-        "guid": "4181ef4c-4a30-4fbc-8011-cf48f83b3a3a",
+        "guid": "2e63e607-ca03-42ad-8684-687ae9876b40",
         "mesh": {
           "path": "./resources/Models/Cube.fbx",
           "fileName": "Cube.fbx",
@@ -4110,7 +4024,7 @@
       },
       {
         "type": "MeshRenderer",
-        "guid": "560b6f1c-e29c-4d3c-81ff-1afd5d603ac7",
+        "guid": "c01f76f7-3635-4d5a-a88d-e059ee73a94c",
         "mesh": {
           "path": "./resources/Models/Cube.fbx",
           "fileName": "Cube.fbx",
@@ -4129,21 +4043,21 @@
         },
         "shadowCast": "On",
         "materials": [
-          "e2a1540b-8374-476a-89c7-54fe1534fe86"
+          "e68adcdf-e995-42e4-b0e0-f4f38d211014"
         ]
       },
       {
         "type": "BoxCollider",
-        "guid": "72549d5a-f9bb-4eb6-922f-bbe3d8037e0a",
+        "guid": "88a0a7a6-9f0d-48f9-af73-9f06325eff55",
         "aabbCenter": [
-          5.87,
-          -0.539999962,
-          4.92
+          6.17999935,
+          -1.15999985,
+          7.86000061
         ],
         "aabbExtent": [
-          4.04208374,
-          2.645384,
-          3.389864
+          6.68448162,
+          4.32536268,
+          6.684654
         ],
         "isTrigger": false,
         "colliderType": "box",
@@ -4160,47 +4074,108 @@
       },
       {
         "type": "Transform",
-        "guid": "b690b02d-b8a1-4988-8574-50434229a957",
+        "guid": "78c1b881-c271-41e7-ac5c-0bd8e9c0d642",
         "position": [
-          3.94,
-          3.0,
-          -4.0
+          -6.96,
+          0.64,
+          -0.87
         ],
         "rotation": [
-          0.308929265,
-          -0.360655159,
-          0.1279627,
-          0.870698631
+          0.0,
+          -0.409081757,
+          0.0,
+          0.9124978
         ],
         "scale": [
-          1.0,
-          1.0,
-          1.0
+          5.0,
+          5.0,
+          5.0
         ]
       },
       {
-        "type": "Light",
-        "guid": "9b21b03a-b786-497d-b021-b32c2f23006c",
-        "lightType": "Directional",
-        "color": [
-          1.0,
-          0.956862748,
-          0.8392157,
-          1.0
+        "type": "MeshFilter",
+        "guid": "65f47355-3ae9-4774-afd0-782efac95da6",
+        "mesh": {
+          "path": "./resources/Models/Quad.fbx",
+          "fileName": "Quad.fbx",
+          "modelName": "Quad",
+          "meshName": "Quad",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            3.0616168E-17
+          ]
+        }
+      },
+      {
+        "type": "MeshRenderer",
+        "guid": "176567e3-b0ee-4f93-b999-4ef8eee3f017",
+        "mesh": {
+          "path": "./resources/Models/Quad.fbx",
+          "fileName": "Quad.fbx",
+          "modelName": "Quad",
+          "meshName": "Quad",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            3.0616168E-17
+          ]
+        },
+        "shadowCast": "On",
+        "materials": [
+          "e68adcdf-e995-42e4-b0e0-f4f38d211014"
+        ]
+      },
+      {
+        "type": "MeshCollider",
+        "guid": "05427231-c9ba-4a94-9f35-af958f259dc3",
+        "aabbCenter": [
+          -6.96,
+          0.6399999,
+          -0.87
         ],
-        "intensity": 1.0,
-        "range": 9.7,
-        "innerSpotAngle": 21.80208,
-        "spotAngle": 30.0,
-        "shadowAngle": 0.0
+        "aabbExtent": [
+          1.66326141,
+          2.50000048,
+          1.86643112
+        ],
+        "isTrigger": false,
+        "colliderType": "mesh",
+        "convex": false,
+        "mesh": {
+          "path": "./resources/Models/Quad.fbx",
+          "fileName": "Quad.fbx",
+          "modelName": "Quad",
+          "meshName": "Quad",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            3.0616168E-17
+          ]
+        }
       },
       {
         "type": "Transform",
-        "guid": "eb313f9f-6db6-4422-9eb3-36eedc583caf",
+        "guid": "27d24faa-00d8-4377-8048-4948c62922b8",
         "position": [
-          -0.22,
-          0.23,
-          -1.53
+          1.26,
+          0.424,
+          -1.67
         ],
         "rotation": [
           0.0,
@@ -4216,7 +4191,129 @@
       },
       {
         "type": "MeshFilter",
-        "guid": "d2401510-867c-48a6-b72c-6c99cf23cfe0",
+        "guid": "fd141739-f12b-43d5-860b-1f435c9a10b5",
+        "mesh": {
+          "path": "./resources/Models/Sphere.fbx",
+          "fileName": "Sphere.fbx",
+          "modelName": "Sphere",
+          "meshName": "Sphere",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      },
+      {
+        "type": "MeshRenderer",
+        "guid": "1c805de1-413f-41a5-8952-f5f8f6de28a3",
+        "mesh": {
+          "path": "./resources/Models/Sphere.fbx",
+          "fileName": "Sphere.fbx",
+          "modelName": "Sphere",
+          "meshName": "Sphere",
+          "boundCenter": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "boundExtent": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        "shadowCast": "On",
+        "materials": [
+          "e68adcdf-e995-42e4-b0e0-f4f38d211014"
+        ]
+      },
+      {
+        "type": "SphereCollider",
+        "guid": "27f73f26-60e7-490e-a00a-b673b62de36e",
+        "aabbCenter": [
+          1.26,
+          0.424000025,
+          -1.67000008
+        ],
+        "aabbExtent": [
+          0.5,
+          0.5,
+          0.50000006
+        ],
+        "isTrigger": false,
+        "colliderType": "sphere",
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 0.5
+      },
+      {
+        "type": "Transform",
+        "guid": "8715e2f5-7637-41a7-9e2f-105256946858",
+        "position": [
+          3.94,
+          3.0,
+          -4.0
+        ],
+        "rotation": [
+          0.408217877,
+          -0.234569684,
+          0.109381631,
+          0.8754261
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "Light",
+        "guid": "0adbe54f-e58a-40d8-a007-5da974e87126",
+        "lightType": "Directional",
+        "color": [
+          1.0,
+          0.956862748,
+          0.8392157,
+          1.0
+        ],
+        "intensity": 1.0,
+        "range": 9.7,
+        "innerSpotAngle": 21.80208,
+        "spotAngle": 30.0,
+        "shadowAngle": 0.0
+      },
+      {
+        "type": "Transform",
+        "guid": "45a1b8a5-81c5-49cc-9774-6d88850c24bd",
+        "position": [
+          0.295,
+          0.23,
+          0.224
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.140671119,
+          0.990056455
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "type": "MeshFilter",
+        "guid": "48ec2d51-f113-4d90-a65e-e6c25a8b0cd2",
         "mesh": {
           "path": "./resources/Models/Capsule.fbx",
           "fileName": "Capsule.fbx",
@@ -4236,7 +4333,7 @@
       },
       {
         "type": "MeshRenderer",
-        "guid": "b2e29996-12bc-455d-b441-e4dfb73b97e2",
+        "guid": "be9d9235-30f9-4014-a97f-54cde3fec2a2",
         "mesh": {
           "path": "./resources/Models/Capsule.fbx",
           "fileName": "Capsule.fbx",
@@ -4255,20 +4352,20 @@
         },
         "shadowCast": "On",
         "materials": [
-          "e2a1540b-8374-476a-89c7-54fe1534fe86"
+          "e68adcdf-e995-42e4-b0e0-f4f38d211014"
         ]
       },
       {
         "type": "CapsuleCollider",
-        "guid": "4915dbfe-094f-4c36-b342-67b22f4e5f31",
+        "guid": "b0a8854a-619d-4629-a4de-876830f491e1",
         "aabbCenter": [
-          -0.219999984,
+          0.295000017,
           0.230000019,
-          -1.53
+          0.223999992
         ],
         "aabbExtent": [
-          0.50000006,
-          1.0,
+          0.6392724,
+          0.980211735,
           0.5
         ],
         "isTrigger": false,
@@ -4283,7 +4380,7 @@
       },
       {
         "type": "Transform",
-        "guid": "d24bc03e-a1c3-4070-95d0-3aac4f90ff81",
+        "guid": "f027be91-17c3-4e52-8b7f-1503e98f9bb4",
         "position": [
           0.0,
           1.32,
@@ -4303,7 +4400,7 @@
       },
       {
         "type": "Camera",
-        "guid": "bab6e0cf-b513-4f40-9990-5894c5877dbe",
+        "guid": "f65d9be6-3564-431e-90d8-02d8d2c4529b",
         "isOrtho": false,
         "orthoSize": 5.0,
         "near": 0.3,
@@ -4312,7 +4409,7 @@
       },
       {
         "type": "Transform",
-        "guid": "e6f5b22c-4f62-48c9-ab9e-43ed63a3c2c8",
+        "guid": "be5bbf1c-f4d9-49fe-baaa-e50d833c8396",
         "position": [
           -0.03,
           -1.16,
@@ -4332,7 +4429,7 @@
       },
       {
         "type": "MeshFilter",
-        "guid": "581affae-97f6-4487-b71f-cfd234867b0c",
+        "guid": "4accc6d3-ab1b-496f-9aa0-3421123d11cc",
         "mesh": {
           "path": "./resources/Models/Cube.fbx",
           "fileName": "Cube.fbx",
@@ -4352,7 +4449,7 @@
       },
       {
         "type": "MeshRenderer",
-        "guid": "a7558355-f478-42f8-9c3b-c260a6b386dd",
+        "guid": "f18f4683-47c9-49d8-923e-1106ea197b7a",
         "mesh": {
           "path": "./resources/Models/Cube.fbx",
           "fileName": "Cube.fbx",
@@ -4371,12 +4468,12 @@
         },
         "shadowCast": "On",
         "materials": [
-          "e2a1540b-8374-476a-89c7-54fe1534fe86"
+          "e68adcdf-e995-42e4-b0e0-f4f38d211014"
         ]
       },
       {
         "type": "BoxCollider",
-        "guid": "19c7d8a6-9ad0-4dac-bb60-0a0146a3e676",
+        "guid": "37bb0012-b730-48d0-97bc-a5da50043f58",
         "aabbCenter": [
           -0.029999733,
           -1.16,
@@ -4402,17 +4499,17 @@
       },
       {
         "type": "Transform",
-        "guid": "7e2e8b10-dbeb-4e88-bf31-07149e59006c",
+        "guid": "96219ceb-68c9-4265-8c2e-4398219ba0fd",
         "position": [
-          -3.07,
-          0.33,
+          -3.51,
+          0.15,
           -1.49
         ],
         "rotation": [
-          -0.221011892,
-          -0.46509853,
-          0.3454383,
-          0.78454417
+          0.0,
+          0.0,
+          0.0,
+          1.0
         ],
         "scale": [
           1.0,
@@ -4422,7 +4519,7 @@
       },
       {
         "type": "MeshFilter",
-        "guid": "43764c57-fb35-4af0-9cb4-43d93d3798f0",
+        "guid": "6191cd87-a00a-44a7-84d2-62260a5ce979",
         "mesh": {
           "path": "./resources/Models/Cube.fbx",
           "fileName": "Cube.fbx",
@@ -4442,7 +4539,7 @@
       },
       {
         "type": "MeshRenderer",
-        "guid": "f1ccfdee-5573-4137-9f2a-d236b2306eb5",
+        "guid": "9cda1f45-9987-4c6a-a87b-631ecc50dc7b",
         "mesh": {
           "path": "./resources/Models/Cube.fbx",
           "fileName": "Cube.fbx",
@@ -4461,21 +4558,21 @@
         },
         "shadowCast": "On",
         "materials": [
-          "e2a1540b-8374-476a-89c7-54fe1534fe86"
+          "e68adcdf-e995-42e4-b0e0-f4f38d211014"
         ]
       },
       {
         "type": "BoxCollider",
-        "guid": "dc9372ac-8af6-4049-a73f-97980b6d678d",
+        "guid": "4c2f204f-b255-4e2b-99d9-7bd38c7bd91b",
         "aabbCenter": [
-          -3.07,
-          0.330000043,
+          -3.51000023,
+          0.149999991,
           -1.49
         ],
         "aabbExtent": [
-          0.7738116,
-          0.7183609,
-          0.8574379
+          0.5000001,
+          0.5,
+          0.5
         ],
         "isTrigger": false,
         "colliderType": "box",
@@ -4492,108 +4589,11 @@
       },
       {
         "type": "Transform",
-        "guid": "82c1cd14-7e3b-435b-8c42-dc6b217ad414",
+        "guid": "6dfdcf0e-c9d5-4d94-92e9-50c8787c04a7",
         "position": [
-          -4.72,
-          -0.08,
-          4.38
-        ],
-        "rotation": [
-          -0.03789713,
-          0.0129205287,
-          0.008332753,
-          0.9991634
-        ],
-        "scale": [
-          5.0,
-          5.0,
-          5.0
-        ]
-      },
-      {
-        "type": "MeshFilter",
-        "guid": "c6007e1c-a03a-4b22-acc5-56368c207c86",
-        "mesh": {
-          "path": "./resources/Models/Quad.fbx",
-          "fileName": "Quad.fbx",
-          "modelName": "Quad",
-          "meshName": "Quad",
-          "boundCenter": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "boundExtent": [
-            0.5,
-            0.5,
-            3.0616168E-17
-          ]
-        }
-      },
-      {
-        "type": "MeshRenderer",
-        "guid": "bfbdbc9e-cd89-40cf-8ae3-c378697ae831",
-        "mesh": {
-          "path": "./resources/Models/Quad.fbx",
-          "fileName": "Quad.fbx",
-          "modelName": "Quad",
-          "meshName": "Quad",
-          "boundCenter": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "boundExtent": [
-            0.5,
-            0.5,
-            3.0616168E-17
-          ]
-        },
-        "shadowCast": "On",
-        "materials": [
-          "e2a1540b-8374-476a-89c7-54fe1534fe86"
-        ]
-      },
-      {
-        "type": "MeshCollider",
-        "guid": "2864045b-a9ab-478c-849a-dd4d33392da0",
-        "aabbCenter": [
-          -4.72,
-          -0.07999992,
-          4.38
-        ],
-        "aabbExtent": [
-          2.54289579,
-          2.531653,
-          0.2549162
-        ],
-        "isTrigger": false,
-        "colliderType": "mesh",
-        "convex": false,
-        "mesh": {
-          "path": "./resources/Models/Quad.fbx",
-          "fileName": "Quad.fbx",
-          "modelName": "Quad",
-          "meshName": "Quad",
-          "boundCenter": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "boundExtent": [
-            0.5,
-            0.5,
-            3.0616168E-17
-          ]
-        }
-      },
-      {
-        "type": "Transform",
-        "guid": "3f372a32-cc32-4bab-a5a4-a734bb5c61e1",
-        "position": [
-          2.15,
+          -0.440000057,
           0.61,
-          -0.66
+          -0.276000023
         ],
         "rotation": [
           0.0,
@@ -4609,12 +4609,12 @@
       },
       {
         "type": "MeshFilter",
-        "guid": "5698dec3-cc75-4843-ba9f-53b28d2c4abf",
+        "guid": "891680fb-e0e3-4e87-962f-d93c23d303e2",
         "mesh": {
-          "path": "./resources/Models/Sphere.fbx",
-          "fileName": "Sphere.fbx",
-          "modelName": "Sphere",
-          "meshName": "Sphere",
+          "path": "./resources/Models/Cube.fbx",
+          "fileName": "Cube.fbx",
+          "modelName": "Cube",
+          "meshName": "Cube",
           "boundCenter": [
             0.0,
             0.0,
@@ -4629,12 +4629,12 @@
       },
       {
         "type": "MeshRenderer",
-        "guid": "5609c0a4-4115-4b9c-8cf0-6e762a9e3568",
+        "guid": "622fca17-1bd5-4206-bd58-77b39131485c",
         "mesh": {
-          "path": "./resources/Models/Sphere.fbx",
-          "fileName": "Sphere.fbx",
-          "modelName": "Sphere",
-          "meshName": "Sphere",
+          "path": "./resources/Models/Cube.fbx",
+          "fileName": "Cube.fbx",
+          "modelName": "Cube",
+          "meshName": "Cube",
           "boundCenter": [
             0.0,
             0.0,
@@ -4648,21 +4648,21 @@
         },
         "shadowCast": "On",
         "materials": [
-          "c37d79e2-a3be-4e39-a28d-a87de4976ff2"
+          "8f59a01b-d5ef-4374-abfa-cf23247b752a"
         ]
       },
       {
         "type": "BoxCollider",
-        "guid": "d5747018-03a7-4a7e-96f1-03ed2be66af0",
+        "guid": "ee4c1e43-f804-49cb-8888-7bd1144c3d0c",
         "aabbCenter": [
-          -1.98606575,
-          2.32538,
-          -0.9667932
+          -3.94999981,
+          0.76,
+          -1.766
         ],
         "aabbExtent": [
-          0.77381146,
-          0.7183609,
-          0.857437968
+          0.499999881,
+          0.5,
+          0.5
         ],
         "isTrigger": false,
         "colliderType": "box",

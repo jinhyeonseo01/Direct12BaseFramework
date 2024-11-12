@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SceneManager.h"
 
+#include "GraphicManager.h"
 #include "Scene.h"
 
 
@@ -34,6 +35,17 @@ std::shared_ptr<Scene> SceneManager::GetScene(std::wstring name)
 	if (iter == _sceneList.end())
 		return nullptr;
 	return *iter;
+}
+
+std::shared_ptr<Scene> SceneManager::GetCurrentScene()
+{
+    return _currentScene;
+}
+
+std::shared_ptr<Scene> SceneManager::Reset()
+{
+    _currentScene->Reset(nullptr);
+    return _currentScene;
 }
 
 void SceneManager::DeleteAll()

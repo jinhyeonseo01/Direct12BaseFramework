@@ -7,7 +7,6 @@
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include "MeshSample.h"
-#include "PlayerComponent.h"
 #include "Scene.h"
 
 void* Study2Scene::Clone()

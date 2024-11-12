@@ -91,8 +91,7 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 
     // 노멀 변환 (평행 이동 제외)
     //output.worldNormal = normalize(mul(float4(input.normal, 0.0f), WorldMatrix));
-
-    output.worldNormal = normalize(mul(float4(input.normal, 0.0f), NormalMatrix));
+    output.worldNormal = normalize(mul(float4(input.normal, 0.0f), NormalMatrix).xyz);
     output.uv = input.uv.xy;
     output.color = input.color;
     output.pos = mul(viewPos, ProjectionMatrix);
@@ -107,6 +106,6 @@ float4 PS_Main(VS_OUT input) : SV_Target
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;
-    return pow(AlbedoColor, 1.0 / 1.0) * _color * (dot(input.worldNormal, normalize(float3(1,1,-1)))*0.5+0.5f);
+    return pow(AlbedoColor, 1.0 / 1) * _color * (saturate(dot(input.worldNormal, normalize(float3(0.7,0.8,-1)))) *0.5 +0.5f);//* _color pow(AlbedoColor, 1.0 / 1) * 
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }

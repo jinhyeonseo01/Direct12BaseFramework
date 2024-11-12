@@ -1,4 +1,5 @@
 #pragma once
+#include "CBuffer_struct.h"
 #include "Component.h"
 #include "GraphicSetting.h"
 

@@ -27,37 +27,46 @@
     <ClCompile Include="TestProject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Study1Scene.cpp">
+    <ClCompile Include="Project_Module\CameraController.cpp">
+      <Filter>소스 파일\모듈 개발</Filter>
+    </ClCompile>
+    <ClCompile Include="Project_Module\TestScene.cpp">
+      <Filter>소스 파일\모듈 개발</Filter>
+    </ClCompile>
+    <ClCompile Include="Project_Study1\Bullet.cpp">
       <Filter>소스 파일\과제1</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerComponent.cpp">
+    <ClCompile Include="Project_Study1\Study1Scene.cpp">
       <Filter>소스 파일\과제1</Filter>
     </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>소스 파일\과제1</Filter>
-    </ClCompile>
-    <ClCompile Include="Study2Scene.cpp">
+    <ClCompile Include="Project_Study2\Study2Scene.cpp">
       <Filter>소스 파일\과제2</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>소스 파일\모듈 개발</Filter>
+    <ClCompile Include="Project_Study1\PlayerComponent.cpp">
+      <Filter>소스 파일\과제1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bullet.h">
-      <Filter>소스 파일\과제1</Filter>
+    <ClInclude Include="Module\CameraController.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerComponent.h">
-      <Filter>소스 파일\과제1</Filter>
-    </ClInclude>
-    <ClInclude Include="Study1Scene.h">
-      <Filter>소스 파일\과제1</Filter>
-    </ClInclude>
-    <ClInclude Include="Study2Scene.h">
-      <Filter>소스 파일\과제2</Filter>
-    </ClInclude>
-    <ClInclude Include="TestScene.h">
+    <ClInclude Include="Project_Module\CameraController.h">
       <Filter>소스 파일\모듈 개발</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Module\TestScene.h">
+      <Filter>소스 파일\모듈 개발</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Study1\Bullet.h">
+      <Filter>소스 파일\과제1</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Study1\PlayerComponent.h">
+      <Filter>소스 파일\과제1</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Study1\Study1Scene.h">
+      <Filter>소스 파일\과제1</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Study2\Study2Scene.h">
+      <Filter>소스 파일\과제2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

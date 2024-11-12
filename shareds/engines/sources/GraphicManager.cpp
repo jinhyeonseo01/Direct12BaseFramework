@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GraphicManager.h"
 
+#include "CBuffer_struct.h"
 #include "DXEngine.h"
 #include "graphic_config.h"
 #include "RenderTargetGroup.h"
@@ -563,38 +564,12 @@ void GraphicManager::CreateDescriptors()
     CreateDescriptorTable();
 }
 
-void GraphicManager::CreateTextureHandlePool()
+void GraphicManager::CreateRootSignature()
 {
-    _textureHandlePool = std::make_shared<ShaderResourcePool>();
-    _textureHandlePool->Init(4096);
-}
-
-void GraphicManager::CreateCBufferPool()
-{
-    _cbufferPoolList.resize(_commandLists.size());
-    for(int i=0;i< _cbufferPoolList.size();i++)
-    {
-        _cbufferPoolList[i] = std::make_shared<CBufferPool>();
-        _cbufferPoolList[i]->_cbufferDescriptorHeapCount = 8000;
-        _cbufferPoolList[i]->AddCBuffer("TransformParams", sizeof(TransformParams), 8000);
-        _cbufferPoolList[i]->AddCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 8000);
-        _cbufferPoolList[i]->AddCBuffer("BoneParams", sizeof(BoneParams), 128);
-
-        _cbufferPoolList[i]->Init();
-    }
-}
-
-void GraphicManager::CreateDescriptorTable()
-{
-    _descriptorTableList.resize(_commandLists.size());
-    for (int i = 0; i < _descriptorTableList.size(); i++)
-    {
-        _descriptorTableList[i] = std::make_shared<DescriptorTable>();
-        _descriptorTableList[i]->Init(_rootSignature->_ranges, 8000);
-    }
+    _rootSignature = std::make_shared<RootSignature>();
+    _rootSignature->Init();
 
 }
-
 
 void GraphicManager::SetScreenInfo(Viewport viewInfo)
 {

@@ -1,6 +1,40 @@
 #include <stdafx.h>
 #include <GraphicManager.h>
 
+#include "CBuffer_struct.h"
+
+
+void GraphicManager::CreateTextureHandlePool()
+{
+    _textureHandlePool = std::make_shared<ShaderResourcePool>();
+    _textureHandlePool->Init(4096);
+}
+
+void GraphicManager::CreateCBufferPool()
+{
+    _cbufferPoolList.resize(_commandLists.size());
+    for (int i = 0; i < _cbufferPoolList.size(); i++)
+    {
+        _cbufferPoolList[i] = std::make_shared<CBufferPool>();
+        _cbufferPoolList[i]->_cbufferDescriptorHeapCount = 8000;
+        _cbufferPoolList[i]->AddCBuffer("TransformParams", sizeof(TransformParams), 8000);
+        _cbufferPoolList[i]->AddCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 8000);
+        _cbufferPoolList[i]->AddCBuffer("BoneParams", sizeof(BoneParams), 128);
+
+        _cbufferPoolList[i]->Init();
+    }
+}
+
+void GraphicManager::CreateDescriptorTable()
+{
+    _descriptorTableList.resize(_commandLists.size());
+    for (int i = 0; i < _descriptorTableList.size(); i++)
+    {
+        _descriptorTableList[i] = std::make_shared<DescriptorTable>();
+        _descriptorTableList[i]->Init(_rootSignature->_ranges, 8000);
+    }
+
+}
 
 void GraphicManager::RefreshRenderTargetGroups()
 {
@@ -22,11 +56,6 @@ void GraphicManager::RefreshRenderTargetGroups()
             ComPtr<ID3D12Resource> resource = _swapChainBuffers_Res[i];
             renderTargetTextureList[i] = RenderTexture::Link(resource, setting.screenFormat, setting.screenInfo.width, setting.screenInfo.height,
                 ResourceState::RTV, Vector4(0.7, 0.7, 0.7, 1));
-
-            //renderTargetTextureList[i] = std::make_shared<RenderTexture>();
-            //renderTargetTextureList[i]->SetState(ResourceState::RTV);
-            //renderTargetTextureList[i]->SetClearColor(Vector4(1, 1, 1, 1));
-            //renderTargetTextureList[i]->CreateFromResource(resource, setting.screenFormat);
         }
         this->_swapChainRT = renderTargetTextureList;
 
@@ -36,13 +65,6 @@ void GraphicManager::RefreshRenderTargetGroups()
 
         this->_renderTargetGroupTable.emplace(static_cast<int>(RTGType::SwapChain), rtGroup);
     }
-
-}
-
-void GraphicManager::CreateRootSignature()
-{
-    _rootSignature = std::make_shared<RootSignature>();
-    _rootSignature->Init();
 
 }
 
