@@ -11,7 +11,7 @@
 
 json JsonLoader::Load(std::wstring path)
 {
-    std::ifstream reader{ path };
+    std::ifstream reader{path};
     if (!reader)
         return {};
 
@@ -49,7 +49,6 @@ json JsonLoader::Load(std::wstring path)
         jsonLoader.LinkComponent(ref.second);
     for (auto& ref : jsonLoader.refGameObjectTable)
         jsonLoader.LinkGameObject(ref.second);
-
 }
 
 JsonLoader::JsonLoader()
@@ -76,24 +75,25 @@ void JsonLoader::PrevProcessingComponent(json data)
     std::shared_ptr<Component> component;
     refComponentTable[guid] = data;
 
-    if (type == L"Transform") {
+    if (type == L"Transform")
+    {
         auto transform = CreateObject<Transform>(guid);
         component = transform;
     }
-    if (type == L"MeshRenderer") {
+    if (type == L"MeshRenderer")
+    {
         auto meshRenderer = CreateObject<MeshRenderer>(guid);
         component = meshRenderer;
 
         auto mesh = data["mesh"];
         auto pack = ResourceManager::main->LoadAssimpPack(
-            std::to_wstring(mesh["path"].get<std::string>()), 
-            std::to_wstring(mesh["modelName"].get<std::string>()), 
+            std::to_wstring(mesh["path"].get<std::string>()),
+            std::to_wstring(mesh["modelName"].get<std::string>()),
             true);
         modelNameList.push_back(pack->name);
     }
     if (type == L"MeshFilter")
     {
-
     }
 
     componentCache.emplace_back(component);
@@ -108,7 +108,7 @@ void JsonLoader::PrevProcessingMaterial(json data)
     for (auto& texture : data["datas"]["textures"])
     {
         ResourceManager::main->LoadTexture(
-            std::to_wstring(texture["path"].get<std::string>()), 
+            std::to_wstring(texture["path"].get<std::string>()),
             std::to_wstring(texture["originalName"].get<std::string>()));
     }
     materialCache.emplace_back(material);
@@ -125,7 +125,8 @@ void JsonLoader::LinkGameObject(json jsonData)
     if (gameObject != nullptr)
     {
         for (auto& componentGuid : jsonData["components"])
-            gameObject->AddComponent(EObject::FindObjectByGuid<Component>(std::to_wstring(componentGuid.get<std::string>())));
+            gameObject->AddComponent(
+                EObject::FindObjectByGuid<Component>(std::to_wstring(componentGuid.get<std::string>())));
         gameObject->name = std::to_wstring(jsonData["name"].get<std::string>());
         gameObject->Init();
         gameObject->SetParent(parentObject);
@@ -138,18 +139,19 @@ void JsonLoader::LinkComponent(json jsonData)
     std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
     std::wstring type = std::to_wstring(jsonData["type"].get<std::string>());
 
-    if (type == L"Transform") {
+    if (type == L"Transform")
+    {
         auto transform = EObject::FindObjectByGuid<Transform>(guid);
-        Vector3 pos = Vector3(
+        auto pos = Vector3(
             jsonData["position"][0].get<float>(),
             jsonData["position"][1].get<float>(),
             jsonData["position"][2].get<float>());
-        Quaternion rotation = Quaternion(
+        auto rotation = Quaternion(
             jsonData["rotation"][0].get<float>(),
             jsonData["rotation"][1].get<float>(),
             jsonData["rotation"][2].get<float>(),
             jsonData["rotation"][3].get<float>());
-        Vector3 scale = Vector3(
+        auto scale = Vector3(
             jsonData["scale"][0].get<float>(),
             jsonData["scale"][1].get<float>(),
             jsonData["scale"][2].get<float>());
@@ -174,10 +176,11 @@ void JsonLoader::LinkComponent(json jsonData)
             {
                 auto guid = std::to_wstring(materialGuid.get<std::string>());
                 auto material = EObject::FindObjectByGuid<Material>(guid);
-                material->shader = ResourceManager::main->GetShader(std::to_wstring(refMaterialTable[guid]["shaderName"].get<std::string>()));
+                material->shader = ResourceManager::main->GetShader(
+                    std::to_wstring(refMaterialTable[guid]["shaderName"].get<std::string>()));
                 if (material->shader.lock() == nullptr)
                     Debug::log << "Material ½¦ÀÌ´õ ¸ÅÄª ½ÇÆÐ\n";
-                meshRenderer->AddMateiral({ material });
+                meshRenderer->AddMateiral({material});
             }
 
             meshRenderer->AddMesh(mesh);
@@ -185,8 +188,6 @@ void JsonLoader::LinkComponent(json jsonData)
             //Debug::log << meshInfo["meshName"].get<std::string>() << "\n";
         }
     }
-
-
 }
 
 void JsonLoader::LinkMaterial(json jsonData)
@@ -210,9 +211,9 @@ void JsonLoader::LinkMaterial(json jsonData)
         material->SetData(data["name"].get<std::string>(), data["data"].get<int>());
     for (auto& data : vectors)
         material->SetData(data["name"].get<std::string>(), Vector4(
-            data["data"][0].get<float>(),
-            data["data"][1].get<float>(),
-            data["data"][2].get<float>(),
-            data["data"][3].get<float>()
-        ));
+                              data["data"][0].get<float>(),
+                              data["data"][1].get<float>(),
+                              data["data"][2].get<float>(),
+                              data["data"][3].get<float>()
+                          ));
 }

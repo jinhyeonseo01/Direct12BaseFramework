@@ -8,7 +8,7 @@ namespace dxe
     {
     public:
         RendererComponent();
-        virtual ~RendererComponent() override;
+        ~RendererComponent() override;
         void* Clone() override;
         void ReRef() override;
         void Destroy() override;
@@ -34,4 +34,3 @@ namespace dxe
         void SetModel(std::shared_ptr<Model> model);
     };
 }
-

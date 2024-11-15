@@ -422,9 +422,6 @@
     <ClCompile Include="..\plugins\includes\tracy\TracyClient.cpp">
       <Filter>Profiler</Filter>
     </ClCompile>
-    <ClCompile Include="Direct12BaseFramework.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\MeshSample.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>

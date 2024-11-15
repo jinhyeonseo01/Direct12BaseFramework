@@ -3,10 +3,10 @@
 
 void Material::GetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shared_ptr<Shader> shader)
 {
-    for(auto& texture : _propertyTextures)
+    for (auto& texture : _propertyTextures)
     {
         std::string name = texture.first;
-        if(_propertyTextures[name].lock() != nullptr)
+        if (_propertyTextures[name].lock() != nullptr)
             table->SetCurrentGroupHandle(shader, name, texture.second.lock()->GetSRVHandle());
     }
 }
@@ -14,7 +14,8 @@ void Material::GetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shar
 
 int Material::GetData(std::string name, int& field)
 {
-    if(_propertyInts.contains(name)) {
+    if (_propertyInts.contains(name))
+    {
         return field = _propertyInts[name];
     }
     return field = 0;
@@ -22,7 +23,8 @@ int Material::GetData(std::string name, int& field)
 
 float Material::GetData(std::string name, float& field)
 {
-    if (_propertyFloats.contains(name)) {
+    if (_propertyFloats.contains(name))
+    {
         return field = _propertyFloats[name];
     }
     return field = 0.5f;
@@ -30,15 +32,17 @@ float Material::GetData(std::string name, float& field)
 
 Vector4 Material::GetData(std::string name, Vector4& field)
 {
-    if (_propertyVectors.contains(name)) {
+    if (_propertyVectors.contains(name))
+    {
         return field = _propertyVectors[name];
     }
-    return field = Vector4(1,1,1,1);
+    return field = Vector4(1, 1, 1, 1);
 }
 
 Vector3 Material::GetData(std::string name, Vector3& field)
 {
-    if (_propertyVectors.contains(name)) {
+    if (_propertyVectors.contains(name))
+    {
         return field = Vector3(_propertyVectors[name]);
     }
     return field = Vector3::Zero;
@@ -46,7 +50,8 @@ Vector3 Material::GetData(std::string name, Vector3& field)
 
 Vector2 Material::GetData(std::string name, Vector2& field)
 {
-    if (_propertyVectors.contains(name)) {
+    if (_propertyVectors.contains(name))
+    {
         return field = Vector2(_propertyVectors[name]);
     }
     return field = Vector2::Zero;
@@ -54,7 +59,8 @@ Vector2 Material::GetData(std::string name, Vector2& field)
 
 Matrix Material::GetData(std::string name, Matrix& field)
 {
-    if (_propertyMatrixs.contains(name)) {
+    if (_propertyMatrixs.contains(name))
+    {
         return field = _propertyMatrixs[name];
     }
     return field = Matrix::Identity;
@@ -62,7 +68,7 @@ Matrix Material::GetData(std::string name, Matrix& field)
 
 std::shared_ptr<Texture> Material::SetData(std::string name, const std::shared_ptr<Texture>& field)
 {
-    if(field != nullptr)
+    if (field != nullptr)
         _propertyTextures[name] = field;
     return field;
 }
@@ -98,4 +104,3 @@ Matrix Material::SetData(std::string name, const Matrix& field)
 {
     return _propertyMatrixs[name] = field;
 }
-

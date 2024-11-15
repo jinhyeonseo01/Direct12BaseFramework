@@ -1,5 +1,3 @@
-
-
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
@@ -32,12 +30,12 @@ struct VS_OUT
 
 VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
-    VS_OUT output = (VS_OUT) 0;
-    
+    VS_OUT output = (VS_OUT)0;
+
     float4 viewPos = mul(float4(input.pos, 1.0f), WorldMatrix);
     //viewPos = float4(input.pos.xy, 0.1f, 1.0f);
     output.uv = input.uv.xy;
-    output.pos = viewPos;//mul(viewPos, ProjectionMatrix)
+    output.pos = viewPos; //mul(viewPos, ProjectionMatrix)
     return output;
 }
 

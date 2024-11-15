@@ -6,12 +6,10 @@
 
 RootSignature::RootSignature()
 {
-
 }
 
 RootSignature::~RootSignature()
 {
-
 }
 
 ComPtr<ID3D12RootSignature> RootSignature::GetRootSignature()
@@ -33,10 +31,10 @@ void RootSignature::Init()
     unsigned int cbvRegister = 0;
     unsigned int srvRegister = 0;
     unsigned int uavRegister = 0;
-    _ranges.push_back({ D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 8, cbvRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } );
+    _ranges.push_back({D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 8, cbvRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND});
     cbvRegister += _ranges[_ranges.size() - 1].NumDescriptors;
 
-    _ranges.push_back({ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, srvRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } );
+    _ranges.push_back({D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, srvRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND});
     srvRegister += _ranges[_ranges.size() - 1].NumDescriptors;
 
     //_ranges.push_back({ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 2, uavRegister, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } );
@@ -60,7 +58,7 @@ void RootSignature::Init()
     rootParameters[1].DescriptorTable.NumDescriptorRanges = _ranges.size();
     rootParameters[1].DescriptorTable.pDescriptorRanges = _ranges.data();
     rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-    
+
     rootSignatureDesc.NumParameters = rootParameters.size();
     rootSignatureDesc.pParameters = rootParameters.data();
 
@@ -114,14 +112,15 @@ void RootSignature::Init()
     rootSignatureDesc.NumStaticSamplers = 5;
     rootSignatureDesc.pStaticSamplers = samplerDesc;
     rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
-    | D3D12_ROOT_SIGNATURE_FLAG_ALLOW_STREAM_OUTPUT;
- // SO 쓰겠다는 명시
+        | D3D12_ROOT_SIGNATURE_FLAG_ALLOW_STREAM_OUTPUT;
+    // SO 쓰겠다는 명시
 
     ComPtr<ID3DBlob> signature;
     ComPtr<ID3DBlob> error;
 
     D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-    GraphicManager::main->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), ComPtrIDAddr(_rootSignature));
+    GraphicManager::main->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
+                                                       ComPtrIDAddr(_rootSignature));
 
 
     InitCompute();
@@ -129,7 +128,7 @@ void RootSignature::Init()
 
 void RootSignature::InitCompute()
 {
-    D3D12_STATIC_SAMPLER_DESC samplerDesc[1] = { CD3DX12_STATIC_SAMPLER_DESC() };
+    D3D12_STATIC_SAMPLER_DESC samplerDesc[1] = {CD3DX12_STATIC_SAMPLER_DESC()};
 
     samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -149,8 +148,8 @@ void RootSignature::InitCompute()
     // 디스크립터 범위 설정
     D3D12_DESCRIPTOR_RANGE ranges[2] =
     {
-        { D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 7, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND }, // b1 ~ b7
-        { D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } //  t0 ~t8
+        {D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 7, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND}, // b1 ~ b7
+        {D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND} //  t0 ~t8
         // { D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 2, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND } //  u0 ~u1
     };
 
@@ -188,5 +187,6 @@ void RootSignature::InitCompute()
     ComPtr<ID3DBlob> error;
 
     D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-    GraphicManager::main->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), ComPtrIDAddr(_computeRootSignature));
+    GraphicManager::main->_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
+                                                       ComPtrIDAddr(_computeRootSignature));
 }

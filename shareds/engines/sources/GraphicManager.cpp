@@ -9,7 +9,6 @@
 #include "RootSignature.h"
 
 
-
 GraphicManager* GraphicManager::main = nullptr;
 
 
@@ -126,7 +125,8 @@ void GraphicManager::Release()
             _d3dDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
 
             Microsoft::WRL::ComPtr<ID3D12DebugDevice> debugDevice;
-            if (SUCCEEDED(_device->QueryInterface(IID_PPV_ARGS(&debugDevice)))) {
+            if (SUCCEEDED(_device->QueryInterface(IID_PPV_ARGS(&debugDevice))))
+            {
                 debugDevice->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
             }
         }
@@ -151,7 +151,7 @@ void GraphicManager::CreateAdapterAndOutputs()
     ComPtr<IDXGIOutput4> output4;
 
     unsigned __int64 maxMemory = 0;
-    for(int index = 0; _factory->EnumAdapters1(index, ComPtrAddr(adapter1)) != DXGI_ERROR_NOT_FOUND;++index)
+    for (int index = 0; _factory->EnumAdapters1(index, ComPtrAddr(adapter1)) != DXGI_ERROR_NOT_FOUND; ++index)
     {
         DXGI_ADAPTER_DESC2 adapterDesc;
         if (DXSuccess(adapter1->QueryInterface(ComPtrIDAddr(adapter3))))
@@ -162,7 +162,8 @@ void GraphicManager::CreateAdapterAndOutputs()
             _adapterList.push_back(adapter3);
 
             unsigned __int64 currentMemory = adapterDesc.DedicatedVideoMemory;
-            if (currentMemory > maxMemory) {
+            if (currentMemory > maxMemory)
+            {
                 bestAdapterIndex = index;
                 setting.maxGPUMemory = static_cast<long long int>(maxMemory = currentMemory);
                 setting.GPUAdapterName = std::wstring(adapterDesc.Description);
@@ -203,11 +204,11 @@ void GraphicManager::CreateSwapChain()
         swapChainDesc.BufferCount = setting.swapChain_BufferCount;
 
         swapChainDesc.Scaling = DXGI_SCALING_NONE;
-        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//flip 방식에
+        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; //flip 방식에
         swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
         //DXGI_ALPHA_MODE_IGNORE 알파 폐기
         //DXGI_ALPHA_MODE_UNSPECIFIED 알파안씀
-        swapChainDesc.Flags = 
+        swapChainDesc.Flags =
             DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH |
             DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING; // 화면 테더링. 현상 허용하는거인듯. 모니터랑 주사율 안맞을때 쓴다나봄. 이거 안하면 vsync켜짐
         //DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING
@@ -231,18 +232,20 @@ void GraphicManager::CreateSwapChain()
     }
 
     ComPtr<IDXGISwapChain1> swapChain1 = nullptr;
-    DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc, swapChainFullDesc.Windowed ? &swapChainFullDesc : nullptr, nullptr, &swapChain1));
+    DXAssert(_factory->CreateSwapChainForHwnd(_commandQueue.Get(), hWnd, &swapChainDesc,
+                                              swapChainFullDesc.Windowed ? &swapChainFullDesc : nullptr, nullptr,
+                                              &swapChain1));
     DXAssert(swapChain1->QueryInterface(ComPtrIDAddr(_swapChain)));
 
 
     _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
     ComPtr<ID3D12Resource> buffer;
-    for (int i = 0; i < setting.swapChain_BufferCount; i++) {
+    for (int i = 0; i < setting.swapChain_BufferCount; i++)
+    {
         _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
     }
 
     _swapChainIndex = _swapChain->GetCurrentBackBufferIndex();
-
 }
 
 void GraphicManager::RefreshSwapChain()
@@ -269,7 +272,8 @@ void GraphicManager::RefreshSwapChain()
             _renderTargetGroupTable.clear();
         }
 
-        { // 디스플레이의 모드를 바꾸는거
+        {
+            // 디스플레이의 모드를 바꾸는거
             DXGI_MODE_DESC dxgiDesc1 = {};
             DEVMODEW currentMonitorSetting = {};
             currentMonitorSetting.dmSize = sizeof(DEVMODEW);
@@ -289,13 +293,16 @@ void GraphicManager::RefreshSwapChain()
             _swapChain->ResizeTarget(&dxgiDesc1); //이건 디스플레이 모드를 바꾸는거임
         }
 
-        { // 스왑체인의 버퍼를 바꾸는거
+        {
+            // 스왑체인의 버퍼를 바꾸는거
             DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc = {};
             _swapChain->GetDesc1(&dxgiSwapChainDesc);
-            _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width, setting.screenInfo.height, setting.screenFormat, dxgiSwapChainDesc.Flags);
+            _swapChain->ResizeBuffers(setting.swapChain_BufferCount, setting.screenInfo.width,
+                                      setting.screenInfo.height, setting.screenFormat, dxgiSwapChainDesc.Flags);
         }
 
-        { //버퍼 재할당
+        {
+            //버퍼 재할당
             _swapChainBuffers_Res.resize(setting.swapChain_BufferCount);
             for (int i = 0; i < setting.swapChain_BufferCount; i++)
                 _swapChain->GetBuffer(i, ComPtrIDAddr(_swapChainBuffers_Res[i]));
@@ -320,7 +327,7 @@ void GraphicManager::ResourceSet()
     auto resourceCommandList = GetResourceCommandList();
     resourceCommandList->Close();
 
-    std::array<ID3D12CommandList*, 1> commandListArray{ resourceCommandList.Get() };
+    std::array<ID3D12CommandList*, 1> commandListArray{resourceCommandList.Get()};
     GetCommandQueue()->ExecuteCommandLists(commandListArray.size(), commandListArray.data());
 
     TotalFenceWaitImmediate(); //Gpu에게 작업 맡긴 뒤에 Lock 검
@@ -368,7 +375,7 @@ void GraphicManager::CommandListFenceWait(int index)
 
 void GraphicManager::ChangeNextCommand()
 {
-    _currentCommandListIndex = (_currentCommandListIndex+1) % _commandLists.size();
+    _currentCommandListIndex = (_currentCommandListIndex + 1) % _commandLists.size();
 }
 
 void GraphicManager::ClearCurrentCommand()
@@ -378,7 +385,6 @@ void GraphicManager::ClearCurrentCommand()
     // 이번 렌더 주기동안 사용할 list를 마련해주시고용
     DXAssert(allocator->Reset());
     DXAssert(list->Reset(allocator.Get(), nullptr));
-
 }
 
 void GraphicManager::FinishAndExecuteCurrentCommand()
@@ -386,15 +392,18 @@ void GraphicManager::FinishAndExecuteCurrentCommand()
     FinishCurrentCommand();
     ExecuteCurrentCommand();
 }
+
 void GraphicManager::FinishCurrentCommand()
 {
     GetCurrentCommandList()->Close();
 }
+
 void GraphicManager::ExecuteCurrentCommand()
 {
-    ID3D12CommandList* commandListArray[] = { GetCurrentCommandList().Get() };
+    ID3D12CommandList* commandListArray[] = {GetCurrentCommandList().Get()};
     _commandQueue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
 }
+
 void GraphicManager::SwapChainExecute()
 {
     switch (setting.syncType)
@@ -446,7 +455,8 @@ void GraphicManager::CreateDevice()
         selectAdapter = _adapterList[bestAdapterIndex];
     ComPtr<ID3D12Device1> selectDevice;
     DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_12_0, ComPtrIDAddr(selectDevice)));
-    if ((!selectDevice) && (!DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_11_0, ComPtrIDAddr(selectDevice)))))
+    if ((!selectDevice) && (!DXSuccess(D3D12CreateDevice(selectAdapter.Get(), D3D_FEATURE_LEVEL_11_0,
+                                                         ComPtrIDAddr(selectDevice)))))
         throw std::exception("Direct 12를 지원하지 않는 그래픽 어뎁터");
 
     DXAssert(selectDevice->QueryInterface(ComPtrIDAddr(_device)));
@@ -457,16 +467,17 @@ void GraphicManager::CreateDevice()
     msaaQualityLevel.SampleCount = 4;
     msaaQualityLevel.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
     msaaQualityLevel.NumQualityLevels = 0;
-    DXSuccess(_device->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &msaaQualityLevel, sizeof(D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS)));
+    DXSuccess(_device->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &msaaQualityLevel,
+                                           sizeof(D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS)));
 
     setting.msaaSupportAble = msaaQualityLevel.NumQualityLevels > 0;
     setting.msaaSupportMaxLevel = msaaQualityLevel.NumQualityLevels;
-
 }
 
 void GraphicManager::CreateFences()
 {
-    { // 리소스용
+    {
+        // 리소스용
         DXAssert(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, ComPtrIDAddr(_fence)));
         _fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
     }
@@ -481,7 +492,7 @@ void GraphicManager::CreateFences()
         _commandListFenceValue.clear();
         _commandListFenceValue.resize(size);
 
-        for(int i=0;i< size;++i)
+        for (int i = 0; i < size; ++i)
         {
             DXAssert(_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, ComPtrIDAddr(_commandListFences[i])));
             _commandListFenceEvents[i] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -534,7 +545,8 @@ void GraphicManager::CreateCommandQueueListAlloc()
         ComPtr<ID3D12GraphicsCommandList4> commandList4;
 
         DXAssert(_device->CreateCommandAllocator(commandType, ComPtrIDAddr(commandAllocator)));
-        DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr, ComPtrIDAddr(commandList)));
+        DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr,
+                                            ComPtrIDAddr(commandList)));
         DXAssert(commandList->QueryInterface(ComPtrIDAddr(commandList4)));
         commandList4->Close();
 
@@ -548,7 +560,8 @@ void GraphicManager::CreateCommandQueueListAlloc()
         ComPtr<ID3D12GraphicsCommandList4> commandList4;
 
         DXAssert(_device->CreateCommandAllocator(commandType, ComPtrIDAddr(commandAllocator)));
-        DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr, ComPtrIDAddr(commandList)));
+        DXAssert(_device->CreateCommandList(0, commandType, commandAllocator.Get(), nullptr,
+                                            ComPtrIDAddr(commandList)));
         DXAssert(commandList->QueryInterface(ComPtrIDAddr(commandList4)));
         //commandList4->Close();
 
@@ -568,12 +581,11 @@ void GraphicManager::CreateRootSignature()
 {
     _rootSignature = std::make_shared<RootSignature>();
     _rootSignature->Init();
-
 }
 
 void GraphicManager::SetScreenInfo(Viewport viewInfo)
 {
-    if( setting.screenInfo.width != viewInfo.width ||
+    if (setting.screenInfo.width != viewInfo.width ||
         setting.screenInfo.height != viewInfo.height)
         _refreshReserve = true;
 
@@ -583,7 +595,7 @@ void GraphicManager::SetScreenInfo(Viewport viewInfo)
 }
 
 void GraphicManager::ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before,
-    D3D12_RESOURCE_STATES after, bool isResource)
+                                     D3D12_RESOURCE_STATES after, bool isResource)
 {
     ComPtr<ID3D12GraphicsCommandList4> list = GetCurrentCommandList();
     if (isResource)
@@ -626,10 +638,8 @@ std::shared_ptr<RenderTargetGroup> GraphicManager::GetRenderTargetGroup(const RT
 }
 
 
-
 GraphicManager::GraphicManager()
 {
-
 }
 
 GraphicManager::~GraphicManager()

@@ -4,11 +4,11 @@
 
 namespace dxe
 {
-
     inline Vector3 Vector3ToFmod(FMOD_VECTOR vec3)
     {
         return Vector3(vec3.x, vec3.y, vec3.z);
     }
+
     inline FMOD_VECTOR Vector3ToFmod(Vector3 vec3)
     {
         return FMOD_VECTOR(vec3.x, vec3.y, vec3.z);
@@ -40,14 +40,15 @@ namespace dxe
         /// @param innerAngle 모든 방향에서 최대 볼륨
         /// @param outerAngle 모든 방향에서 감쇠가 없음
         /// @param outerVolume 외부 각도에서 볼륨이 50%로 줄어듭니다.
-        void SetSoundAtten(std::shared_ptr<FMOD::Sound>& sound, float minD=10, float maxD=100, float innerAngle=360, float outerAngle=360, float outerVolume = 1);
+        void SetSoundAtten(std::shared_ptr<FMOD::Sound>& sound, float minD = 10, float maxD = 100,
+                           float innerAngle = 360, float outerAngle = 360, float outerVolume = 1);
         /// @brief 리스너의 상태 세팅
         /// @param position
         /// @param velocity 
         /// @param forward 
         /// @param up 
-        void SetListener3DState(const Vector3& position, const Vector3& velocity, const Vector3& forward, const Vector3& up);
+        void SetListener3DState(const Vector3& position, const Vector3& velocity, const Vector3& forward,
+                                const Vector3& up);
         void SetSound3DState(std::shared_ptr<FMOD::Channel>& channel, const Vector3& position, const Vector3& velocity);
     };
 }
-

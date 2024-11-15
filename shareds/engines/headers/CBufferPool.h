@@ -38,6 +38,4 @@ public:
     //uint32_t CBufferIndexAlloc();
     //D3D12_CPU_DESCRIPTOR_HANDLE CBufferDescriptorHandleAlloc(D3D12_CPU_DESCRIPTOR_HANDLE* handle = nullptr);
     //void CBufferDescriptorHandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
-
 };
-

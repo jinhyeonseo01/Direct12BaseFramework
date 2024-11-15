@@ -7,7 +7,6 @@ Bone::Bone()
 
 Bone::~Bone()
 {
-
 }
 
 void Bone::SetName(const std::string& boneName, const std::string& nodeName)

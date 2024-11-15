@@ -21,4 +21,3 @@ public:
     void Rendering() override;
     void AfterRendering() override;
 };
-

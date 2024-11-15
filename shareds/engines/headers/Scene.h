@@ -6,45 +6,46 @@
 
 namespace dxe
 {
-	class Scene : public EObject
-	{
-	public:
-		Scene();
-		Scene(std::wstring name);
-		Scene(const Scene& scene);
-		Scene(Scene&& scene) noexcept;
-		Scene& operator=(const Scene& scene);
-		Scene& operator=(Scene&& scene) noexcept;
-		virtual ~Scene();
-	public:
-		void SetName(std::wstring name);
-		void Reset(std::shared_ptr<Scene> prevScene);
-		virtual void Init();
+    class Scene : public EObject
+    {
+    public:
+        Scene();
+        Scene(std::wstring name);
+        Scene(const Scene& scene);
+        Scene(Scene&& scene) noexcept;
+        Scene& operator=(const Scene& scene);
+        Scene& operator=(Scene&& scene) noexcept;
+        ~Scene() override;
+
+    public:
+        void SetName(std::wstring name);
+        void Reset(std::shared_ptr<Scene> prevScene);
+        virtual void Init();
         virtual void Update();
         virtual void RenderingBegin();
         virtual void RenderingEnd();
-	public:
-		std::wstring name;
 
-		std::vector<std::shared_ptr<GameObject>> _gameObjectList;
-		std::vector<std::shared_ptr<GameObject>> _destroyObject;
+    public:
+        std::wstring name;
 
-		static void LoadJsonObject(Scene& scene, std::wstring json);
-	public:
-		std::shared_ptr<GameObject> CreateGameObject();
-		std::shared_ptr<GameObject> CreateGameObject(std::wstring name);
+        std::vector<std::shared_ptr<GameObject>> _gameObjectList;
+        std::vector<std::shared_ptr<GameObject>> _destroyObject;
+
+        static void LoadJsonObject(Scene& scene, std::wstring json);
+
+    public:
+        std::shared_ptr<GameObject> CreateGameObject();
+        std::shared_ptr<GameObject> CreateGameObject(std::wstring name);
         std::shared_ptr<GameObject> CreateGameObjects(const std::shared_ptr<Model>& model, ModelNode* node = nullptr);
 
-		bool AddGameObject(std::shared_ptr<GameObject> gameObject);
-		bool RemoveGameObject(std::shared_ptr<GameObject> gameObject);
-		bool RemoveAtGameObject(int index);
+        bool AddGameObject(std::shared_ptr<GameObject> gameObject);
+        bool RemoveGameObject(std::shared_ptr<GameObject> gameObject);
+        bool RemoveAtGameObject(int index);
 
-		std::shared_ptr<GameObject> Find(std::wstring name, bool includeDestroy = false);
-		int Finds(std::wstring name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+        std::shared_ptr<GameObject> Find(std::wstring name, bool includeDestroy = false);
+        int Finds(std::wstring name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
 
-	public:
-		void Debug();
-
-	};
+    public:
+        void Debug();
+    };
 }
-

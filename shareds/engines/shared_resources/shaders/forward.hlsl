@@ -1,6 +1,3 @@
-
-
-
 cbuffer CameraParams : register(b0)
 {
     row_major matrix ViewMatrix;
@@ -9,7 +6,6 @@ cbuffer CameraParams : register(b0)
 
 cbuffer ObjectParams : register(b4)
 {
-
 };
 
 cbuffer BoneParams : register(b3)
@@ -60,24 +56,24 @@ struct VS_OUT
 
 VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
-    VS_OUT output = (VS_OUT) 0;
+    VS_OUT output = (VS_OUT)0;
 
     output.worldPos = float4(input.pos, 1.0f);
 
-    if(isSkinned != 0)
+    if (isSkinned != 0)
     {
         matrix boneMatrix = float4x4(0, 0, 0, 0,
-                                0, 0, 0, 0,
-                                0, 0, 0, 0,
-                                0, 0, 0, 0);
-        
-        if(input.boneWs.x > 0.0001f)
+                                     0, 0, 0, 0,
+                                     0, 0, 0, 0,
+                                     0, 0, 0, 0);
+
+        if (input.boneWs.x > 0.0001f)
             boneMatrix += bone[(int)input.boneIDs.x] * input.boneWs.x;
-        if(input.boneWs.y > 0.0001f)
+        if (input.boneWs.y > 0.0001f)
             boneMatrix += bone[(int)input.boneIDs.y] * input.boneWs.y;
-        if(input.boneWs.z > 0.0001f)
+        if (input.boneWs.z > 0.0001f)
             boneMatrix += bone[(int)input.boneIDs.z] * input.boneWs.z;
-        if(input.boneWs.w > 0.0001f)
+        if (input.boneWs.w > 0.0001f)
             boneMatrix += bone[(int)input.boneIDs.w] * input.boneWs.w;
 
         output.worldPos = mul(output.worldPos, boneMatrix);
@@ -106,6 +102,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;
-    return pow(AlbedoColor, 1.0 / 1) * _color * (saturate(dot(input.worldNormal, normalize(float3(0.7,0.8,-1)))) *0.5 +0.5f);//* _color pow(AlbedoColor, 1.0 / 1) * 
+    return pow(AlbedoColor, 1.0 / 1) * _color * (saturate(dot(input.worldNormal, normalize(float3(0.7, 0.8, -1)))) * 0.5
+        + 0.5f); //* _color pow(AlbedoColor, 1.0 / 1) * 
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }

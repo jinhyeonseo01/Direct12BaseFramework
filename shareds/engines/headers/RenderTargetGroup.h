@@ -15,7 +15,7 @@ namespace dxe
         PostProcessing,
         GUI
     };
-    
+
     class RenderTargetGroup : public std::enable_shared_from_this<RenderTargetGroup>
     {
     public:
@@ -34,7 +34,8 @@ namespace dxe
         D3D12_VIEWPORT _viewport;
         D3D12_RECT _rect;
 
-        void Create(std::vector<std::shared_ptr<RenderTexture>>& renderTargetList, std::shared_ptr<RenderTexture> depthStencil);
+        void Create(std::vector<std::shared_ptr<RenderTexture>>& renderTargetList,
+                    std::shared_ptr<RenderTexture> depthStencil);
 
         void ResourceBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
         void OMSetRenderTargets(uint32_t count, uint32_t offset);
@@ -48,4 +49,3 @@ namespace dxe
         void SetViewport(int width, int height);
     };
 }
-

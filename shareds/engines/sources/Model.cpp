@@ -9,7 +9,6 @@
 Model::Model()
 {
     _meshList.reserve(64);
-
 }
 
 Model::~Model()
@@ -36,13 +35,11 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
     _nodeNameToNodeTable.reserve(256);
 
 
-    if(pack->scene->HasMeshes())
+    if (pack->scene->HasMeshes())
     {
-
         _meshList.reserve(pack->scene->mNumMeshes);
-        for(int i= 0;i< pack->scene->mNumMeshes;i++)
+        for (int i = 0; i < pack->scene->mNumMeshes; i++)
         {
-
             // 전처리 루프
 
             auto& currentAIMesh = pack->scene->mMeshes[i];
@@ -57,12 +54,12 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
             //--------- Vertex 등록 ---------
             Vertex vert;
             Matrix fliper(
-                1,0,0,0,
-                0,1,0,0,
-                0,0,1,0,
-                0,0,0,1
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
             );
-            for(int j=0; j< currentAIMesh->mNumVertices; j++)
+            for (int j = 0; j < currentAIMesh->mNumVertices; j++)
             {
                 vert = {};
                 vert.position = Vector3::Transform(convert_assimp::Format(currentAIMesh->mVertices[j]), fliper);
@@ -74,8 +71,10 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                     vert.color = convert_assimp::Format(currentAIMesh->mColors[0][j]);
                 if (currentAIMesh->HasTextureCoords(0))
                 {
-                    vert.tangent = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mTangents[j]), fliper);
-                    vert.bitangent = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mBitangents[j]), fliper);
+                    vert.tangent =
+                        Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mTangents[j]), fliper);
+                    vert.bitangent = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mBitangents[j]),
+                                                              fliper);
                     for (int k = 0; k < 8; k++)
                         if (currentAIMesh->HasTextureCoords(k))
                         {
@@ -116,7 +115,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                 str::trim(nodeName);
 
                 auto bone = GetBoneByName(boneName);
-                if(bone == nullptr)
+                if (bone == nullptr)
                 {
                     bone = std::make_shared<Bone>();
                     bone->SetName(boneName, nodeName);
@@ -139,7 +138,8 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                     if (findIndex == -1)
                     {
                         float minW = 1.1f;
-                        for (int l = 0; l < 4; l++) {
+                        for (int l = 0; l < 4; l++)
+                        {
                             if (weightArray[l] < minW)
                             {
                                 minW = weightArray[l];
@@ -148,19 +148,21 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                         }
                     }
                     // 수색 성공시 갱신.
-                    if(findIndex != -1) {
+                    if (findIndex != -1)
+                    {
                         reinterpret_cast<float*>(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->boneId);
-                        reinterpret_cast<float*>(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[k].mWeight;
+                        reinterpret_cast<float*>(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[k].
+                            mWeight;
                     }
                 }
             }
 
             // 후처리
             // 가중치 정리
-            for(int vertexIndex = 0; vertexIndex < vertexs.size(); vertexIndex++)
+            for (int vertexIndex = 0; vertexIndex < vertexs.size(); vertexIndex++)
             {
                 auto& currentVertex = vertexs[vertexIndex];
-                if(currentVertex.boneWeight.LengthSquared() > 1)
+                if (currentVertex.boneWeight.LengthSquared() > 1)
                     currentVertex.boneWeight.Normalize();
             }
 
@@ -171,7 +173,8 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                 meshName = std::to_string(pack->name);
             mesh->SetName(meshName);
             mesh->Init(std::move(vertexs), std::move(indexs));
-            mesh->SetBound(convert_assimp::Format(currentAIMesh->mAABB.mMin), convert_assimp::Format(currentAIMesh->mAABB.mMax));
+            mesh->SetBound(convert_assimp::Format(currentAIMesh->mAABB.mMin),
+                           convert_assimp::Format(currentAIMesh->mAABB.mMax));
             if (SimpleMath::Equals(Vector3(mesh->_bound.Extents).Length(), 0))
                 mesh->CalculateBound();
             AddMesh(mesh);
@@ -182,7 +185,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
     {
         auto rootNode = AddNode(nullptr, pack->scene->mRootNode);
         int index = 0;
-        for(int i=0;i<_boneList.size();i++)
+        for (int i = 0; i < _boneList.size(); i++)
         {
             auto& bone = _boneList[i];
             auto node = GetNodeByName(bone->nodeName);
@@ -190,9 +193,9 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                 node->SetBone(bone);
         }
     }
-    
+
     //값 세팅
-    if(_nodeList.size() != 0)
+    if (_nodeList.size() != 0)
         this->rootNode = _nodeList[0];
     if (_boneList.size() != 0)
     {
@@ -235,12 +238,12 @@ std::shared_ptr<ModelNode> Model::AddNode(const std::shared_ptr<ModelNode>& pare
     if (currentNode == nullptr)
         return nullptr;
     auto name = std::string(currentNode->mName.C_Str(), currentNode->mName.length);
-    
+
     auto trans = convert_assimp::Format(currentNode->mTransformation);
     auto thisNode = std::make_shared<ModelNode>();
     str::trim(name);
     thisNode->Init(name, trans);
-    if(parentNode != nullptr)
+    if (parentNode != nullptr)
         thisNode->SetParent(parentNode.get());
     for (int i = 0; i < currentNode->mNumMeshes; i++)
         thisNode->AddMeshName(_meshList[currentNode->mMeshes[i]]->name);
@@ -248,7 +251,7 @@ std::shared_ptr<ModelNode> Model::AddNode(const std::shared_ptr<ModelNode>& pare
     _nodeList.push_back(thisNode);
     _nodeNameToNodeTable[name] = thisNode;
 
-    for(int i = 0; i < currentNode->mNumChildren; i++)
+    for (int i = 0; i < currentNode->mNumChildren; i++)
     {
         AddNode(thisNode, currentNode->mChildren[i]);
     }
@@ -269,9 +272,9 @@ bool Model::ContainsBone(const std::string& name)
 
 std::shared_ptr<Bone> Model::AddBone(std::shared_ptr<Bone> bone)
 {
-    if(!ContainsBone(bone->boneName))
+    if (!ContainsBone(bone->boneName))
     {
-        _boneList.resize(_boneAllocator+1);
+        _boneList.resize(_boneAllocator + 1);
         bone->SetBoneID(_boneAllocator);
 
         _boneList[bone->boneId] = bone;
@@ -303,7 +306,7 @@ std::vector<std::shared_ptr<Mesh>> Model::GetMeshsByName(const std::string& name
     if (_meshNameToMeshTable.contains(name))
     {
         auto iterRange = _meshNameToMeshTable.equal_range(name);
-        for(auto it = iterRange.first; it != iterRange.second;++it)
+        for (auto it = iterRange.first; it != iterRange.second; ++it)
             meshs.push_back(it->second);
         return meshs;
     }
@@ -330,12 +333,10 @@ std::shared_ptr<Mesh> Model::GetMeshByNameSubIndex(const std::string& name, int 
 
 ModelNode::ModelNode()
 {
-
 }
 
 ModelNode::~ModelNode()
 {
-
 }
 
 void ModelNode::Init(const std::string& name, const Matrix& trans)
@@ -362,7 +363,7 @@ void ModelNode::SetParent(ModelNode* parent)
 void ModelNode::AddMeshName(const std::string& meshName)
 {
     auto iter = std::find(meshNameList.begin(), meshNameList.end(), meshName);
-    if(iter == meshNameList.end())
+    if (iter == meshNameList.end())
         meshNameList.push_back(meshName);
 }
 

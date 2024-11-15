@@ -5,7 +5,6 @@ namespace dxe
 {
     Vertex::Vertex() : Vertex(2, false)
     {
-
     }
 
     Vertex::Vertex(int uvCount, bool isStatic) : position(0, 0, 0), normal(0, 0, 1), tangent(0, 1, 0)
@@ -177,11 +176,9 @@ namespace dxe
                 std::memcpy(&buffer[offset], &boneWeight, sizeof(Vector4));
                 offset += 4;
                 break;
-
             }
             ++index;
         }
-
     }
 
     SelectorInfo Vertex::GetSelectorInfo(const std::vector<VertexProp>& props)
@@ -309,5 +306,4 @@ namespace dxe
         info.propCount = static_cast<int>(props.size());
         return info;
     }
-
 }

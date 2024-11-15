@@ -9,6 +9,7 @@ namespace dxe
         uint8,
         uint16
     };
+
     class Terrain
     {
     public:
@@ -23,7 +24,8 @@ namespace dxe
 
         float GetHeigth(int x, int y);
 
-        static std::shared_ptr<Terrain> Load(const std::wstring& path, int xLength = 0, int yLength = 0, TerrainDataType dataType = TerrainDataType::uint16, int size = 100, int height = 100);
+        static std::shared_ptr<Terrain> Load(const std::wstring& path, int xLength = 0, int yLength = 0,
+                                             TerrainDataType dataType = TerrainDataType::uint16, int size = 100,
+                                             int height = 100);
     };
 }
-

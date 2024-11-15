@@ -9,7 +9,7 @@ namespace dxe
     {
     public:
         Camera();
-        virtual ~Camera();
+        ~Camera() override;
 
     public:
         float _near = 0.03f;
@@ -27,7 +27,6 @@ namespace dxe
         Vector3 GetScreenToWorldDirection(Vector2 mousePosition);
 
     public:
-
         void* Clone() override;
         void ReRef() override;
         void Init() override;
@@ -44,4 +43,3 @@ namespace dxe
         void AfterRendering() override;
     };
 }
-

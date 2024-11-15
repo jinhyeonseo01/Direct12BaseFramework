@@ -3,12 +3,10 @@
 
 SkinnedHierarchy::SkinnedHierarchy()
 {
-
 }
 
 SkinnedHierarchy::~SkinnedHierarchy()
 {
-
 }
 
 void* SkinnedHierarchy::Clone()

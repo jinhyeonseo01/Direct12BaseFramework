@@ -8,7 +8,7 @@ std::shared_ptr<Mesh> MeshSample::CreateCubeMap()
 
 std::shared_ptr<Mesh> MeshSample::CreateQuad()
 {
-    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+    auto mesh = std::make_shared<Mesh>();
 
     std::vector<Vertex> verts;
     std::vector<unsigned int> inds;
@@ -54,7 +54,8 @@ std::shared_ptr<Mesh> MeshSample::CreateQuad()
     return mesh;
 }
 
-std::shared_ptr<Mesh> MeshSample::CreateTerrain(std::vector<unsigned short> arrayData, int xCount, int yCount, int size, int height)
+std::shared_ptr<Mesh> MeshSample::CreateTerrain(std::vector<unsigned short> arrayData, int xCount, int yCount, int size,
+                                                int height)
 {
     /*
     m_nWidth = nWidth;
@@ -69,5 +70,4 @@ std::shared_ptr<Mesh> MeshSample::CreateTerrain(std::vector<unsigned short> arra
     ::CloseHandle(hFile);
     */
     return nullptr;
-
 }

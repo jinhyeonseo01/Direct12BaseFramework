@@ -71,6 +71,7 @@ namespace dxe
         int index = 0;
         VertexProp prop;
     };
+
     class SelectorInfo
     {
     public:
@@ -81,34 +82,32 @@ namespace dxe
         std::vector<VertexProp> props;
     };
 
-	class Vertex
-	{
-	public:
-		Vector3 position = Vector3(0,0,0);
-		Vector3 normal = Vector3(0, 0, 1);
-		Vector3 tangent = Vector3(0, 1, 0);
+    class Vertex
+    {
+    public:
+        Vector3 position = Vector3(0, 0, 0);
+        Vector3 normal = Vector3(0, 0, 1);
+        Vector3 tangent = Vector3(0, 1, 0);
         Vector3 bitangent = Vector3(0, 0, 0);
-		Vector4 color = Vector4(1, 1, 0, 1);
-        std::vector<Vector3> uvs{ 8 };
-		Vector4 boneId = Vector4(-1, -1, -1, -1);
+        Vector4 color = Vector4(1, 1, 0, 1);
+        std::vector<Vector3> uvs{8};
+        Vector4 boneId = Vector4(-1, -1, -1, -1);
         Vector4 boneWeight = Vector4(0, 0, 0, 0);
 
 
-		Vertex();
+        Vertex();
         Vertex(int uvCount, bool isStatic);
-		virtual ~Vertex();
+        virtual ~Vertex();
 
-		Vertex(const Vertex& other);
-		Vertex(Vertex&& other) noexcept;
-		Vertex& operator=(const Vertex& other);
-		Vertex& operator=(Vertex&& other) noexcept;
+        Vertex(const Vertex& other);
+        Vertex(Vertex&& other) noexcept;
+        Vertex& operator=(const Vertex& other);
+        Vertex& operator=(Vertex&& other) noexcept;
 
-		bool operator==(const Vertex& other) const;
+        bool operator==(const Vertex& other) const;
 
         void WriteBuffer(float* buffer, int& offset, const std::vector<VertexProp>& selector);
 
         static SelectorInfo GetSelectorInfo(const std::vector<VertexProp>& props);
-	};
+    };
 }
-
-

@@ -43,5 +43,4 @@ public:
 public:
     ComPtr<ID3D12DescriptorHeap> _cbufferDescriptorHeap;
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> _cbufferCPUDescriptHandle;
-    
 };

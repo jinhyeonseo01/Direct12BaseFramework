@@ -72,7 +72,6 @@
 #include <simple_mesh_ext.h>
 
 
-
 //Assimp
 
 #include <assimp/Importer.hpp>
@@ -97,7 +96,6 @@
 #pragma comment(lib, "assimp-vc143-mt.lib")
 #pragma comment(lib, "zlibstatic.lib")
 #endif
-
 
 
 //direct12
@@ -129,7 +127,6 @@
 #endif
 
 
-
 //imgui
 //#include "imgui.h"
 //#include "imgui_impl_win32.h"
@@ -141,7 +138,6 @@
 
 
 //#include "imgui_internal.h"
-
 
 
 //fmod

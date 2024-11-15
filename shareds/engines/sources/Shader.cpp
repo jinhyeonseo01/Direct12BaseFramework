@@ -12,7 +12,7 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
 
     std::wstring ext = std::filesystem::path(shaderPath).extension();
 
-    std::shared_ptr<ShaderCode> shaderCode = std::make_shared<ShaderCode>();
+    auto shaderCode = std::make_shared<ShaderCode>();
     shaderCode->shaderType = shaderVersion;
     shaderCode->endPointName = endPointName;
 
@@ -41,9 +41,12 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
         ComPtr<ID3DBlob> _shaderBlob;
 
         if (!DXSuccess(::D3DCompileFromFile(shaderPath.c_str(), shaderMacro.data(), D3D_COMPILE_STANDARD_FILE_INCLUDE
-            , functionName.c_str(), version.c_str(), compileFlag, 0,
-            _shaderBlob.GetAddressOf(), shaderCode->_errorBlob.GetAddressOf()))) {
-            Debug::log << "Shader Compile Failed\n" << std::string{ (char*)shaderCode->_errorBlob->GetBufferPointer(), shaderCode->_errorBlob->GetBufferSize() } << "\n";
+                                            , functionName.c_str(), version.c_str(), compileFlag, 0,
+                                            _shaderBlob.GetAddressOf(), shaderCode->_errorBlob.GetAddressOf())))
+        {
+            Debug::log << "Shader Compile Failed\n" << std::string{
+                (char*)shaderCode->_errorBlob->GetBufferPointer(), shaderCode->_errorBlob->GetBufferSize()
+            } << "\n";
             return nullptr;
         }
         else
@@ -63,7 +66,7 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
         shaderCode->_shaderPrecompiledBuffer.resize(size);
         if (!shaderFile.read(shaderCode->_shaderPrecompiledBuffer.data(), size))
             Debug::log << "Shader Compile Failed\n" << "미리 컴파일 된 쉐이더 읽기 실패\n";
-        
+
         shaderCode->_shaderByteCode.pShaderBytecode = shaderCode->_shaderPrecompiledBuffer.data();
         shaderCode->_shaderByteCode.BytecodeLength = shaderCode->_shaderPrecompiledBuffer.size();
     }
@@ -87,7 +90,7 @@ ShaderCBufferInfo ShaderProfileInfo::GetCBufferByName(const std::string& name)
 
 std::shared_ptr<RootSignature> Shader::GetRootSignature()
 {
-    return  _rootSignature;
+    return _rootSignature;
 }
 
 
@@ -110,18 +113,22 @@ void Shader::Init()
         elementDesc.SemanticName = PropNameStrings[static_cast<int>(vertexSetInfo.props[i])].c_str();
         elementDesc.SemanticIndex = vertexSetInfo.propInfos[i].index;
         elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
-        switch (vertexSetInfo.propInfos[i].size) {
-        case 1: elementDesc.Format = DXGI_FORMAT_R32_FLOAT; break;
-        case 2: elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT; break;
-        case 3: elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT; break;
-        case 4: elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+        switch (vertexSetInfo.propInfos[i].size)
+        {
+        case 1: elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
+            break;
+        case 2: elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+            break;
+        case 3: elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+            break;
+        case 4: elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            break;
         }
         elementDesc.InputSlot = 0;
         elementDesc.AlignedByteOffset = vertexSetInfo.propInfos[i].byteOffset;
         elementDesc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
         elementDesc.InstanceDataStepRate = 0;
         _inputElementDesc[i] = elementDesc;
-
     }
 
     _pipelineDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
@@ -132,7 +139,7 @@ void Shader::Init()
 
     _pipelineDesc.pRootSignature = GraphicManager::main->_rootSignature->_rootSignature.Get();
 
-    _pipelineDesc.InputLayout = { _inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size()) };
+    _pipelineDesc.InputLayout = {_inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size())};
 
     _pipelineDesc.RTVFormats[0] = GraphicManager::main->setting.screenFormat;
     _pipelineDesc.NumRenderTargets = std::max(std::min(8, renderTargetCount), 1);
@@ -156,7 +163,7 @@ void Shader::Init()
     //_pipelineState->
 
     //CD3DX12_RASTERIZER_DESC2 resterizerDesc {D3D12_DEFAULT};
-    CD3DX12_RASTERIZER_DESC resterizerDesc{ D3D12_DEFAULT };
+    CD3DX12_RASTERIZER_DESC resterizerDesc{D3D12_DEFAULT};
 
     resterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
     resterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
@@ -189,21 +196,29 @@ void Shader::Init()
     _pipelineDesc.RasterizerState.DepthBiasClamp = 0.0f;
 
 
-
-    CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
+    CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{D3D12_DEFAULT};
     depthStencilDesc.DepthEnable = _info._zTest ? TRUE : FALSE;
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
     switch (_info._zComp)
     {
-    case CompOper::Always: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS; break;
-    case CompOper::Less: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
-    case CompOper::LEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
-    case CompOper::Equal: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
-    case CompOper::GEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
-    case CompOper::Greater: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER; break;
-    case CompOper::NotEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
-    case CompOper::Never: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NEVER; break;
-    default: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
+    case CompOper::Always: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+        break;
+    case CompOper::Less: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+        break;
+    case CompOper::LEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+        break;
+    case CompOper::Equal: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL;
+        break;
+    case CompOper::GEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+        break;
+    case CompOper::Greater: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
+        break;
+    case CompOper::NotEqual: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL;
+        break;
+    case CompOper::Never: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NEVER;
+        break;
+    default: depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+        break;
     }
     depthStencilDesc.DepthWriteMask = _info._zWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 
@@ -218,15 +233,24 @@ void Shader::Init()
     depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
     switch (_info._stencilComp)
     {
-    case CompOper::Always: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS; break;
-    case CompOper::Less: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS; break;
-    case CompOper::LEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
-    case CompOper::Equal: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
-    case CompOper::GEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
-    case CompOper::Greater: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER; break;
-    case CompOper::NotEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
-    case CompOper::Never: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER; break;
-    default: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
+    case CompOper::Always: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+        break;
+    case CompOper::Less: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS;
+        break;
+    case CompOper::LEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+        break;
+    case CompOper::Equal: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
+        break;
+    case CompOper::GEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+        break;
+    case CompOper::Greater: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER;
+        break;
+    case CompOper::NotEqual: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL;
+        break;
+    case CompOper::Never: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+        break;
+    default: depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+        break;
     }
 
     depthStencilDesc.BackFace = depthStencilDesc.FrontFace;
@@ -235,7 +259,6 @@ void Shader::Init()
 
     _pipelineDesc.BlendState.AlphaToCoverageEnable = FALSE; // 필요에 따라 TRUE로 설정
     _pipelineDesc.BlendState.IndependentBlendEnable = TRUE; // 여러 렌더 타겟에 대해 다른 블렌딩 설정을 원할 경우 TRUE로 설정
-
 
 
     for (int i = 0; i < 8; i++)
@@ -331,7 +354,7 @@ void Shader::SetShaderSetting(const ShaderInfo& info)
 void Shader::SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts)
 {
     renderTargetCount = rts.size();
-    for(int i=0;i<std::min(8, renderTargetCount);i++)
+    for (int i = 0; i < std::min(8, renderTargetCount); i++)
         RTVForamts[i] = rts[i]->format;
 }
 
@@ -357,7 +380,8 @@ void Shader::Profile()
     {
         auto& code = codePair.second;
         ComPtr<ID3D12ShaderReflection> pReflector = nullptr;
-        HRESULT hr = D3DReflect(code->_shaderByteCode.pShaderBytecode, code->_shaderByteCode.BytecodeLength, IID_ID3D12ShaderReflection, reinterpret_cast<void**>(pReflector.GetAddressOf()));
+        HRESULT hr = D3DReflect(code->_shaderByteCode.pShaderBytecode, code->_shaderByteCode.BytecodeLength,
+                                IID_ID3D12ShaderReflection, reinterpret_cast<void**>(pReflector.GetAddressOf()));
 
         if (DXSuccess(hr))
         {
@@ -367,18 +391,20 @@ void Shader::Profile()
             ShaderCBufferInfo cbufferInfo;
             ShaderCBufferPropertyInfo cbufferPropertyInfo;
 
-            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
+            for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++)
+            {
                 ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflector->GetConstantBufferByIndex(i);
                 D3D12_SHADER_BUFFER_DESC bufferDesc;
                 pConstantBuffer->GetDesc(&bufferDesc);
-                if(bufferDesc.Type != D3D_CT_CBUFFER)
+                if (bufferDesc.Type != D3D_CT_CBUFFER)
                     continue;
 
                 cbufferInfo.name = std::string(bufferDesc.Name);
                 cbufferInfo.index = bufferDesc.Variables;
                 cbufferInfo.bufferByteSize = static_cast<int>(bufferDesc.Size);
 
-                for (UINT j = 0; j < bufferDesc.Variables; j++) {
+                for (UINT j = 0; j < bufferDesc.Variables; j++)
+                {
                     ID3D12ShaderReflectionVariable* pVar = pConstantBuffer->GetVariableByIndex(j);
 
                     D3D12_SHADER_VARIABLE_DESC varDesc;
@@ -386,7 +412,7 @@ void Shader::Profile()
                     ID3D12ShaderReflectionType* pType = pVar->GetType();
                     D3D12_SHADER_TYPE_DESC typeDesc;
                     pType->GetDesc(&typeDesc);
-                    
+
                     switch (typeDesc.Class)
                     {
                     case D3D_SVC_SCALAR:
@@ -433,14 +459,13 @@ void Shader::Profile()
                 }
 
                 //cbufferInfo.propertys.push_back();
-                
+
                 if (!_profileInfo._nameToCBufferTable.contains(cbufferInfo.name))
                 {
                     _profileInfo._nameToCBufferTable.emplace(cbufferInfo.name, cbufferInfo);
                     _profileInfo.cbuffers.push_back(cbufferInfo);
                     CBufferPool::CBufferRegister(cbufferInfo, 1);
                 }
-                
             }
 
 
@@ -449,13 +474,14 @@ void Shader::Profile()
                 _profileInfo._typeToStructTable.emplace(codePair.first, ShaderStructInfo{});
             _profileInfo._typeToStructTable[codePair.first].count = shaderDesc.InputParameters;
 
-            for (UINT i = 0; i < shaderDesc.InputParameters; i++) {
-
+            for (UINT i = 0; i < shaderDesc.InputParameters; i++)
+            {
                 D3D12_SIGNATURE_PARAMETER_DESC desc;
                 pReflector->GetInputParameterDesc(i, &desc);
 
                 structPropertyInfo.elementType = "float";
-                switch (desc.ComponentType) {
+                switch (desc.ComponentType)
+                {
                 case D3D_REGISTER_COMPONENT_UINT32:
                     structPropertyInfo.elementType = "uint";
                     break;
@@ -471,7 +497,7 @@ void Shader::Profile()
                     break;
                 }
                 structPropertyInfo.elementTypeRange = 0;
-                for(int j=0;j<8;j++)
+                for (int j = 0; j < 8; j++)
                     structPropertyInfo.elementTypeRange += (desc.Mask & (1 << j)) ? 1 : 0;
                 structPropertyInfo.semantic = std::string(desc.SemanticName);
                 structPropertyInfo.semanticIndex = static_cast<int>(desc.SemanticIndex);
@@ -491,7 +517,8 @@ void Shader::Profile()
                 registerInfo.registerCount = static_cast<int>(bindDesc.BindCount);
                 registerInfo.name = std::string(bindDesc.Name);
                 registerInfo.elementType = "float";
-                switch (bindDesc.ReturnType) {
+                switch (bindDesc.ReturnType)
+                {
                 case D3D_RETURN_TYPE_UINT:
                     registerInfo.elementType = "uint";
                     break;
@@ -514,7 +541,8 @@ void Shader::Profile()
                 registerInfo.space = static_cast<int>(bindDesc.Space);
                 registerInfo.numSample = static_cast<int>(bindDesc.NumSamples);
                 registerInfo.registerType = 'b';
-                switch (bindDesc.Type) {
+                switch (bindDesc.Type)
+                {
                 case D3D_SIT_CBUFFER:
                     registerInfo.registerType = 'b';
                     break;
@@ -540,7 +568,8 @@ void Shader::Profile()
                     break;
                 }
                 registerInfo.bufferType = "none";
-                switch (bindDesc.Dimension) {
+                switch (bindDesc.Dimension)
+                {
                 case D3D_SRV_DIMENSION_BUFFER:
                     registerInfo.bufferType = "buffer";
                     break;
@@ -572,7 +601,8 @@ void Shader::Profile()
                     registerInfo.bufferType = "textureCubeArray";
                     break;
                 }
-                registerInfo.registerTypeString = registerInfo.registerType + std::to_string(registerInfo.registerIndex);
+                registerInfo.registerTypeString = registerInfo.registerType +
+                    std::to_string(registerInfo.registerIndex);
                 str::trim(registerInfo.registerTypeString);
 
                 if (!_profileInfo._nameToRegisterTable.contains(registerInfo.name))
@@ -601,4 +631,3 @@ std::shared_ptr<Shader> Shader::Load(std::wstring path)
 
     return shader;
 }
-

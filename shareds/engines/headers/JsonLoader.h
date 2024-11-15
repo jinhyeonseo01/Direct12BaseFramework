@@ -14,10 +14,10 @@ namespace dxe
     public:
         static json Load(std::wstring path);
 
-        template<class T, std::enable_if_t<std::is_base_of_v<EObject, T>, int> = 0>
+        template <class T, std::enable_if_t<std::is_base_of_v<EObject, T>, int>  = 0>
         static std::shared_ptr<T> CreateObject(const std::wstring& guid)
         {
-            std::shared_ptr<T> object = std::make_shared<T>()->MakeInit<T>();//
+            std::shared_ptr<T> object = std::make_shared<T>()->MakeInit<T>(); //
             object->SetGUID(guid);
             return object;
         }
@@ -44,4 +44,3 @@ namespace dxe
         void LinkMaterial(json jsonData);
     };
 }
-

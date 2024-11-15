@@ -25,7 +25,9 @@
 
 namespace tracy
 {
-    class D3D12ZoneScope {};
+    class D3D12ZoneScope
+    {
+    };
 }
 
 using TracyD3D12Ctx = void*;

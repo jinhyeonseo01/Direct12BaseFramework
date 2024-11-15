@@ -7,7 +7,7 @@ class SkinnedMeshRenderer : public dxe::RendererComponent
 {
 public:
     SkinnedMeshRenderer();
-    virtual ~SkinnedMeshRenderer() override;
+    ~SkinnedMeshRenderer() override;
     void* Clone() override;
     void ReRef() override;
     void Destroy() override;
@@ -29,4 +29,3 @@ public:
     std::shared_ptr<Model> model;
     std::shared_ptr<Texture> texture;
 };
-

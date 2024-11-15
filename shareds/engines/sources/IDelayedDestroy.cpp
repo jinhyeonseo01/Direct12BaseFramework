@@ -3,21 +3,20 @@
 
 namespace dxe
 {
-	bool IDelayedDestroy::IsDestroy() const
-	{
-		return _destroy;
-	}
+    bool IDelayedDestroy::IsDestroy() const
+    {
+        return _destroy;
+    }
 
-	void IDelayedDestroy::Destroy()
-	{
-		_destroy = true;
-	}
+    void IDelayedDestroy::Destroy()
+    {
+        _destroy = true;
+    }
 
-	IDelayedDestroy::~IDelayedDestroy() = default;
+    IDelayedDestroy::~IDelayedDestroy() = default;
 
 
-	IDelayedDestroy::IDelayedDestroy() : _destroy(false)
-	{
-
-	}
+    IDelayedDestroy::IDelayedDestroy() : _destroy(false)
+    {
+    }
 }

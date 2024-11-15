@@ -17,6 +17,7 @@ namespace dxe
         Always,
         Never
     };
+
     enum class CullingType
     {
         NONE,
@@ -24,6 +25,7 @@ namespace dxe
         BACK,
         WIREFRAME
     };
+
     enum class RenderQueueType
     {
         Opaque,
@@ -31,11 +33,13 @@ namespace dxe
         Transparent,
         Geometry
     };
+
     enum class FrontWise
     {
         CW,
         CCW
     };
+
     enum class BlendType
     {
         AlphaBlend, //FinalColor = SrcColor * SrcAlpha + DestColor * (1 - SrcAlpha)
@@ -55,6 +59,7 @@ namespace dxe
         int semanticIndex = 0;
         int registerIndex = 0;
     };
+
     class ShaderStructInfo
     {
     public:
@@ -76,6 +81,7 @@ namespace dxe
         int space = 0;
         int numSample = 0;
     };
+
     class ShaderCBufferPropertyInfo
     {
     public:
@@ -114,7 +120,6 @@ namespace dxe
 
         ShaderRegisterInfo GetRegisterByName(const std::string& name);
         ShaderCBufferInfo GetCBufferByName(const std::string& name);
-
     };
 
     class ShaderCode
@@ -154,7 +159,7 @@ namespace dxe
         //D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
         //D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST
 
-        BlendType _blendType[8] = { BlendType::AlphaBlend };
+        BlendType _blendType[8] = {BlendType::AlphaBlend};
         int _renderQueue = 2000;
         RenderQueueType _renderQueueType = RenderQueueType::Opaque;
         bool isMsaaDisable = true;
@@ -171,10 +176,10 @@ namespace dxe
         ShaderProfileInfo _profileInfo;
 
         int _initCount = 0;
-    public:
 
-        ComPtr<ID3D12PipelineState>			_pipelineState;
-        D3D12_GRAPHICS_PIPELINE_STATE_DESC  _pipelineDesc = {};
+    public:
+        ComPtr<ID3D12PipelineState> _pipelineState;
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC _pipelineDesc = {};
         std::vector<D3D12_INPUT_ELEMENT_DESC> _inputElementDesc;
 
         int renderTargetCount = 1;
@@ -194,5 +199,4 @@ namespace dxe
             std::string shaderVersion,
             std::vector<D3D_SHADER_MACRO>& shaderMacro);
     };
-} 
-
+}

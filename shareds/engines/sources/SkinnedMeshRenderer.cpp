@@ -28,7 +28,7 @@ void SkinnedMeshRenderer::Init()
 {
     RendererComponent::Init();
 
-    std::shared_ptr<Material> material = std::make_shared<Material>();
+    auto material = std::make_shared<Material>();
     material->shader = ResourceManager::main->GetShader(L"forward");;
 
     texture = Texture::Load(L"test.png", true);
@@ -75,9 +75,6 @@ void SkinnedMeshRenderer::OnComponentDestroy()
 void SkinnedMeshRenderer::BeforeRendering()
 {
     RendererComponent::BeforeRendering();
-
-
-
 }
 
 void SkinnedMeshRenderer::Rendering()
@@ -125,7 +122,8 @@ void SkinnedMeshRenderer::Rendering()
         for (int j = 0; j < model->_boneList.size(); j++)
         {
             objs.clear();
-            gameObject.lock()->rootParent.lock()->GetChildsAllByName(std::to_wstring(model->_boneList[j]->nodeName), objs);
+            gameObject.lock()->rootParent.lock()->GetChildsAllByName(std::to_wstring(model->_boneList[j]->nodeName),
+                                                                     objs);
             objs[0]->transform->GetLocalToWorldMatrix(mat);
             data3.boneMatrix[j] = model->_boneList[j]->offsetTransform * mat; // * model->_boneList[j]->offsetTransform
             //std::memcpy(&(data3.boneMatrix[j]._11), &(mat._11), sizeof(mat));
@@ -133,7 +131,8 @@ void SkinnedMeshRenderer::Rendering()
         cbuffer3.SetData(&data3, sizeof(data3));
         table->SetCurrentGroupHandle(material->shader.lock(), "BoneParams", cbuffer3.handle);
 
-        GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
+        GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(
+            material->shader.lock(), "CameraParams");
 
         auto a = table->GetCurrentGroupGPUHandle(0);
         list->SetGraphicsRootDescriptorTable(1, a);

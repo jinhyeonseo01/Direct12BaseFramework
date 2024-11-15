@@ -4,7 +4,6 @@
 
 namespace dxe
 {
-
     enum class ResourceState
     {
         RTV,
@@ -17,14 +16,16 @@ namespace dxe
     enum class AAType
     {
         MSAA,
-        TAA,// 备泅 X
+        TAA, // 备泅 X
     };
+
     enum class WindowType
     {
         FullScreen,
         FullScreen_Noborder,
-        Windows,// 备泅 X
+        Windows, // 备泅 X
     };
+
     enum class FrameSync
     {
         VSync,
@@ -52,7 +53,7 @@ namespace dxe
 
         WindowType windowType = WindowType::Windows;
         FrameSync syncType = FrameSync::GSync;
-        Viewport screenInfo = Viewport(0,0,1920,1080);
+        Viewport screenInfo = Viewport(0, 0, 1920, 1080);
         DXGI_FORMAT screenFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
         //DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
         DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -69,7 +70,6 @@ namespace dxe
     public:
 
     public:
-        
         int swapChain_BufferCount = 3;
 
         int GetMSAACount();
@@ -84,6 +84,4 @@ namespace dxe
         long long int maxGPUMemory = 0;
         std::wstring GPUAdapterName;
     };
-
 }
-

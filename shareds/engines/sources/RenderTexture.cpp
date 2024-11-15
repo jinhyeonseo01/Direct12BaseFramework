@@ -6,14 +6,11 @@
 
 RenderTexture::RenderTexture()
 {
-
 }
 
 RenderTexture::~RenderTexture()
 {
-
 }
-
 
 
 void RenderTexture::SetState(ResourceState state)
@@ -22,7 +19,9 @@ void RenderTexture::SetState(ResourceState state)
 }
 
 std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
-    const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, ResourceState state, Vector4 clearColor)
+                                                     const D3D12_HEAP_PROPERTIES& heapProperty,
+                                                     D3D12_HEAP_FLAGS heapFlags, ResourceState state,
+                                                     Vector4 clearColor)
 {
     auto texture = std::make_shared<RenderTexture>();
     auto device = GraphicManager::main->_device;
@@ -57,7 +56,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         desc.MipLevels = 1;
         desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
         resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
+        float arrFloat[4] = {clearColor.x, clearColor.y, clearColor.z, clearColor.w};
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
         pOptimizedClearValue = &optimizedClearValue;
     }
@@ -73,7 +72,8 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     return texture;
 }
 
-std::shared_ptr<RenderTexture> RenderTexture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width, uint32_t height, ResourceState state, Vector4 clearColor)
+std::shared_ptr<RenderTexture> RenderTexture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width,
+                                                   uint32_t height, ResourceState state, Vector4 clearColor)
 {
     auto texture = std::make_shared<RenderTexture>();
 

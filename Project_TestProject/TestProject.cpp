@@ -22,25 +22,22 @@ void Initialize(HINSTANCE hInstance);
 void Release();
 
 
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
+                      _In_opt_ HINSTANCE hPrevInstance,
+                      _In_ LPWSTR lpCmdLine,
+                      _In_ int nCmdShow)
 {
-
     Initialize(hInstance);
 
 
     MSG msg{};
     try
     {
-
         {
-            std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
+            auto engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
             engine->SetHandleName(L"main");
-            engine->SetWindowRect({ 400,200,1280,720 });
+            engine->SetWindowRect({400, 200, 1280, 720});
             engine->EngineInit();
             engine->VisualInit();
             engine->EngineRun();
@@ -68,7 +65,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 }
             }
         }
-        if(Engine::GetEngineList().empty())
+        if (Engine::GetEngineList().empty())
         {
             Debug::log << "모든 엔진이 제거됨\n" << "\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(0));
@@ -77,7 +74,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     catch (const std::exception& e)
     {
         Debug::log << "예외 발생: " << e.what() << "\n";
-        if(GraphicManager::main)
+        if (GraphicManager::main)
             DXSuccess(GraphicManager::main->_device->GetDeviceRemovedReason());
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
@@ -102,5 +99,4 @@ void Release()
     dxe::Engine::DeleteEngineAll();
     Debug::Console::Close();
     ShowCursor(TRUE);
-
 }

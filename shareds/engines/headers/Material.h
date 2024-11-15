@@ -30,8 +30,7 @@ public:
     int SetData(std::string name, const int& field);
     float SetData(std::string name, const float& field);
     Vector4 SetData(std::string name, const Vector4& field);
-    Vector3 SetData(std::string name, const  Vector3& field);
+    Vector3 SetData(std::string name, const Vector3& field);
     Vector2 SetData(std::string name, const Vector2& field);
     Matrix SetData(std::string name, const Matrix& field);
 };
-

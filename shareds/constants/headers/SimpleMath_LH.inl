@@ -33,7 +33,8 @@ inline Vector2 Rectangle::Center() const noexcept
 
 inline bool Rectangle::Contains(const Vector2& point) const noexcept
 {
-    return (float(x) <= point.x) && (point.x < float(x + width)) && (float(y) <= point.y) && (point.y < float(y + height));
+    return (float(x) <= point.x) && (point.x < float(x + width)) && (float(y) <= point.y) && (point.y <
+        float(y + height));
 }
 
 inline void Rectangle::Inflate(long horizAmount, long vertAmount) noexcept
@@ -149,11 +150,11 @@ inline RECT Rectangle::Union(const RECT& rcta, const RECT& rctb) noexcept
  *
  ****************************************************************************/
 
- //------------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
 
-inline bool Vector2::operator == (const Vector2& V) const noexcept
+inline bool Vector2::operator ==(const Vector2& V) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
@@ -161,7 +162,7 @@ inline bool Vector2::operator == (const Vector2& V) const noexcept
     return XMVector2Equal(v1, v2);
 }
 
-inline bool Vector2::operator != (const Vector2& V) const noexcept
+inline bool Vector2::operator !=(const Vector2& V) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
@@ -173,7 +174,7 @@ inline bool Vector2::operator != (const Vector2& V) const noexcept
 // Assignment operators
 //------------------------------------------------------------------------------
 
-inline Vector2& Vector2::operator+= (const Vector2& V) noexcept
+inline Vector2& Vector2::operator+=(const Vector2& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
@@ -183,7 +184,7 @@ inline Vector2& Vector2::operator+= (const Vector2& V) noexcept
     return *this;
 }
 
-inline Vector2& Vector2::operator-= (const Vector2& V) noexcept
+inline Vector2& Vector2::operator-=(const Vector2& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
@@ -193,7 +194,7 @@ inline Vector2& Vector2::operator-= (const Vector2& V) noexcept
     return *this;
 }
 
-inline Vector2& Vector2::operator*= (const Vector2& V) noexcept
+inline Vector2& Vector2::operator*=(const Vector2& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
@@ -203,7 +204,7 @@ inline Vector2& Vector2::operator*= (const Vector2& V) noexcept
     return *this;
 }
 
-inline Vector2& Vector2::operator*= (float S) noexcept
+inline Vector2& Vector2::operator*=(float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
@@ -212,7 +213,7 @@ inline Vector2& Vector2::operator*= (float S) noexcept
     return *this;
 }
 
-inline Vector2& Vector2::operator/= (float S) noexcept
+inline Vector2& Vector2::operator/=(float S) noexcept
 {
     using namespace DirectX;
     assert(S != 0.0f);
@@ -226,7 +227,7 @@ inline Vector2& Vector2::operator/= (float S) noexcept
 // Binary operators
 //------------------------------------------------------------------------------
 
-inline Vector2 operator+ (const Vector2& V1, const Vector2& V2) noexcept
+inline Vector2 operator+(const Vector2& V1, const Vector2& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V1);
@@ -237,7 +238,7 @@ inline Vector2 operator+ (const Vector2& V1, const Vector2& V2) noexcept
     return R;
 }
 
-inline Vector2 operator- (const Vector2& V1, const Vector2& V2) noexcept
+inline Vector2 operator-(const Vector2& V1, const Vector2& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V1);
@@ -248,7 +249,7 @@ inline Vector2 operator- (const Vector2& V1, const Vector2& V2) noexcept
     return R;
 }
 
-inline Vector2 operator* (const Vector2& V1, const Vector2& V2) noexcept
+inline Vector2 operator*(const Vector2& V1, const Vector2& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V1);
@@ -259,7 +260,7 @@ inline Vector2 operator* (const Vector2& V1, const Vector2& V2) noexcept
     return R;
 }
 
-inline Vector2 operator* (const Vector2& V, float S) noexcept
+inline Vector2 operator*(const Vector2& V, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V);
@@ -269,7 +270,7 @@ inline Vector2 operator* (const Vector2& V, float S) noexcept
     return R;
 }
 
-inline Vector2 operator/ (const Vector2& V1, const Vector2& V2) noexcept
+inline Vector2 operator/(const Vector2& V1, const Vector2& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V1);
@@ -280,7 +281,7 @@ inline Vector2 operator/ (const Vector2& V1, const Vector2& V2) noexcept
     return R;
 }
 
-inline Vector2 operator/ (const Vector2& V, float S) noexcept
+inline Vector2 operator/(const Vector2& V, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V);
@@ -290,7 +291,7 @@ inline Vector2 operator/ (const Vector2& V, float S) noexcept
     return R;
 }
 
-inline Vector2 operator* (float S, const Vector2& V) noexcept
+inline Vector2 operator*(float S, const Vector2& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(&V);
@@ -484,7 +485,7 @@ inline Vector2 Vector2::Lerp(const Vector2& v1, const Vector2& v2, float t) noex
 inline void Vector2::SmoothStep(const Vector2& v1, const Vector2& v2, float t, Vector2& result) noexcept
 {
     using namespace DirectX;
-    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t); // Clamp value to 0 to 1
     t = t * t * (3.f - 2.f * t);
     const XMVECTOR x1 = XMLoadFloat2(&v1);
     const XMVECTOR x2 = XMLoadFloat2(&v2);
@@ -495,7 +496,7 @@ inline void Vector2::SmoothStep(const Vector2& v1, const Vector2& v2, float t, V
 inline Vector2 Vector2::SmoothStep(const Vector2& v1, const Vector2& v2, float t) noexcept
 {
     using namespace DirectX;
-    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t); // Clamp value to 0 to 1
     t = t * t * (3.f - 2.f * t);
     const XMVECTOR x1 = XMLoadFloat2(&v1);
     const XMVECTOR x2 = XMLoadFloat2(&v2);
@@ -506,7 +507,8 @@ inline Vector2 Vector2::SmoothStep(const Vector2& v1, const Vector2& v2, float t
     return result;
 }
 
-inline void Vector2::Barycentric(const Vector2& v1, const Vector2& v2, const Vector2& v3, float f, float g, Vector2& result) noexcept
+inline void Vector2::Barycentric(const Vector2& v1, const Vector2& v2, const Vector2& v3, float f, float g,
+                                 Vector2& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat2(&v1);
@@ -529,7 +531,8 @@ inline Vector2 Vector2::Barycentric(const Vector2& v1, const Vector2& v2, const 
     return result;
 }
 
-inline void Vector2::CatmullRom(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& v4, float t, Vector2& result) noexcept
+inline void Vector2::CatmullRom(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& v4, float t,
+                                Vector2& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat2(&v1);
@@ -540,7 +543,8 @@ inline void Vector2::CatmullRom(const Vector2& v1, const Vector2& v2, const Vect
     XMStoreFloat2(&result, X);
 }
 
-inline Vector2 Vector2::CatmullRom(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& v4, float t) noexcept
+inline Vector2 Vector2::CatmullRom(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& v4,
+                                   float t) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat2(&v1);
@@ -554,7 +558,8 @@ inline Vector2 Vector2::CatmullRom(const Vector2& v1, const Vector2& v2, const V
     return result;
 }
 
-inline void Vector2::Hermite(const Vector2& v1, const Vector2& t1, const Vector2& v2, const Vector2& t2, float t, Vector2& result) noexcept
+inline void Vector2::Hermite(const Vector2& v1, const Vector2& t1, const Vector2& v2, const Vector2& t2, float t,
+                             Vector2& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat2(&v1);
@@ -565,7 +570,8 @@ inline void Vector2::Hermite(const Vector2& v1, const Vector2& t1, const Vector2
     XMStoreFloat2(&result, X);
 }
 
-inline Vector2 Vector2::Hermite(const Vector2& v1, const Vector2& t1, const Vector2& v2, const Vector2& t2, float t) noexcept
+inline Vector2 Vector2::Hermite(const Vector2& v1, const Vector2& t1, const Vector2& v2, const Vector2& t2,
+                                float t) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat2(&v1);
@@ -664,6 +670,7 @@ inline Vector2 Vector2::Transform(const Vector2& v, const Matrix& m) noexcept
 }
 
 _Use_decl_annotations_
+
 inline void Vector2::Transform(const Vector2* varray, size_t count, const Matrix& m, Vector2* resultArray) noexcept
 {
     using namespace DirectX;
@@ -681,6 +688,7 @@ inline void Vector2::Transform(const Vector2& v, const Matrix& m, Vector4& resul
 }
 
 _Use_decl_annotations_
+
 inline void Vector2::Transform(const Vector2* varray, size_t count, const Matrix& m, Vector4* resultArray) noexcept
 {
     using namespace DirectX;
@@ -710,7 +718,9 @@ inline Vector2 Vector2::TransformNormal(const Vector2& v, const Matrix& m) noexc
 }
 
 _Use_decl_annotations_
-inline void Vector2::TransformNormal(const Vector2* varray, size_t count, const Matrix& m, Vector2* resultArray) noexcept
+
+inline void Vector2::TransformNormal(const Vector2* varray, size_t count, const Matrix& m,
+                                     Vector2* resultArray) noexcept
 {
     using namespace DirectX;
     const XMMATRIX M = XMLoadFloat4x4(&m);
@@ -724,11 +734,11 @@ inline void Vector2::TransformNormal(const Vector2* varray, size_t count, const 
  *
  ****************************************************************************/
 
- //------------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
 
-inline bool Vector3::operator == (const Vector3& V) const noexcept
+inline bool Vector3::operator ==(const Vector3& V) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -736,7 +746,7 @@ inline bool Vector3::operator == (const Vector3& V) const noexcept
     return XMVector3Equal(v1, v2);
 }
 
-inline bool Vector3::operator != (const Vector3& V) const noexcept
+inline bool Vector3::operator !=(const Vector3& V) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -748,7 +758,7 @@ inline bool Vector3::operator != (const Vector3& V) const noexcept
 // Assignment operators
 //------------------------------------------------------------------------------
 
-inline Vector3& Vector3::operator+= (const Vector3& V) noexcept
+inline Vector3& Vector3::operator+=(const Vector3& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -758,7 +768,7 @@ inline Vector3& Vector3::operator+= (const Vector3& V) noexcept
     return *this;
 }
 
-inline Vector3& Vector3::operator-= (const Vector3& V) noexcept
+inline Vector3& Vector3::operator-=(const Vector3& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -768,7 +778,7 @@ inline Vector3& Vector3::operator-= (const Vector3& V) noexcept
     return *this;
 }
 
-inline Vector3& Vector3::operator*= (const Vector3& V) noexcept
+inline Vector3& Vector3::operator*=(const Vector3& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -778,7 +788,7 @@ inline Vector3& Vector3::operator*= (const Vector3& V) noexcept
     return *this;
 }
 
-inline Vector3& Vector3::operator*= (float S) noexcept
+inline Vector3& Vector3::operator*=(float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -787,7 +797,7 @@ inline Vector3& Vector3::operator*= (float S) noexcept
     return *this;
 }
 
-inline Vector3& Vector3::operator/= (float S) noexcept
+inline Vector3& Vector3::operator/=(float S) noexcept
 {
     using namespace DirectX;
     assert(S != 0.0f);
@@ -801,7 +811,7 @@ inline Vector3& Vector3::operator/= (float S) noexcept
 // Urnary operators
 //------------------------------------------------------------------------------
 
-inline Vector3 Vector3::operator- () const noexcept
+inline Vector3 Vector3::operator-() const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
@@ -815,7 +825,7 @@ inline Vector3 Vector3::operator- () const noexcept
 // Binary operators
 //------------------------------------------------------------------------------
 
-inline Vector3 operator+ (const Vector3& V1, const Vector3& V2) noexcept
+inline Vector3 operator+(const Vector3& V1, const Vector3& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V1);
@@ -826,7 +836,7 @@ inline Vector3 operator+ (const Vector3& V1, const Vector3& V2) noexcept
     return R;
 }
 
-inline Vector3 operator- (const Vector3& V1, const Vector3& V2) noexcept
+inline Vector3 operator-(const Vector3& V1, const Vector3& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V1);
@@ -837,7 +847,7 @@ inline Vector3 operator- (const Vector3& V1, const Vector3& V2) noexcept
     return R;
 }
 
-inline Vector3 operator* (const Vector3& V1, const Vector3& V2) noexcept
+inline Vector3 operator*(const Vector3& V1, const Vector3& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V1);
@@ -848,7 +858,7 @@ inline Vector3 operator* (const Vector3& V1, const Vector3& V2) noexcept
     return R;
 }
 
-inline Vector3 operator* (const Vector3& V, float S) noexcept
+inline Vector3 operator*(const Vector3& V, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V);
@@ -858,7 +868,7 @@ inline Vector3 operator* (const Vector3& V, float S) noexcept
     return R;
 }
 
-inline Vector3 operator/ (const Vector3& V1, const Vector3& V2) noexcept
+inline Vector3 operator/(const Vector3& V1, const Vector3& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V1);
@@ -869,7 +879,7 @@ inline Vector3 operator/ (const Vector3& V1, const Vector3& V2) noexcept
     return R;
 }
 
-inline Vector3 operator/ (const Vector3& V, float S) noexcept
+inline Vector3 operator/(const Vector3& V, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V);
@@ -879,7 +889,7 @@ inline Vector3 operator/ (const Vector3& V, float S) noexcept
     return R;
 }
 
-inline Vector3 operator* (float S, const Vector3& V) noexcept
+inline Vector3 operator*(float S, const Vector3& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(&V);
@@ -1073,7 +1083,7 @@ inline Vector3 Vector3::Lerp(const Vector3& v1, const Vector3& v2, float t) noex
 inline void Vector3::SmoothStep(const Vector3& v1, const Vector3& v2, float t, Vector3& result) noexcept
 {
     using namespace DirectX;
-    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t); // Clamp value to 0 to 1
     t = t * t * (3.f - 2.f * t);
     const XMVECTOR x1 = XMLoadFloat3(&v1);
     const XMVECTOR x2 = XMLoadFloat3(&v2);
@@ -1084,7 +1094,7 @@ inline void Vector3::SmoothStep(const Vector3& v1, const Vector3& v2, float t, V
 inline Vector3 Vector3::SmoothStep(const Vector3& v1, const Vector3& v2, float t) noexcept
 {
     using namespace DirectX;
-    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t); // Clamp value to 0 to 1
     t = t * t * (3.f - 2.f * t);
     const XMVECTOR x1 = XMLoadFloat3(&v1);
     const XMVECTOR x2 = XMLoadFloat3(&v2);
@@ -1095,7 +1105,8 @@ inline Vector3 Vector3::SmoothStep(const Vector3& v1, const Vector3& v2, float t
     return result;
 }
 
-inline void Vector3::Barycentric(const Vector3& v1, const Vector3& v2, const Vector3& v3, float f, float g, Vector3& result) noexcept
+inline void Vector3::Barycentric(const Vector3& v1, const Vector3& v2, const Vector3& v3, float f, float g,
+                                 Vector3& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat3(&v1);
@@ -1118,7 +1129,8 @@ inline Vector3 Vector3::Barycentric(const Vector3& v1, const Vector3& v2, const 
     return result;
 }
 
-inline void Vector3::CatmullRom(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, float t, Vector3& result) noexcept
+inline void Vector3::CatmullRom(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, float t,
+                                Vector3& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat3(&v1);
@@ -1129,7 +1141,8 @@ inline void Vector3::CatmullRom(const Vector3& v1, const Vector3& v2, const Vect
     XMStoreFloat3(&result, X);
 }
 
-inline Vector3 Vector3::CatmullRom(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, float t) noexcept
+inline Vector3 Vector3::CatmullRom(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4,
+                                   float t) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat3(&v1);
@@ -1143,7 +1156,8 @@ inline Vector3 Vector3::CatmullRom(const Vector3& v1, const Vector3& v2, const V
     return result;
 }
 
-inline void Vector3::Hermite(const Vector3& v1, const Vector3& t1, const Vector3& v2, const Vector3& t2, float t, Vector3& result) noexcept
+inline void Vector3::Hermite(const Vector3& v1, const Vector3& t1, const Vector3& v2, const Vector3& t2, float t,
+                             Vector3& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat3(&v1);
@@ -1154,7 +1168,8 @@ inline void Vector3::Hermite(const Vector3& v1, const Vector3& t1, const Vector3
     XMStoreFloat3(&result, X);
 }
 
-inline Vector3 Vector3::Hermite(const Vector3& v1, const Vector3& t1, const Vector3& v2, const Vector3& t2, float t) noexcept
+inline Vector3 Vector3::Hermite(const Vector3& v1, const Vector3& t1, const Vector3& v2, const Vector3& t2,
+                                float t) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat3(&v1);
@@ -1253,6 +1268,7 @@ inline Vector3 Vector3::Transform(const Vector3& v, const Matrix& m) noexcept
 }
 
 _Use_decl_annotations_
+
 inline void Vector3::Transform(const Vector3* varray, size_t count, const Matrix& m, Vector3* resultArray) noexcept
 {
     using namespace DirectX;
@@ -1270,6 +1286,7 @@ inline void Vector3::Transform(const Vector3& v, const Matrix& m, Vector4& resul
 }
 
 _Use_decl_annotations_
+
 inline void Vector3::Transform(const Vector3* varray, size_t count, const Matrix& m, Vector4* resultArray) noexcept
 {
     using namespace DirectX;
@@ -1299,7 +1316,9 @@ inline Vector3 Vector3::TransformNormal(const Vector3& v, const Matrix& m) noexc
 }
 
 _Use_decl_annotations_
-inline void Vector3::TransformNormal(const Vector3* varray, size_t count, const Matrix& m, Vector3* resultArray) noexcept
+
+inline void Vector3::TransformNormal(const Vector3* varray, size_t count, const Matrix& m,
+                                     Vector3* resultArray) noexcept
 {
     using namespace DirectX;
     const XMMATRIX M = XMLoadFloat4x4(&m);
@@ -1313,11 +1332,11 @@ inline void Vector3::TransformNormal(const Vector3* varray, size_t count, const 
  *
  ****************************************************************************/
 
- //------------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
 
-inline bool Vector4::operator == (const Vector4& V) const noexcept
+inline bool Vector4::operator ==(const Vector4& V) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1325,7 +1344,7 @@ inline bool Vector4::operator == (const Vector4& V) const noexcept
     return XMVector4Equal(v1, v2);
 }
 
-inline bool Vector4::operator != (const Vector4& V) const noexcept
+inline bool Vector4::operator !=(const Vector4& V) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1337,7 +1356,7 @@ inline bool Vector4::operator != (const Vector4& V) const noexcept
 // Assignment operators
 //------------------------------------------------------------------------------
 
-inline Vector4& Vector4::operator+= (const Vector4& V) noexcept
+inline Vector4& Vector4::operator+=(const Vector4& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1347,7 +1366,7 @@ inline Vector4& Vector4::operator+= (const Vector4& V) noexcept
     return *this;
 }
 
-inline Vector4& Vector4::operator-= (const Vector4& V) noexcept
+inline Vector4& Vector4::operator-=(const Vector4& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1357,7 +1376,7 @@ inline Vector4& Vector4::operator-= (const Vector4& V) noexcept
     return *this;
 }
 
-inline Vector4& Vector4::operator*= (const Vector4& V) noexcept
+inline Vector4& Vector4::operator*=(const Vector4& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1367,7 +1386,7 @@ inline Vector4& Vector4::operator*= (const Vector4& V) noexcept
     return *this;
 }
 
-inline Vector4& Vector4::operator*= (float S) noexcept
+inline Vector4& Vector4::operator*=(float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1376,7 +1395,7 @@ inline Vector4& Vector4::operator*= (float S) noexcept
     return *this;
 }
 
-inline Vector4& Vector4::operator/= (float S) noexcept
+inline Vector4& Vector4::operator/=(float S) noexcept
 {
     using namespace DirectX;
     assert(S != 0.0f);
@@ -1390,7 +1409,7 @@ inline Vector4& Vector4::operator/= (float S) noexcept
 // Urnary operators
 //------------------------------------------------------------------------------
 
-inline Vector4 Vector4::operator- () const noexcept
+inline Vector4 Vector4::operator-() const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
@@ -1404,7 +1423,7 @@ inline Vector4 Vector4::operator- () const noexcept
 // Binary operators
 //------------------------------------------------------------------------------
 
-inline Vector4 operator+ (const Vector4& V1, const Vector4& V2) noexcept
+inline Vector4 operator+(const Vector4& V1, const Vector4& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V1);
@@ -1415,7 +1434,7 @@ inline Vector4 operator+ (const Vector4& V1, const Vector4& V2) noexcept
     return R;
 }
 
-inline Vector4 operator- (const Vector4& V1, const Vector4& V2) noexcept
+inline Vector4 operator-(const Vector4& V1, const Vector4& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V1);
@@ -1426,7 +1445,7 @@ inline Vector4 operator- (const Vector4& V1, const Vector4& V2) noexcept
     return R;
 }
 
-inline Vector4 operator* (const Vector4& V1, const Vector4& V2) noexcept
+inline Vector4 operator*(const Vector4& V1, const Vector4& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V1);
@@ -1437,7 +1456,7 @@ inline Vector4 operator* (const Vector4& V1, const Vector4& V2) noexcept
     return R;
 }
 
-inline Vector4 operator* (const Vector4& V, float S) noexcept
+inline Vector4 operator*(const Vector4& V, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V);
@@ -1447,7 +1466,7 @@ inline Vector4 operator* (const Vector4& V, float S) noexcept
     return R;
 }
 
-inline Vector4 operator/ (const Vector4& V1, const Vector4& V2) noexcept
+inline Vector4 operator/(const Vector4& V1, const Vector4& V2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V1);
@@ -1458,7 +1477,7 @@ inline Vector4 operator/ (const Vector4& V1, const Vector4& V2) noexcept
     return R;
 }
 
-inline Vector4 operator/ (const Vector4& V, float S) noexcept
+inline Vector4 operator/(const Vector4& V, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V);
@@ -1468,7 +1487,7 @@ inline Vector4 operator/ (const Vector4& V, float S) noexcept
     return R;
 }
 
-inline Vector4 operator* (float S, const Vector4& V) noexcept
+inline Vector4 operator*(float S, const Vector4& V) noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(&V);
@@ -1664,7 +1683,7 @@ inline Vector4 Vector4::Lerp(const Vector4& v1, const Vector4& v2, float t) noex
 inline void Vector4::SmoothStep(const Vector4& v1, const Vector4& v2, float t, Vector4& result) noexcept
 {
     using namespace DirectX;
-    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t); // Clamp value to 0 to 1
     t = t * t * (3.f - 2.f * t);
     const XMVECTOR x1 = XMLoadFloat4(&v1);
     const XMVECTOR x2 = XMLoadFloat4(&v2);
@@ -1675,7 +1694,7 @@ inline void Vector4::SmoothStep(const Vector4& v1, const Vector4& v2, float t, V
 inline Vector4 Vector4::SmoothStep(const Vector4& v1, const Vector4& v2, float t) noexcept
 {
     using namespace DirectX;
-    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+    t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t); // Clamp value to 0 to 1
     t = t * t * (3.f - 2.f * t);
     const XMVECTOR x1 = XMLoadFloat4(&v1);
     const XMVECTOR x2 = XMLoadFloat4(&v2);
@@ -1686,7 +1705,8 @@ inline Vector4 Vector4::SmoothStep(const Vector4& v1, const Vector4& v2, float t
     return result;
 }
 
-inline void Vector4::Barycentric(const Vector4& v1, const Vector4& v2, const Vector4& v3, float f, float g, Vector4& result) noexcept
+inline void Vector4::Barycentric(const Vector4& v1, const Vector4& v2, const Vector4& v3, float f, float g,
+                                 Vector4& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(&v1);
@@ -1709,7 +1729,8 @@ inline Vector4 Vector4::Barycentric(const Vector4& v1, const Vector4& v2, const 
     return result;
 }
 
-inline void Vector4::CatmullRom(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vector4& v4, float t, Vector4& result) noexcept
+inline void Vector4::CatmullRom(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vector4& v4, float t,
+                                Vector4& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(&v1);
@@ -1720,7 +1741,8 @@ inline void Vector4::CatmullRom(const Vector4& v1, const Vector4& v2, const Vect
     XMStoreFloat4(&result, X);
 }
 
-inline Vector4 Vector4::CatmullRom(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vector4& v4, float t) noexcept
+inline Vector4 Vector4::CatmullRom(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vector4& v4,
+                                   float t) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(&v1);
@@ -1734,7 +1756,8 @@ inline Vector4 Vector4::CatmullRom(const Vector4& v1, const Vector4& v2, const V
     return result;
 }
 
-inline void Vector4::Hermite(const Vector4& v1, const Vector4& t1, const Vector4& v2, const Vector4& t2, float t, Vector4& result) noexcept
+inline void Vector4::Hermite(const Vector4& v1, const Vector4& t1, const Vector4& v2, const Vector4& t2, float t,
+                             Vector4& result) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(&v1);
@@ -1745,7 +1768,8 @@ inline void Vector4::Hermite(const Vector4& v1, const Vector4& t1, const Vector4
     XMStoreFloat4(&result, X);
 }
 
-inline Vector4 Vector4::Hermite(const Vector4& v1, const Vector4& t1, const Vector4& v2, const Vector4& t2, float t) noexcept
+inline Vector4 Vector4::Hermite(const Vector4& v1, const Vector4& t1, const Vector4& v2, const Vector4& t2,
+                                float t) noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(&v1);
@@ -1892,6 +1916,7 @@ inline Vector4 Vector4::Transform(const Vector4& v, const Matrix& m) noexcept
 }
 
 _Use_decl_annotations_
+
 inline void Vector4::Transform(const Vector4* varray, size_t count, const Matrix& m, Vector4* resultArray) noexcept
 {
     using namespace DirectX;
@@ -1906,11 +1931,11 @@ inline void Vector4::Transform(const Vector4* varray, size_t count, const Matrix
  *
  ****************************************************************************/
 
- //------------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
 
-inline bool Matrix::operator == (const Matrix& M) const noexcept
+inline bool Matrix::operator ==(const Matrix& M) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -1929,7 +1954,7 @@ inline bool Matrix::operator == (const Matrix& M) const noexcept
         && XMVector4Equal(x4, y4)) != 0;
 }
 
-inline bool Matrix::operator != (const Matrix& M) const noexcept
+inline bool Matrix::operator !=(const Matrix& M) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -1954,39 +1979,87 @@ inline bool Matrix::operator != (const Matrix& M) const noexcept
 
 inline Matrix::Matrix(const XMFLOAT3X3& M) noexcept
 {
-    _11 = M._11; _12 = M._12; _13 = M._13; _14 = 0.f;
-    _21 = M._21; _22 = M._22; _23 = M._23; _24 = 0.f;
-    _31 = M._31; _32 = M._32; _33 = M._33; _34 = 0.f;
-    _41 = 0.f;   _42 = 0.f;   _43 = 0.f;   _44 = 1.f;
+    _11 = M._11;
+    _12 = M._12;
+    _13 = M._13;
+    _14 = 0.f;
+    _21 = M._21;
+    _22 = M._22;
+    _23 = M._23;
+    _24 = 0.f;
+    _31 = M._31;
+    _32 = M._32;
+    _33 = M._33;
+    _34 = 0.f;
+    _41 = 0.f;
+    _42 = 0.f;
+    _43 = 0.f;
+    _44 = 1.f;
 }
 
 inline Matrix::Matrix(const XMFLOAT4X3& M) noexcept
 {
-    _11 = M._11; _12 = M._12; _13 = M._13; _14 = 0.f;
-    _21 = M._21; _22 = M._22; _23 = M._23; _24 = 0.f;
-    _31 = M._31; _32 = M._32; _33 = M._33; _34 = 0.f;
-    _41 = M._41; _42 = M._42; _43 = M._43; _44 = 1.f;
+    _11 = M._11;
+    _12 = M._12;
+    _13 = M._13;
+    _14 = 0.f;
+    _21 = M._21;
+    _22 = M._22;
+    _23 = M._23;
+    _24 = 0.f;
+    _31 = M._31;
+    _32 = M._32;
+    _33 = M._33;
+    _34 = 0.f;
+    _41 = M._41;
+    _42 = M._42;
+    _43 = M._43;
+    _44 = 1.f;
 }
 
-inline Matrix& Matrix::operator= (const XMFLOAT3X3& M) noexcept
+inline Matrix& Matrix::operator=(const XMFLOAT3X3& M) noexcept
 {
-    _11 = M._11; _12 = M._12; _13 = M._13; _14 = 0.f;
-    _21 = M._21; _22 = M._22; _23 = M._23; _24 = 0.f;
-    _31 = M._31; _32 = M._32; _33 = M._33; _34 = 0.f;
-    _41 = 0.f;   _42 = 0.f;   _43 = 0.f;   _44 = 1.f;
+    _11 = M._11;
+    _12 = M._12;
+    _13 = M._13;
+    _14 = 0.f;
+    _21 = M._21;
+    _22 = M._22;
+    _23 = M._23;
+    _24 = 0.f;
+    _31 = M._31;
+    _32 = M._32;
+    _33 = M._33;
+    _34 = 0.f;
+    _41 = 0.f;
+    _42 = 0.f;
+    _43 = 0.f;
+    _44 = 1.f;
     return *this;
 }
 
-inline Matrix& Matrix::operator= (const XMFLOAT4X3& M) noexcept
+inline Matrix& Matrix::operator=(const XMFLOAT4X3& M) noexcept
 {
-    _11 = M._11; _12 = M._12; _13 = M._13; _14 = 0.f;
-    _21 = M._21; _22 = M._22; _23 = M._23; _24 = 0.f;
-    _31 = M._31; _32 = M._32; _33 = M._33; _34 = 0.f;
-    _41 = M._41; _42 = M._42; _43 = M._43; _44 = 1.f;
+    _11 = M._11;
+    _12 = M._12;
+    _13 = M._13;
+    _14 = 0.f;
+    _21 = M._21;
+    _22 = M._22;
+    _23 = M._23;
+    _24 = 0.f;
+    _31 = M._31;
+    _32 = M._32;
+    _33 = M._33;
+    _34 = 0.f;
+    _41 = M._41;
+    _42 = M._42;
+    _43 = M._43;
+    _44 = 1.f;
     return *this;
 }
 
-inline Matrix& Matrix::operator+= (const Matrix& M) noexcept
+inline Matrix& Matrix::operator+=(const Matrix& M) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -2011,7 +2084,7 @@ inline Matrix& Matrix::operator+= (const Matrix& M) noexcept
     return *this;
 }
 
-inline Matrix& Matrix::operator-= (const Matrix& M) noexcept
+inline Matrix& Matrix::operator-=(const Matrix& M) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -2036,7 +2109,7 @@ inline Matrix& Matrix::operator-= (const Matrix& M) noexcept
     return *this;
 }
 
-inline Matrix& Matrix::operator*= (const Matrix& M) noexcept
+inline Matrix& Matrix::operator*=(const Matrix& M) noexcept
 {
     using namespace DirectX;
     const XMMATRIX M1 = XMLoadFloat4x4(this);
@@ -2046,7 +2119,7 @@ inline Matrix& Matrix::operator*= (const Matrix& M) noexcept
     return *this;
 }
 
-inline Matrix& Matrix::operator*= (float S) noexcept
+inline Matrix& Matrix::operator*=(float S) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -2066,7 +2139,7 @@ inline Matrix& Matrix::operator*= (float S) noexcept
     return *this;
 }
 
-inline Matrix& Matrix::operator/= (float S) noexcept
+inline Matrix& Matrix::operator/=(float S) noexcept
 {
     using namespace DirectX;
     assert(S != 0.f);
@@ -2089,7 +2162,7 @@ inline Matrix& Matrix::operator/= (float S) noexcept
     return *this;
 }
 
-inline Matrix& Matrix::operator/= (const Matrix& M) noexcept
+inline Matrix& Matrix::operator/=(const Matrix& M) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -2118,7 +2191,7 @@ inline Matrix& Matrix::operator/= (const Matrix& M) noexcept
 // Urnary operators
 //------------------------------------------------------------------------------
 
-inline Matrix Matrix::operator- () const noexcept
+inline Matrix Matrix::operator-() const noexcept
 {
     using namespace DirectX;
     XMVECTOR v1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&_11));
@@ -2143,7 +2216,7 @@ inline Matrix Matrix::operator- () const noexcept
 // Binary operators
 //------------------------------------------------------------------------------
 
-inline Matrix operator+ (const Matrix& M1, const Matrix& M2) noexcept
+inline Matrix operator+(const Matrix& M1, const Matrix& M2) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M1._11));
@@ -2169,7 +2242,7 @@ inline Matrix operator+ (const Matrix& M1, const Matrix& M2) noexcept
     return R;
 }
 
-inline Matrix operator- (const Matrix& M1, const Matrix& M2) noexcept
+inline Matrix operator-(const Matrix& M1, const Matrix& M2) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M1._11));
@@ -2195,7 +2268,7 @@ inline Matrix operator- (const Matrix& M1, const Matrix& M2) noexcept
     return R;
 }
 
-inline Matrix operator* (const Matrix& M1, const Matrix& M2) noexcept
+inline Matrix operator*(const Matrix& M1, const Matrix& M2) noexcept
 {
     using namespace DirectX;
     const XMMATRIX m1 = XMLoadFloat4x4(&M1);
@@ -2207,7 +2280,7 @@ inline Matrix operator* (const Matrix& M1, const Matrix& M2) noexcept
     return R;
 }
 
-inline Matrix operator* (const Matrix& M, float S) noexcept
+inline Matrix operator*(const Matrix& M, float S) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M._11));
@@ -2228,7 +2301,7 @@ inline Matrix operator* (const Matrix& M, float S) noexcept
     return R;
 }
 
-inline Matrix operator/ (const Matrix& M, float S) noexcept
+inline Matrix operator/(const Matrix& M, float S) noexcept
 {
     using namespace DirectX;
     assert(S != 0.f);
@@ -2253,7 +2326,7 @@ inline Matrix operator/ (const Matrix& M, float S) noexcept
     return R;
 }
 
-inline Matrix operator/ (const Matrix& M1, const Matrix& M2) noexcept
+inline Matrix operator/(const Matrix& M1, const Matrix& M2) noexcept
 {
     using namespace DirectX;
     XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M1._11));
@@ -2279,7 +2352,7 @@ inline Matrix operator/ (const Matrix& M1, const Matrix& M2) noexcept
     return R;
 }
 
-inline Matrix operator* (float S, const Matrix& M) noexcept
+inline Matrix operator*(float S, const Matrix& M) noexcept
 {
     using namespace DirectX;
 
@@ -2381,6 +2454,7 @@ inline Vector3 Matrix::ToEuler() const noexcept
 //------------------------------------------------------------------------------
 
 _Use_decl_annotations_
+
 inline Matrix Matrix::CreateBillboard(
     const Vector3& object,
     const Vector3& cameraPosition,
@@ -2426,6 +2500,7 @@ inline Matrix Matrix::CreateBillboard(
 }
 
 _Use_decl_annotations_
+
 inline Matrix Matrix::CreateConstrainedBillboard(
     const Vector3& object,
     const Vector3& cameraPosition,
@@ -2435,7 +2510,8 @@ inline Matrix Matrix::CreateConstrainedBillboard(
 {
     using namespace DirectX;
 
-    static const XMVECTORF32 s_minAngle = { { { 0.99825467075f, 0.99825467075f, 0.99825467075f, 0.99825467075f } } }; // 1.0 - XMConvertToRadians( 0.1f );
+    static const XMVECTORF32 s_minAngle = {{{0.99825467075f, 0.99825467075f, 0.99825467075f, 0.99825467075f}}};
+    // 1.0 - XMConvertToRadians( 0.1f );
 
     const XMVECTOR O = XMLoadFloat3(&object);
     const XMVECTOR C = XMLoadFloat3(&cameraPosition);
@@ -2578,7 +2654,8 @@ inline Matrix Matrix::CreateFromAxisAngle(const Vector3& axis, float angle) noex
     return R;
 }
 
-inline Matrix Matrix::CreatePerspectiveFieldOfView(float fov, float aspectRatio, float nearPlane, float farPlane) noexcept
+inline Matrix Matrix::CreatePerspectiveFieldOfView(float fov, float aspectRatio, float nearPlane,
+                                                   float farPlane) noexcept
 {
     using namespace DirectX;
     Matrix R;
@@ -2594,7 +2671,8 @@ inline Matrix Matrix::CreatePerspective(float width, float height, float nearPla
     return R;
 }
 
-inline Matrix Matrix::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlane, float farPlane) noexcept
+inline Matrix Matrix::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlane,
+                                                 float farPlane) noexcept
 {
     using namespace DirectX;
     Matrix R;
@@ -2610,7 +2688,8 @@ inline Matrix Matrix::CreateOrthographic(float width, float height, float zNearP
     return R;
 }
 
-inline Matrix Matrix::CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane) noexcept
+inline Matrix Matrix::CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane,
+                                                  float zFarPlane) noexcept
 {
     using namespace DirectX;
     Matrix R;
@@ -2642,7 +2721,9 @@ inline Matrix Matrix::CreateWorld(const Vector3& position, const Vector3& forwar
     XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&R._21), yaxis);
     XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&R._31), zaxis);
     R._14 = R._24 = R._34 = 0.f;
-    R._41 = position.x; R._42 = position.y; R._43 = position.z;
+    R._41 = position.x;
+    R._42 = position.y;
+    R._43 = position.z;
     R._44 = 1.f;
     return R;
 }
@@ -2793,7 +2874,7 @@ inline Plane::Plane(const Vector3& point, const Vector3& normal) noexcept
 // Comparision operators
 //------------------------------------------------------------------------------
 
-inline bool Plane::operator == (const Plane& p) const noexcept
+inline bool Plane::operator ==(const Plane& p) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR p1 = XMLoadFloat4(this);
@@ -2801,7 +2882,7 @@ inline bool Plane::operator == (const Plane& p) const noexcept
     return XMPlaneEqual(p1, p2);
 }
 
-inline bool Plane::operator != (const Plane& p) const noexcept
+inline bool Plane::operator !=(const Plane& p) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR p1 = XMLoadFloat4(this);
@@ -2904,11 +2985,11 @@ inline Plane Plane::Transform(const Plane& plane, const Quaternion& rotation) no
  *
  ****************************************************************************/
 
- //------------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
 
-inline bool Quaternion::operator == (const Quaternion& q) const noexcept
+inline bool Quaternion::operator ==(const Quaternion& q) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(this);
@@ -2916,7 +2997,7 @@ inline bool Quaternion::operator == (const Quaternion& q) const noexcept
     return XMQuaternionEqual(q1, q2);
 }
 
-inline bool Quaternion::operator != (const Quaternion& q) const noexcept
+inline bool Quaternion::operator !=(const Quaternion& q) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(this);
@@ -2928,7 +3009,7 @@ inline bool Quaternion::operator != (const Quaternion& q) const noexcept
 // Assignment operators
 //------------------------------------------------------------------------------
 
-inline Quaternion& Quaternion::operator+= (const Quaternion& q) noexcept
+inline Quaternion& Quaternion::operator+=(const Quaternion& q) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(this);
@@ -2937,7 +3018,7 @@ inline Quaternion& Quaternion::operator+= (const Quaternion& q) noexcept
     return *this;
 }
 
-inline Quaternion& Quaternion::operator-= (const Quaternion& q) noexcept
+inline Quaternion& Quaternion::operator-=(const Quaternion& q) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(this);
@@ -2946,7 +3027,7 @@ inline Quaternion& Quaternion::operator-= (const Quaternion& q) noexcept
     return *this;
 }
 
-inline Quaternion& Quaternion::operator*= (const Quaternion& q) noexcept
+inline Quaternion& Quaternion::operator*=(const Quaternion& q) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(this);
@@ -2955,7 +3036,7 @@ inline Quaternion& Quaternion::operator*= (const Quaternion& q) noexcept
     return *this;
 }
 
-inline Quaternion& Quaternion::operator*= (float S) noexcept
+inline Quaternion& Quaternion::operator*=(float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q = XMLoadFloat4(this);
@@ -2963,7 +3044,7 @@ inline Quaternion& Quaternion::operator*= (float S) noexcept
     return *this;
 }
 
-inline Quaternion& Quaternion::operator/= (const Quaternion& q) noexcept
+inline Quaternion& Quaternion::operator/=(const Quaternion& q) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(this);
@@ -2977,7 +3058,7 @@ inline Quaternion& Quaternion::operator/= (const Quaternion& q) noexcept
 // Urnary operators
 //------------------------------------------------------------------------------
 
-inline Quaternion Quaternion::operator- () const noexcept
+inline Quaternion Quaternion::operator-() const noexcept
 {
     using namespace DirectX;
     const XMVECTOR q = XMLoadFloat4(this);
@@ -2991,7 +3072,7 @@ inline Quaternion Quaternion::operator- () const noexcept
 // Binary operators
 //------------------------------------------------------------------------------
 
-inline Quaternion operator+ (const Quaternion& Q1, const Quaternion& Q2) noexcept
+inline Quaternion operator+(const Quaternion& Q1, const Quaternion& Q2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(&Q1);
@@ -3002,7 +3083,7 @@ inline Quaternion operator+ (const Quaternion& Q1, const Quaternion& Q2) noexcep
     return R;
 }
 
-inline Quaternion operator- (const Quaternion& Q1, const Quaternion& Q2) noexcept
+inline Quaternion operator-(const Quaternion& Q1, const Quaternion& Q2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(&Q1);
@@ -3013,7 +3094,7 @@ inline Quaternion operator- (const Quaternion& Q1, const Quaternion& Q2) noexcep
     return R;
 }
 
-inline Quaternion operator* (const Quaternion& Q1, const Quaternion& Q2) noexcept
+inline Quaternion operator*(const Quaternion& Q1, const Quaternion& Q2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(&Q1);
@@ -3024,7 +3105,7 @@ inline Quaternion operator* (const Quaternion& Q1, const Quaternion& Q2) noexcep
     return R;
 }
 
-inline Quaternion operator* (const Quaternion& Q, float S) noexcept
+inline Quaternion operator*(const Quaternion& Q, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q = XMLoadFloat4(&Q);
@@ -3034,7 +3115,7 @@ inline Quaternion operator* (const Quaternion& Q, float S) noexcept
     return R;
 }
 
-inline Quaternion operator/ (const Quaternion& Q1, const Quaternion& Q2) noexcept
+inline Quaternion operator/(const Quaternion& Q1, const Quaternion& Q2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(&Q1);
@@ -3046,7 +3127,7 @@ inline Quaternion operator/ (const Quaternion& Q1, const Quaternion& Q2) noexcep
     return R;
 }
 
-inline Quaternion operator* (float S, const Quaternion& Q) noexcept
+inline Quaternion operator*(float S, const Quaternion& Q) noexcept
 {
     using namespace DirectX;
     const XMVECTOR q1 = XMLoadFloat4(&Q);
@@ -3330,7 +3411,7 @@ inline Color::Color(const DirectX::PackedVector::XMUBYTEN4& Packed) noexcept
 //------------------------------------------------------------------------------
 // Comparision operators
 //------------------------------------------------------------------------------
-inline bool Color::operator == (const Color& c) const noexcept
+inline bool Color::operator ==(const Color& c) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(this);
@@ -3338,7 +3419,7 @@ inline bool Color::operator == (const Color& c) const noexcept
     return XMColorEqual(c1, c2);
 }
 
-inline bool Color::operator != (const Color& c) const noexcept
+inline bool Color::operator !=(const Color& c) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(this);
@@ -3350,21 +3431,21 @@ inline bool Color::operator != (const Color& c) const noexcept
 // Assignment operators
 //------------------------------------------------------------------------------
 
-inline Color& Color::operator= (const DirectX::PackedVector::XMCOLOR& Packed) noexcept
+inline Color& Color::operator=(const DirectX::PackedVector::XMCOLOR& Packed) noexcept
 {
     using namespace DirectX;
     XMStoreFloat4(this, PackedVector::XMLoadColor(&Packed));
     return *this;
 }
 
-inline Color& Color::operator= (const DirectX::PackedVector::XMUBYTEN4& Packed) noexcept
+inline Color& Color::operator=(const DirectX::PackedVector::XMUBYTEN4& Packed) noexcept
 {
     using namespace DirectX;
     XMStoreFloat4(this, PackedVector::XMLoadUByteN4(&Packed));
     return *this;
 }
 
-inline Color& Color::operator+= (const Color& c) noexcept
+inline Color& Color::operator+=(const Color& c) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(this);
@@ -3373,7 +3454,7 @@ inline Color& Color::operator+= (const Color& c) noexcept
     return *this;
 }
 
-inline Color& Color::operator-= (const Color& c) noexcept
+inline Color& Color::operator-=(const Color& c) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(this);
@@ -3382,7 +3463,7 @@ inline Color& Color::operator-= (const Color& c) noexcept
     return *this;
 }
 
-inline Color& Color::operator*= (const Color& c) noexcept
+inline Color& Color::operator*=(const Color& c) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(this);
@@ -3391,7 +3472,7 @@ inline Color& Color::operator*= (const Color& c) noexcept
     return *this;
 }
 
-inline Color& Color::operator*= (float S) noexcept
+inline Color& Color::operator*=(float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c = XMLoadFloat4(this);
@@ -3399,7 +3480,7 @@ inline Color& Color::operator*= (float S) noexcept
     return *this;
 }
 
-inline Color& Color::operator/= (const Color& c) noexcept
+inline Color& Color::operator/=(const Color& c) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(this);
@@ -3412,7 +3493,7 @@ inline Color& Color::operator/= (const Color& c) noexcept
 // Urnary operators
 //------------------------------------------------------------------------------
 
-inline Color Color::operator- () const noexcept
+inline Color Color::operator-() const noexcept
 {
     using namespace DirectX;
     const XMVECTOR c = XMLoadFloat4(this);
@@ -3425,7 +3506,7 @@ inline Color Color::operator- () const noexcept
 // Binary operators
 //------------------------------------------------------------------------------
 
-inline Color operator+ (const Color& C1, const Color& C2) noexcept
+inline Color operator+(const Color& C1, const Color& C2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(&C1);
@@ -3435,7 +3516,7 @@ inline Color operator+ (const Color& C1, const Color& C2) noexcept
     return R;
 }
 
-inline Color operator- (const Color& C1, const Color& C2) noexcept
+inline Color operator-(const Color& C1, const Color& C2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(&C1);
@@ -3445,7 +3526,7 @@ inline Color operator- (const Color& C1, const Color& C2) noexcept
     return R;
 }
 
-inline Color operator* (const Color& C1, const Color& C2) noexcept
+inline Color operator*(const Color& C1, const Color& C2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(&C1);
@@ -3455,7 +3536,7 @@ inline Color operator* (const Color& C1, const Color& C2) noexcept
     return R;
 }
 
-inline Color operator* (const Color& C, float S) noexcept
+inline Color operator*(const Color& C, float S) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c = XMLoadFloat4(&C);
@@ -3464,7 +3545,7 @@ inline Color operator* (const Color& C, float S) noexcept
     return R;
 }
 
-inline Color operator/ (const Color& C1, const Color& C2) noexcept
+inline Color operator/(const Color& C1, const Color& C2) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(&C1);
@@ -3474,7 +3555,7 @@ inline Color operator/ (const Color& C1, const Color& C2) noexcept
     return R;
 }
 
-inline Color operator* (float S, const Color& C) noexcept
+inline Color operator*(float S, const Color& C) noexcept
 {
     using namespace DirectX;
     const XMVECTOR c1 = XMLoadFloat4(&C);
@@ -3638,10 +3719,10 @@ inline Color Color::Lerp(const Color& c1, const Color& c2, float t) noexcept
  *
  ****************************************************************************/
 
- //-----------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
-inline bool Ray::operator == (const Ray& r) const noexcept
+//-----------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
+inline bool Ray::operator ==(const Ray& r) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR r1p = XMLoadFloat3(&position);
@@ -3651,7 +3732,7 @@ inline bool Ray::operator == (const Ray& r) const noexcept
     return XMVector3Equal(r1p, r2p) && XMVector3Equal(r1d, r2d);
 }
 
-inline bool Ray::operator != (const Ray& r) const noexcept
+inline bool Ray::operator !=(const Ray& r) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR r1p = XMLoadFloat3(&position);
@@ -3675,7 +3756,8 @@ inline bool Ray::Intersects(const BoundingOrientedBox& box, _Out_ float& Dist) c
     return box.Intersects(position, direction, Dist);
 }
 
-inline bool Ray::Intersects(const Vector3& tri0, const Vector3& tri1, const Vector3& tri2, _Out_ float& Dist) const noexcept
+inline bool Ray::Intersects(const Vector3& tri0, const Vector3& tri1, const Vector3& tri2,
+                            _Out_ float& Dist) const noexcept
 {
     return DirectX::TriangleTests::Intersects(position, direction, tri0, tri1, tri2, Dist);
 }
@@ -3722,19 +3804,19 @@ inline bool Ray::Intersects(const Plane& plane, _Out_ float& Dist) const noexcep
  *
  ****************************************************************************/
 
- //------------------------------------------------------------------------------
- // Comparision operators
- //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Comparision operators
+//------------------------------------------------------------------------------
 
 #if (__cplusplus < 202002L)
-inline bool Viewport::operator == (const Viewport& vp) const noexcept
+inline bool Viewport::operator ==(const Viewport& vp) const noexcept
 {
     return (x == vp.x && y == vp.y
         && width == vp.width && height == vp.height
         && minDepth == vp.minDepth && maxDepth == vp.maxDepth);
 }
 
-inline bool Viewport::operator != (const Viewport& vp) const noexcept
+inline bool Viewport::operator !=(const Viewport& vp) const noexcept
 {
     return (x != vp.x || y != vp.y
         || width != vp.width || height != vp.height
@@ -3746,12 +3828,14 @@ inline bool Viewport::operator != (const Viewport& vp) const noexcept
 // Assignment operators
 //------------------------------------------------------------------------------
 
-inline Viewport& Viewport::operator= (const RECT& rct) noexcept
+inline Viewport& Viewport::operator=(const RECT& rct) noexcept
 {
-    x = float(rct.left); y = float(rct.top);
+    x = float(rct.left);
+    y = float(rct.top);
     width = float(rct.right - rct.left);
     height = float(rct.bottom - rct.top);
-    minDepth = 0.f; maxDepth = 1.f;
+    minDepth = 0.f;
+    maxDepth = 1.f;
     return *this;
 }
 
@@ -3766,11 +3850,14 @@ inline Viewport& Viewport::operator= (const D3D11_VIEWPORT& vp) noexcept
 #endif
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
-inline Viewport& Viewport::operator= (const D3D12_VIEWPORT& vp) noexcept
+inline Viewport& Viewport::operator=(const D3D12_VIEWPORT& vp) noexcept
 {
-    x = vp.TopLeftX; y = vp.TopLeftY;
-    width = vp.Width; height = vp.Height;
-    minDepth = vp.MinDepth; maxDepth = vp.MaxDepth;
+    x = vp.TopLeftX;
+    y = vp.TopLeftY;
+    width = vp.Width;
+    height = vp.Height;
+    minDepth = vp.MinDepth;
+    maxDepth = vp.MaxDepth;
     return *this;
 }
 #endif
@@ -3787,7 +3874,8 @@ inline float Viewport::AspectRatio() const noexcept
     return (width / height);
 }
 
-inline Vector3 Viewport::Project(const Vector3& p, const Matrix& proj, const Matrix& view, const Matrix& world) const noexcept
+inline Vector3 Viewport::Project(const Vector3& p, const Matrix& proj, const Matrix& view,
+                                 const Matrix& world) const noexcept
 {
     using namespace DirectX;
     XMVECTOR v = XMLoadFloat3(&p);
@@ -3798,7 +3886,8 @@ inline Vector3 Viewport::Project(const Vector3& p, const Matrix& proj, const Mat
     return result;
 }
 
-inline void Viewport::Project(const Vector3& p, const Matrix& proj, const Matrix& view, const Matrix& world, Vector3& result) const noexcept
+inline void Viewport::Project(const Vector3& p, const Matrix& proj, const Matrix& view, const Matrix& world,
+                              Vector3& result) const noexcept
 {
     using namespace DirectX;
     XMVECTOR v = XMLoadFloat3(&p);
@@ -3807,7 +3896,8 @@ inline void Viewport::Project(const Vector3& p, const Matrix& proj, const Matrix
     XMStoreFloat3(&result, v);
 }
 
-inline Vector3 Viewport::Unproject(const Vector3& p, const Matrix& proj, const Matrix& view, const Matrix& world) const noexcept
+inline Vector3 Viewport::Unproject(const Vector3& p, const Matrix& proj, const Matrix& view,
+                                   const Matrix& world) const noexcept
 {
     using namespace DirectX;
     XMVECTOR v = XMLoadFloat3(&p);
@@ -3818,7 +3908,8 @@ inline Vector3 Viewport::Unproject(const Vector3& p, const Matrix& proj, const M
     return result;
 }
 
-inline void Viewport::Unproject(const Vector3& p, const Matrix& proj, const Matrix& view, const Matrix& world, Vector3& result) const noexcept
+inline void Viewport::Unproject(const Vector3& p, const Matrix& proj, const Matrix& view, const Matrix& world,
+                                Vector3& result) const noexcept
 {
     using namespace DirectX;
     XMVECTOR v = XMLoadFloat3(&p);

@@ -13,4 +13,3 @@ namespace dxe
         virtual ~IClone() = default;
     };
 }
-

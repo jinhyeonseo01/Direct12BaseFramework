@@ -17,6 +17,5 @@ namespace dxe
         void SetBoneID(int id);
         void SetOffsetTransform(const Matrix& matrix);
         virtual ~Bone();
-
     };
-} 
+}

@@ -28,7 +28,8 @@ public:
     ComPtr<ID3D12DescriptorHeap> _tempDescriptorHeap;
 
     void AddRecycleHandle(std::string registerName, const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
-    void SetCurrentGroupHandle(std::shared_ptr<Shader> shader, std::string registerName, const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
+    void SetCurrentGroupHandle(std::shared_ptr<Shader> shader, std::string registerName,
+                               const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
     void RecycleCurrentGroupHandle(std::shared_ptr<Shader> shader, std::string registerName);
     void SetCPUHandle(int groupIndex, int offsetIndex, const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
     D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(int groupIndex, int offsetIndex);
@@ -40,4 +41,3 @@ public:
 
     void SetNextGroupHandle();
 };
-

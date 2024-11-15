@@ -17,6 +17,4 @@ public:
     void IndexFree(uint32_t index);
     D3D12_CPU_DESCRIPTOR_HANDLE HandleAlloc();
     void HandleFree(const D3D12_CPU_DESCRIPTOR_HANDLE& handle);
-
 };
-

@@ -28,7 +28,7 @@ namespace dxe
 
     public: // Direct
 
-        bool _refreshReserve = false;//예약
+        bool _refreshReserve = false; //예약
 
 
         ComPtr<IDXGIFactory4> _factory;
@@ -67,17 +67,16 @@ namespace dxe
 
         std::unordered_map<int, std::shared_ptr<RenderTargetGroup>> _renderTargetGroupTable;
 
-    public://DescriptorHeap
+    public: //DescriptorHeap
         std::shared_ptr<ShaderResourcePool> _textureHandlePool;
         std::shared_ptr<Texture> _noneTexture;
 
-    public://DescriptorHeap
+    public: //DescriptorHeap
         int _currentCBufferPoolIndex = -1;
         std::vector<std::shared_ptr<CBufferPool>> _cbufferPoolList;
 
         int _currentDescriptorTableIndex = -1;
         std::vector<std::shared_ptr<DescriptorTable>> _descriptorTableList;
-
 
     public:
         SelectorInfo vertexInfo_Full{};
@@ -86,9 +85,10 @@ namespace dxe
 
     public:
         bool _isRelease = false;
+
     public:
         void Init();
-        void Refresh();//D3D12GetDebugInterface
+        void Refresh(); //D3D12GetDebugInterface
 
         void Release();
 
@@ -128,7 +128,8 @@ namespace dxe
 
         void SetScreenInfo(Viewport viewInfo);
 
-        void ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after, bool isResource = false);
+        void ResourceBarrier(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after,
+                             bool isResource = false);
 
         // 렌더링 준비
         void RenderPrepare();
@@ -151,12 +152,9 @@ namespace dxe
         GraphicManager();
         virtual ~GraphicManager();
 
-
     public:
 #ifdef TRACY_ENABLE
         tracy::D3D12QueueCtx _tracyCTX;
 #endif
     };
-
 }
-

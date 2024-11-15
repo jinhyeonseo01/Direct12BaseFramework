@@ -10,12 +10,10 @@ std::unordered_map<std::string, int> CBufferPool::_cbufferIndexTable{};
 
 CBufferPool::CBufferPool()
 {
-
 }
 
 CBufferPool::~CBufferPool()
 {
-
 }
 
 void CBufferPool::CBufferRegister(std::string name, int cbufferSize, int count)
@@ -28,10 +26,11 @@ void CBufferPool::CBufferRegister(std::string name, int cbufferSize, int count)
 
 void CBufferPool::CBufferRegister(ShaderCBufferInfo& cbufferInfo, int count)
 {
-    if(!_cbufferInfoTable.contains(cbufferInfo.name)) {
+    if (!_cbufferInfoTable.contains(cbufferInfo.name))
+    {
         _cbufferInfoTable.emplace(cbufferInfo.name, cbufferInfo);
     }
-    if(!_cbufferIndexTable.contains(cbufferInfo.name))
+    if (!_cbufferIndexTable.contains(cbufferInfo.name))
         _cbufferIndexTable.emplace(cbufferInfo.name, count);
     _cbufferIndexTable[cbufferInfo.name] = count;
 }
@@ -44,14 +43,14 @@ void CBufferPool::AddCBuffer(std::string name, std::shared_ptr<CBuffer> cbuffer)
 
 void CBufferPool::AddCBuffer(std::string name, int size, int count)
 {
-    if(!_cbufferTable.contains(name))
+    if (!_cbufferTable.contains(name))
     {
         auto cbuffer = std::make_shared<CBuffer>();
         cbuffer->Init(size, count);
         _cbufferTable.emplace(name, cbuffer);
         _cbufferIndexTable.emplace(name, 0);
     }
-    else  if (_cbufferTable[name]->_cbufferCount < count) // 더 많은 양으로 설정될 경우
+    else if (_cbufferTable[name]->_cbufferCount < count) // 더 많은 양으로 설정될 경우
     {
         auto cbuffer = std::make_shared<CBuffer>();
         cbuffer->Init(size, count);
@@ -62,7 +61,7 @@ void CBufferPool::AddCBuffer(std::string name, int size, int count)
 
 CBufferView CBufferPool::PopCBuffer(std::string name, int size, int count)
 {
-    if(!_cbufferTable.contains(name))
+    if (!_cbufferTable.contains(name))
     {
         AddCBuffer(name, size, count);
     }
@@ -73,11 +72,12 @@ CBufferView CBufferPool::PopCBuffer(std::string name, int size, int count)
 
 void CBufferPool::Init()
 {
-    for(auto& cbufferInfo : _cbufferInfoTable)
+    for (auto& cbufferInfo : _cbufferInfoTable)
     {
         Debug::log << (cbufferInfo.second.name) << "\n";
     }
-    _cbufferDescriptorSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    _cbufferDescriptorSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void CBufferPool::Reset()
@@ -85,6 +85,7 @@ void CBufferPool::Reset()
     for (auto& indexPair : _cbufferIndexTable)
         _cbufferIndexTable[indexPair.first] = 0;
 }
+
 /*
 uint32_t CBufferPool::CBufferIndexAlloc()
 {

@@ -47,7 +47,6 @@ namespace dxe
         std::shared_ptr<Bone> GetBoneByName(const std::string& name);
         std::shared_ptr<Bone> GetBoneByID(int index);
 
-
     public:
         Model();
         virtual ~Model();
@@ -78,4 +77,3 @@ namespace dxe
         void AddMeshName(const std::string& meshName);
     };
 }
-

@@ -10,12 +10,10 @@
 
 Camera::Camera()
 {
-
 }
 
 Camera::~Camera()
 {
-
 }
 
 Vector3 Camera::GetScreenToWorldDirection(Vector2 mousePosition)

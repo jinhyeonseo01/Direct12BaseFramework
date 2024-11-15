@@ -11,12 +11,10 @@
 
 MeshRenderer::MeshRenderer()
 {
-
 }
 
 MeshRenderer::~MeshRenderer()
 {
-    
 }
 
 void* MeshRenderer::Clone()
@@ -77,9 +75,6 @@ void MeshRenderer::OnComponentDestroy()
 void MeshRenderer::BeforeRendering()
 {
     RendererComponent::BeforeRendering();
-
-
-
 }
 
 void MeshRenderer::Rendering()
@@ -87,11 +82,11 @@ void MeshRenderer::Rendering()
     RendererComponent::Rendering();
 
 
-    for(int i=0;i< materialList.size();i++)
+    for (int i = 0; i < materialList.size(); i++)
     {
         if (meshList.size() == 0)
             break;
-        auto material = materialList[i];//.lock()
+        auto material = materialList[i]; //.lock()
         auto mesh = meshList[i % meshList.size()].lock();
         if (!material)
             continue;
@@ -126,8 +121,9 @@ void MeshRenderer::Rendering()
         cbuffer2.SetData(&data2, sizeof(data2));
         table->SetCurrentGroupHandle(material->shader.lock(), "DefaultMaterialParams", cbuffer2.handle);
 
-        
-        GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
+
+        GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(
+            material->shader.lock(), "CameraParams");
 
         auto a = table->GetCurrentGroupGPUHandle(0);
         list->SetGraphicsRootDescriptorTable(1, a);

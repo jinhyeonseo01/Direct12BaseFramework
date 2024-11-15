@@ -8,7 +8,6 @@
 
 Mesh::Mesh()
 {
-
 }
 
 Mesh::~Mesh()
@@ -51,7 +50,8 @@ BoundingOrientedBox Mesh::GetWorldOBB(std::shared_ptr<Transform> trans)
 {
     BoundingOrientedBox obb = GetOBB(Quaternion::Identity);
     Matrix localToWorld = Matrix::Identity;
-    if (trans != nullptr) {
+    if (trans != nullptr)
+    {
         trans->GetLocalToWorldMatrix_BottomUp(localToWorld);
         obb.Transform(obb, localToWorld);
     }
@@ -60,9 +60,9 @@ BoundingOrientedBox Mesh::GetWorldOBB(std::shared_ptr<Transform> trans)
 
 void Mesh::CalculateBound()
 {
-    Vector3 min = Vector3(100,100,100);
+    auto min = Vector3(100, 100, 100);
     Vector3 max = -Vector3(100, 100, 100);
-    for(auto& vert : _vertexList)
+    for (auto& vert : _vertexList)
     {
         if (min.x >= vert.position.x)
             min.x = vert.position.x;
@@ -95,7 +95,8 @@ bool Mesh::Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, flo
     BoundingOrientedBox worldOBB;
     BoundingOrientedBox localOBB = GetOBB(Quaternion::Identity);
     Matrix localToWorld = Matrix::Identity;
-    if (trans != nullptr) {
+    if (trans != nullptr)
+    {
         trans->GetLocalToWorldMatrix_BottomUp(localToWorld);
         localOBB.Transform(worldOBB, localToWorld);
     }
@@ -114,12 +115,12 @@ bool Mesh::Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, flo
         localHitPoint.Normalize(localHitPoint);
 
         XMVECTOR normals[6] = {
-        XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),   // +X
-        XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f),  // -X
-        XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),   // +Y
-        XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),  // -Y
-        XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),   // +Z
-        XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f)   // -Z
+            XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), // +X
+            XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f), // -X
+            XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), // +Y
+            XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f), // -Y
+            XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), // +Z
+            XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f) // -Z
         };
 
         float maxDot = -FLT_MAX;
@@ -144,7 +145,8 @@ bool Mesh::Intersects(std::shared_ptr<Transform> trans, const BoundingOrientedBo
 {
     BoundingOrientedBox finalBound = this->GetOBB(Quaternion::Identity);
 
-    if (trans != nullptr) {
+    if (trans != nullptr)
+    {
         Matrix localToWorld = Matrix::Identity;
         trans->GetLocalToWorldMatrix_BottomUp(localToWorld);
         finalBound.Transform(finalBound, localToWorld);
@@ -168,7 +170,7 @@ void Mesh::CreateVertexBuffer()
     _dataBuffer.resize(vertexInto.totalSize * vertexCount);
 
     int offset = 0;
-    for(auto& vertex : _vertexList)
+    for (auto& vertex : _vertexList)
         vertex.WriteBuffer(_dataBuffer.data(), offset, vertexInto.props);
 
     {
@@ -207,10 +209,12 @@ void Mesh::CreateVertexBuffer()
         _uploadBuffer->Unmap(0, nullptr);
 
 
-        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(_vertexResource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+            _vertexResource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
         GraphicManager::main->GetResourceCommandList()->ResourceBarrier(1, &barrier);
         GraphicManager::main->GetResourceCommandList()->CopyResource(_vertexResource.Get(), _uploadBuffer.Get());
-        D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(_vertexResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+        D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(
+            _vertexResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
         GraphicManager::main->GetResourceCommandList()->ResourceBarrier(1, &barrier2);
         GraphicManager::main->ResourceSet(); // 어차피 여기서 execute 할거기 때문에 업로드 힙 없애도 됨 ㅇㅇ..
     }
@@ -264,10 +268,12 @@ void Mesh::CreateIndexBuffer(D3D12_PRIMITIVE_TOPOLOGY indexTopology)
         _uploadBuffer->Unmap(0, nullptr);
 
 
-        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(_vertexResource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+            _vertexResource.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
         GraphicManager::main->GetResourceCommandList()->ResourceBarrier(1, &barrier);
         GraphicManager::main->GetResourceCommandList()->CopyResource(_indexResource.Get(), _uploadBuffer.Get());
-        D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(_indexResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+        D3D12_RESOURCE_BARRIER barrier2 = CD3DX12_RESOURCE_BARRIER::Transition(
+            _indexResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
         GraphicManager::main->GetResourceCommandList()->ResourceBarrier(1, &barrier2);
         GraphicManager::main->ResourceSet(); // 어차피 여기서 execute 할거기 때문에 업로드 힙 없애도 됨 ㅇㅇ..
     }

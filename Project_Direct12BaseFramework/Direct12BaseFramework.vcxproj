@@ -342,7 +342,6 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClCompile Include="..\shareds\engines\sources\Texture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Transform.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Vertex.cpp" />
-    <ClCompile Include="Direct12BaseFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc" />

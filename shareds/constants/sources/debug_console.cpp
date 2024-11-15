@@ -18,142 +18,144 @@ namespace Debug
 {
     int Console::debugDeltaTime = 10;
 
-	Console::Console()
-	{
-		
-		
-	}
-	Console::~Console()
-	{
-		Close();
-	}
-	//std::thread asyncWriteThread;
-	//std::queue<std::wstring> wstringQueue;
-	std::wstring Console::TextPop()
-	{
-		std::wstring str;
-		m.lock();
-		if (!Debug::log.wstringQueue.empty())
-		{
-			str = Debug::log.wstringQueue.front();
-			Debug::log.wstringQueue.pop();
-		}
-		m.unlock();
-		return str;
-	}
+    Console::Console()
+    {
+    }
 
-	void Console::TextPush(std::wstring& str)
-	{
-		m.lock();
-		Debug::log.wstringQueue.push(str);
-		m.unlock();
-	}
+    Console::~Console()
+    {
+        Close();
+    }
 
-	int Console::TextCount()
-	{
-		int count;
-		m.lock();
-		count = Debug::log.wstringQueue.size();
-		m.unlock();
-		return count;
-	}
+    //std::thread asyncWriteThread;
+    //std::queue<std::wstring> wstringQueue;
+    std::wstring Console::TextPop()
+    {
+        std::wstring str;
+        m.lock();
+        if (!Debug::log.wstringQueue.empty())
+        {
+            str = Debug::log.wstringQueue.front();
+            Debug::log.wstringQueue.pop();
+        }
+        m.unlock();
+        return str;
+    }
 
-	void Console::TextQueueClear()
-	{
-		m.lock();
-		while(!Debug::log.wstringQueue.empty())
-			Debug::log.wstringQueue.pop();
-		m.unlock();
-		std::wstring str{ L"Debug Console Clear : 너무 많은 부채\n" };
-		TextPush(str);
-	}
+    void Console::TextPush(std::wstring& str)
+    {
+        m.lock();
+        Debug::log.wstringQueue.push(str);
+        m.unlock();
+    }
 
-	Console& Console::CreateConsole(int offsetX, int offsetY, int width, int hegiht, bool record)
-	{
-		if (!log.active.load())
-		{
-			AllocConsole();
-			SetConsoleTitle(L"콘솔창");
-			
-			log.record.store(record);
-			log.active.store(true);
-			log.runningAsyncWriteThread.store(true);
+    int Console::TextCount()
+    {
+        int count;
+        m.lock();
+        count = Debug::log.wstringQueue.size();
+        m.unlock();
+        return count;
+    }
 
-			if (log.runningAsyncWriteThread.load())
-			{
-				log.asyncWriteThread = std::thread{ []() {
-					log.AsyncWriteFunction();
-				} };
-				//log.asyncWriteThread.detach();
-			}
-		}
-		//HWND_TOP
-		SetWindowPos(GetConsoleWindow(), HWND_NOTOPMOST, offsetX, offsetY, width, hegiht, SWP_SHOWWINDOW|
-			SWP_ASYNCWINDOWPOS);
-		return log;
-	}
-	void Console::Close()
-	{
-		if (log.active.load())
-		{
-			log.active.store(false);
-			log.runningAsyncWriteThread.store(false);
+    void Console::TextQueueClear()
+    {
+        m.lock();
+        while (!Debug::log.wstringQueue.empty())
+            Debug::log.wstringQueue.pop();
+        m.unlock();
+        std::wstring str{L"Debug Console Clear : 너무 많은 부채\n"};
+        TextPush(str);
+    }
+
+    Console& Console::CreateConsole(int offsetX, int offsetY, int width, int hegiht, bool record)
+    {
+        if (!log.active.load())
+        {
+            AllocConsole();
+            SetConsoleTitle(L"콘솔창");
+
+            log.record.store(record);
+            log.active.store(true);
+            log.runningAsyncWriteThread.store(true);
+
+            if (log.runningAsyncWriteThread.load())
+            {
+                log.asyncWriteThread = std::thread{
+                    []()
+                    {
+                        log.AsyncWriteFunction();
+                    }
+                };
+                //log.asyncWriteThread.detach();
+            }
+        }
+        //HWND_TOP
+        SetWindowPos(GetConsoleWindow(), HWND_NOTOPMOST, offsetX, offsetY, width, hegiht, SWP_SHOWWINDOW |
+                     SWP_ASYNCWINDOWPOS);
+        return log;
+    }
+
+    void Console::Close()
+    {
+        if (log.active.load())
+        {
+            log.active.store(false);
+            log.runningAsyncWriteThread.store(false);
             log.asyncWriteThread.join();
-			FreeConsole();
-		}
-	}
+            FreeConsole();
+        }
+    }
 
-	bool Console::IsActive()
-	{
-		return this->active.load();
-	}
+    bool Console::IsActive()
+    {
+        return this->active.load();
+    }
 
-	bool Console::SetActive(bool active)
-	{
-		this->active.store(active);
-		if (this->active.load())
-		{
+    bool Console::SetActive(bool active)
+    {
+        this->active.store(active);
+        if (this->active.load())
+        {
+        }
+        else
+        {
+        }
 
-		}
-		else
-		{
+        return this->active.load();
+    }
 
-		}
+    bool Console::ClearContext()
+    {
+        if (!this->active)
+            return false;
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-		return this->active.load();
-	}
+        if (hConsole == INVALID_HANDLE_VALUE)
+            return false;
+        if (!GetConsoleScreenBufferInfo(hConsole, &bufferInfo))
+            return false;
 
-	bool Console::ClearContext()
-	{
-		if (!this->active)
-			return false;
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+        COORD topLeft = {0, 0};
+        DWORD charsWritten;
+        DWORD conSize = bufferInfo.dwSize.X * bufferInfo.dwSize.Y;
 
-		if (hConsole == INVALID_HANDLE_VALUE)
-			return false;
-		if (!GetConsoleScreenBufferInfo(hConsole, &bufferInfo))
-			return false;
+        if (!FillConsoleOutputCharacterW(hConsole, L' ', conSize, topLeft, &charsWritten))
+            return false;
+        if (!SetConsoleCursorPosition(hConsole, topLeft))
+            return false;
 
-		COORD topLeft = { 0, 0 };
-		DWORD charsWritten;
-		DWORD conSize = bufferInfo.dwSize.X * bufferInfo.dwSize.Y;
-
-		if (!FillConsoleOutputCharacterW(hConsole, L' ', conSize, topLeft, &charsWritten))
-			return false;
-		if (!SetConsoleCursorPosition(hConsole, topLeft))
-			return false;
-
-		return true;
-	}
+        return true;
+    }
 
 
-	std::string Console::GetContextAll()
-	{
-		std::string context{""};
+    std::string Console::GetContextAll()
+    {
+        std::string context{""};
 
-		return context;
-	}
+        return context;
+    }
 }
 
 /*

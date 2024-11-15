@@ -13,23 +13,19 @@ void Initialize(HINSTANCE hInstance);
 void Release();
 
 
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+                      _In_opt_ HINSTANCE hPrevInstance,
+                      _In_ LPWSTR lpCmdLine,
+                      _In_ int nCmdShow)
 {
-
     Initialize(hInstance);
-	
 
 
-
-    float* b = new float[100*9];
+    auto b = new float[100 * 9];
     int offset = 0;
     std::vector<Vertex> vertexs;
     vertexs.reserve(100);
-    for(int i=0;i<100;i++)
+    for (int i = 0; i < 100; i++)
     {
         Vertex v;
         v.position = Vector3(i, i, i);
@@ -53,16 +49,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Sleep(50000);
     try
     {
-        
         {
-            std::shared_ptr<dxe::Engine> engine = std::make_shared<dxe::Engine>();
+            auto engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
             engine->SetHandleName(L"main");
             engine->EngineInit();
             engine->VisualInit();
             engine = nullptr;
 
-            std::shared_ptr<dxe::Engine> engine2 = std::make_shared<dxe::Engine>();
+            auto engine2 = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Gamea2");
             engine->SetHandleName(L"maina2");
             engine2->EngineInit();
@@ -100,14 +95,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     Release();
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 void Initialize(HINSTANCE hInstance)
 {
     timeBeginPeriod(1);
     SetPriorityClass(GetCurrentProcess(),REALTIME_PRIORITY_CLASS);
-    Debug::Console::CreateConsole(0,0,600,900,true);
+    Debug::Console::CreateConsole(0, 0, 600, 900, true);
     dxe::Engine::SetWindowHInstance(hInstance);
     dxe::Engine::_processStartClock = std::chrono::steady_clock::now();
 }

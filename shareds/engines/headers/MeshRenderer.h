@@ -9,7 +9,7 @@ namespace dxe
     {
     public:
         MeshRenderer();
-        virtual ~MeshRenderer() override;
+        ~MeshRenderer() override;
         void* Clone() override;
         void ReRef() override;
         void Destroy() override;
@@ -26,4 +26,3 @@ namespace dxe
         void AfterRendering() override;
     };
 }
-

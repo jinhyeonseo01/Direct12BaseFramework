@@ -16,7 +16,7 @@ CBuffer::CBuffer()
 
 CBuffer::~CBuffer()
 {
-    if(_cbufferResource != nullptr)
+    if (_cbufferResource != nullptr)
         _cbufferResource->Unmap(0, nullptr);
     _cbufferResource = nullptr;
 }
@@ -66,18 +66,19 @@ void CBuffer::CreateCBufferView(int count)
     GraphicManager::main->_device->CreateDescriptorHeap(&cbufferDHDesc, IID_PPV_ARGS(&_cbufferDescriptorHeap));
 
     auto cpuHandleBegin = _cbufferDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    auto handleSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    auto handleSize = GraphicManager::main->_device->GetDescriptorHandleIncrementSize(
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     _cbufferCPUDescriptHandle.resize(count);
-    for(int i=0;i< count;i++)
+    for (int i = 0; i < count; i++)
     {
         _cbufferCPUDescriptHandle[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(cpuHandleBegin, i, handleSize);
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-        cbvDesc.BufferLocation = _cbufferResource->GetGPUVirtualAddress() + static_cast<unsigned long long int>(_cbufferStrideSize) * i;
+        cbvDesc.BufferLocation = _cbufferResource->GetGPUVirtualAddress() + static_cast<unsigned long long int>(
+            _cbufferStrideSize) * i;
         cbvDesc.SizeInBytes = _cbufferStrideSize;
 
         GraphicManager::main->_device->CreateConstantBufferView(&cbvDesc, _cbufferCPUDescriptHandle[i]);
     }
-
 }
 
 CBufferView CBuffer::GetView(int index)

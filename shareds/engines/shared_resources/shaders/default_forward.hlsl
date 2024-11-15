@@ -1,6 +1,3 @@
-
-
-
 cbuffer CameraParams : register(b0)
 {
     row_major matrix ViewMatrix;
@@ -9,7 +6,6 @@ cbuffer CameraParams : register(b0)
 
 cbuffer ObjectParams : register(b4)
 {
-
 };
 
 cbuffer TransformParams : register(b2)
@@ -47,7 +43,7 @@ struct VS_OUT
 
 VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
-    VS_OUT output = (VS_OUT) 0;
+    VS_OUT output = (VS_OUT)0;
 
     output.worldPos = float4(input.pos, 1.0f);
 
@@ -56,7 +52,7 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
     float4 viewPos = mul(output.worldPos, ViewMatrix);
 
     // 노멀 변환 (평행 이동 제외)
-    
+
     output.uv = input.uv.xy;
     output.color = input.color;
     output.pos = mul(viewPos, ProjectionMatrix);
@@ -69,6 +65,6 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 color2 = input.color;
-    return 0.5f * (dot(input.worldNormal, normalize(float3(1,1,-1)))*0.5+0.5f);
+    return 0.5f * (dot(input.worldNormal, normalize(float3(1, 1, -1))) * 0.5 + 0.5f);
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }

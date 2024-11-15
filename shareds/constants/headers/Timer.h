@@ -7,6 +7,7 @@ private:
     bool _first = true;
     std::chrono::time_point<std::chrono::steady_clock> resume;
     std::chrono::time_point<std::chrono::steady_clock> pause;
+
 public:
     std::chrono::time_point<std::chrono::steady_clock> start;
     std::chrono::duration<long long, std::nano> lastPauseElapsed;
@@ -30,4 +31,3 @@ public:
     std::chrono::duration<long long, std::nano> GetTime();
     std::chrono::duration<long long, std::nano> GetLastBetweenTime();
 };
-

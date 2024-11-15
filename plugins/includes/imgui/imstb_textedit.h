@@ -303,17 +303,17 @@
 typedef struct
 {
    // private data
-   IMSTB_TEXTEDIT_POSITIONTYPE  where;
-   IMSTB_TEXTEDIT_POSITIONTYPE  insert_length;
-   IMSTB_TEXTEDIT_POSITIONTYPE  delete_length;
-   int                        char_storage;
+   IMSTB_TEXTEDIT_POSITIONTYPE where;
+   IMSTB_TEXTEDIT_POSITIONTYPE insert_length;
+   IMSTB_TEXTEDIT_POSITIONTYPE delete_length;
+   int char_storage;
 } StbUndoRecord;
 
 typedef struct
 {
    // private data
-   StbUndoRecord          undo_rec [IMSTB_TEXTEDIT_UNDOSTATECOUNT];
-   IMSTB_TEXTEDIT_CHARTYPE  undo_char[IMSTB_TEXTEDIT_UNDOCHARCOUNT];
+   StbUndoRecord undo_rec[IMSTB_TEXTEDIT_UNDOSTATECOUNT];
+   IMSTB_TEXTEDIT_CHARTYPE undo_char[IMSTB_TEXTEDIT_UNDOCHARCOUNT];
    short undo_point, redo_point;
    int undo_char_point, redo_char_point;
 } StbUndoState;
@@ -328,7 +328,7 @@ typedef struct
    int cursor;
    // position of the text cursor within the string
 
-   int select_start;          // selection start point
+   int select_start; // selection start point
    int select_end;
    // selection start and end point in characters; if equal, no selection.
    // note that start may be less than or greater than end (e.g. when
@@ -367,9 +367,9 @@ typedef struct
 // result of layout query
 typedef struct
 {
-   float x0,x1;             // starting x location, end x location (allows for align=right, etc)
-   float baseline_y_delta;  // position of baseline relative to previous row's baseline
-   float ymin,ymax;         // height of row above and below baseline
+   float x0, x1; // starting x location, end x location (allows for align=right, etc)
+   float baseline_y_delta; // position of baseline relative to previous row's baseline
+   float ymin, ymax; // height of row above and below baseline
    int num_chars;
 } StbTexteditRow;
 #endif //INCLUDE_IMSTB_TEXTEDIT_H
@@ -893,10 +893,10 @@ retry:
             x = row.x0;
             for (i=0; i < row.num_chars; ++i) {
                float dx = STB_TEXTEDIT_GETWIDTH(str, start, i);
-               #ifdef IMSTB_TEXTEDIT_GETWIDTH_NEWLINE
+#ifdef IMSTB_TEXTEDIT_GETWIDTH_NEWLINE
                if (dx == IMSTB_TEXTEDIT_GETWIDTH_NEWLINE)
                   break;
-               #endif
+#endif
                x += dx;
                if (x > goal_x)
                   break;
@@ -955,10 +955,10 @@ retry:
             x = row.x0;
             for (i=0; i < row.num_chars; ++i) {
                float dx = STB_TEXTEDIT_GETWIDTH(str, find.prev_first, i);
-               #ifdef IMSTB_TEXTEDIT_GETWIDTH_NEWLINE
+#ifdef IMSTB_TEXTEDIT_GETWIDTH_NEWLINE
                if (dx == IMSTB_TEXTEDIT_GETWIDTH_NEWLINE)
                   break;
-               #endif
+#endif
                x += dx;
                if (x > goal_x)
                   break;

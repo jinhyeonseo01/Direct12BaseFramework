@@ -5,12 +5,10 @@
 
 dxe::IType::IType()
 {
-
 }
 
 dxe::IType::~IType()
 {
-
 }
 
 std::string& dxe::IType::GetTypeName()
@@ -19,13 +17,15 @@ std::string& dxe::IType::GetTypeName()
 
     // "struct " 또는 "class " 같은 접두사 제거
     size_t pos = fullName.find_last_of("::");
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos)
+    {
         _className = fullName.substr(pos + 1);
     }
 
     // 복잡한 부분을 단순화 (예: "1Derived" -> "Derived")
     // 숫자가 포함된 경우 제거
-    for (size_t i = 0; i < _className.length(); ++i) {
+    for (size_t i = 0; i < _className.length(); ++i)
+    {
         if (isdigit(_className[i]))
             continue;
         _className = _className.substr(i);
@@ -42,4 +42,4 @@ std::string dxe::IType::GetTypeFullName()
 }
 
 bool dxe::IType::_first = true;
-std::unordered_map<std::string, std::function<void* ()>> dxe::IType::typeTable;
+std::unordered_map<std::string, std::function<void*()>> dxe::IType::typeTable;

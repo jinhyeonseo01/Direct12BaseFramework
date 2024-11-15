@@ -5,7 +5,6 @@
 #include "graphic_config.h"
 
 
-
 Texture::Texture()
 {
     _SRV_CPUHandle.ptr = 0;
@@ -13,7 +12,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-    if(_SRV_CPUHandle.ptr != 0)
+    if (_SRV_CPUHandle.ptr != 0)
         GraphicManager::main->_textureHandlePool->HandleFree(_SRV_CPUHandle);
 }
 
@@ -28,7 +27,8 @@ void Texture::SetName(const std::wstring& name)
 }
 
 std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uint32_t height,
-                                         const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags, Vector4 clearColor)
+                                         const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags,
+                                         Vector4 clearColor)
 {
     auto texture = std::make_shared<Texture>();
     auto device = GraphicManager::main->_device;
@@ -36,7 +36,6 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
     texture->SetState(ResourceState::SRV);
     texture->SetClearColor(clearColor);
     texture->SetSize(Vector2(width, height));
-
 
 
     D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height);
@@ -74,7 +73,7 @@ std::shared_ptr<Texture> Texture::Create(DXGI_FORMAT format, uint32_t width, uin
     desc.Flags = D3D12_RESOURCE_FLAG_NONE;
     //모든 쉐이더에서 쓸 수 있음을 의미함
     resourceStates = D3D12_RESOURCE_STATE_GENERIC_READ;
-    float arrFloat[4] = { clearColor.x, clearColor.y, clearColor.z, clearColor.w };
+    float arrFloat[4] = {clearColor.x, clearColor.y, clearColor.z, clearColor.w};
     optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
     pOptimizedClearValue = &optimizedClearValue;
     DXAssert(device->CreateCommittedResource(
@@ -110,7 +109,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
 
     if (!DXSuccess(loadSuccess))
     {
-        Debug::log << "해당 경로에 텍스쳐 없음\n"<<path<<"\n";
+        Debug::log << "해당 경로에 텍스쳐 없음\n" << path << "\n";
         return nullptr;
     }
     if (!(ext == L".dds" || ext == L".DDS") && createMipMap)
@@ -121,9 +120,9 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
         //TEX_FILTER_FANT 가우시안 비등방성 보간
         //TEX_FILTER_POINT
         GenerateMipMaps(
-            texture->_image.GetImages(),          // 소스 이미지 배열
-            texture->_image.GetImageCount(),      // 소스 이미지 개수
-            texture->_image.GetMetadata(),        // 소스 이미지 메타데이터
+            texture->_image.GetImages(), // 소스 이미지 배열
+            texture->_image.GetImageCount(), // 소스 이미지 개수
+            texture->_image.GetMetadata(), // 소스 이미지 메타데이터
             TEX_FILTER_CUBIC, // 필터 옵션 (기본값 사용) // CUBIC
             0, mipmapImage);
         texture->_image.Release();
@@ -137,9 +136,11 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     DXAssert(CreateTexture(device.Get(), texture->_image.GetMetadata(), &texture->_resource));
 
     std::vector<D3D12_SUBRESOURCE_DATA> subResources;
-    DXAssert(PrepareUpload(device.Get(), texture->_image.GetImages(), texture->_image.GetImageCount(), texture->_image.GetMetadata(), subResources));
+    DXAssert(PrepareUpload(device.Get(), texture->_image.GetImages(), texture->_image.GetImageCount(),
+                           texture->_image.GetMetadata(), subResources));
 
-    int bufferSize = ::GetRequiredIntermediateSize(texture->_resource.Get(), 0, static_cast<uint32_t>(subResources.size()));
+    int bufferSize = ::GetRequiredIntermediateSize(texture->_resource.Get(), 0,
+                                                   static_cast<uint32_t>(subResources.size()));
 
     ComPtr<ID3D12Resource> textureUploadHeap;
 
@@ -150,7 +151,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
 
     // 3. CreateCommittedResource 호출 시 명시적으로 생성한 lvalue들을 넘겨줌
     DXAssert(device->CreateCommittedResource(
-        &uploadHeapProperties,       // 업로드 힙
+        &uploadHeapProperties, // 업로드 힙
         D3D12_HEAP_FLAG_NONE,
         &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ, // 읽기 상태로 전환
@@ -190,28 +191,28 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     //리소스 배리어를 통해 상태를 복사 대기상태로
     auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
         texture->_resource.Get(),
-        D3D12_RESOURCE_STATE_GENERIC_READ,  // 초기 상태에서
+        D3D12_RESOURCE_STATE_GENERIC_READ, // 초기 상태에서
         D3D12_RESOURCE_STATE_COPY_DEST);
-    resourceCommandList->ResourceBarrier(1, &barrier);   // 복사 대상으로 전환
+    resourceCommandList->ResourceBarrier(1, &barrier); // 복사 대상으로 전환
     //메모리 복사
     ::UpdateSubresources(resourceCommandList.Get(),
-        texture->_resource.Get(),
-        textureUploadHeap.Get(),
-        0, 0,
-        static_cast<unsigned int>(subResources.size()),
-        subResources.data());
+                         texture->_resource.Get(),
+                         textureUploadHeap.Get(),
+                         0, 0,
+                         static_cast<unsigned int>(subResources.size()),
+                         subResources.data());
     //메모리 복사
     // 리소스 배리어: 복사 작업 후 쉐이더 리소스로 세팅
     barrier = CD3DX12_RESOURCE_BARRIER::Transition(
         texture->_resource.Get(),
-        D3D12_RESOURCE_STATE_COPY_DEST,  // 복사 대상에서
+        D3D12_RESOURCE_STATE_COPY_DEST, // 복사 대상에서
         D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-    resourceCommandList.Get()->ResourceBarrier(1, &barrier);  // 원하는 최종 상태로 전환
+    resourceCommandList.Get()->ResourceBarrier(1, &barrier); // 원하는 최종 상태로 전환
 
     GraphicManager::main->ResourceSet();
 
     texture->_SRV_CPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
-    
+
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
     SRVDesc.Format = metadata.format;
     SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // D3D12_SRV_DIMENSION_TEXTURECUBE
@@ -242,7 +243,8 @@ std::shared_ptr<Texture> Texture::Link(std::shared_ptr<RenderTexture> renderText
     return texture;
 }
 
-std::shared_ptr<Texture> Texture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width, uint32_t height, int mipLevels)
+std::shared_ptr<Texture> Texture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width,
+                                       uint32_t height, int mipLevels)
 {
     auto texture = std::make_shared<Texture>();
 
@@ -261,7 +263,7 @@ Vector4 Texture::GetPixel(int x, int y, int channal) const
         return Vector4(0, 0, 0, 0);
     int index = (y * static_cast<int>(_size.x) + x) * (pixelSize / 8);
     unsigned char* currentPixel = &(_image.GetPixels()[index]);
-    Vector4 color = Vector4(0,0,0,0);
+    auto color = Vector4(0, 0, 0, 0);
     unsigned long long int data = 0;
     for (int i = 0; i < channal; i++)
     {

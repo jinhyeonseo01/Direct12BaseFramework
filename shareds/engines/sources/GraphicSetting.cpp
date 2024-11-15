@@ -3,7 +3,7 @@
 
 int GraphicSetting::GetMSAACount()
 {
-    if(aaType == AAType::MSAA && aaActive && msaaSupportAble)
+    if (aaType == AAType::MSAA && aaActive && msaaSupportAble)
     {
         return std::max(std::min(4, msaaLevel), 1);
     }

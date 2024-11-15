@@ -41,14 +41,12 @@ namespace dxe
         void CreateIndexBuffer(D3D12_PRIMITIVE_TOPOLOGY indexTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
-        D3D12_VERTEX_BUFFER_VIEW	_vertexBufferView = {};
-        D3D12_INDEX_BUFFER_VIEW		_indexBufferView = {};
+        D3D12_VERTEX_BUFFER_VIEW _vertexBufferView = {};
+        D3D12_INDEX_BUFFER_VIEW _indexBufferView = {};
 
-        ComPtr<ID3D12Resource>		_vertexResource;
-        ComPtr<ID3D12Resource>		_indexResource;
+        ComPtr<ID3D12Resource> _vertexResource;
+        ComPtr<ID3D12Resource> _indexResource;
 
         D3D12_PRIMITIVE_TOPOLOGY _indexTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
     };
 }
-

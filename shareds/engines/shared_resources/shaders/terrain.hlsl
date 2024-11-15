@@ -1,6 +1,3 @@
-
-
-
 cbuffer CameraParams : register(b0)
 {
     row_major matrix ViewMatrix;
@@ -9,7 +6,6 @@ cbuffer CameraParams : register(b0)
 
 cbuffer ObjectParams : register(b4)
 {
-
 };
 
 cbuffer BoneParams : register(b3)
@@ -63,21 +59,21 @@ struct VS_OUT
 
 VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
-    VS_OUT output = (VS_OUT) 0;
+    VS_OUT output = (VS_OUT)0;
 
     output.localPos = output.worldPos = float4(input.pos, 1.0f);
 
-    if(isSkinned != 0)
+    if (isSkinned != 0)
     {
         matrix boneMatrix = float4x4(0, 0, 0, 0,
-                                0, 0, 0, 0,
-                                0, 0, 0, 0,
-                                0, 0, 0, 0);
-        boneMatrix += 
-        bone[(int)input.boneIDs.x] * input.boneWs.x
-        +bone[(int)input.boneIDs.y] * input.boneWs.y
-        +bone[(int)input.boneIDs.z] * input.boneWs.z
-        +bone[(int)input.boneIDs.w] * input.boneWs.w;
+                                     0, 0, 0, 0,
+                                     0, 0, 0, 0,
+                                     0, 0, 0, 0);
+        boneMatrix +=
+            bone[(int)input.boneIDs.x] * input.boneWs.x
+            + bone[(int)input.boneIDs.y] * input.boneWs.y
+            + bone[(int)input.boneIDs.z] * input.boneWs.z
+            + bone[(int)input.boneIDs.w] * input.boneWs.w;
 
         output.worldPos = mul(output.worldPos, boneMatrix);
     }
@@ -90,7 +86,7 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 
     // 노멀 변환 (평행 이동 제외)
     //output.worldNormal = normalize(mul(float4(input.normal, 0.0f), WorldMatrix));
-    
+
     output.uv = input.uv.xy;
     output.color = input.color;
     output.pos = mul(viewPos, ProjectionMatrix);
@@ -104,8 +100,8 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float4 color2 = input.color;
 
     float4 AlbedoColor = _BaseMap.Sample(sampler_aniso_16, input.uv);
-    float4 AlbedoColor2 = _BaseMap2.Sample(sampler_aniso_16, input.uv*8);
-    float4 AlbedoColor3 = _BaseMap3.Sample(sampler_aniso_16, input.uv*8);
+    float4 AlbedoColor2 = _BaseMap2.Sample(sampler_aniso_16, input.uv * 8);
+    float4 AlbedoColor3 = _BaseMap3.Sample(sampler_aniso_16, input.uv * 8);
     float4 finalColor = AlbedoColor;
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
@@ -113,12 +109,12 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float split1 = 100;
     float split2 = 600;
 
-    if(input.localPos.y >= split1)
-        finalColor = lerp(AlbedoColor, AlbedoColor2, saturate((input.localPos.y - split1)/200));
+    if (input.localPos.y >= split1)
+        finalColor = lerp(AlbedoColor, AlbedoColor2, saturate((input.localPos.y - split1) / 200));
 
-    if(input.localPos.y >= split2)
-        finalColor = lerp(finalColor , AlbedoColor3, saturate((input.localPos.y - split2)/200));
-    
+    if (input.localPos.y >= split2)
+        finalColor = lerp(finalColor, AlbedoColor3, saturate((input.localPos.y - split2) / 200));
+
     //return pow(AlbedoColor, 1.0 / 1.0);
     //return pow(AlbedoColor2, 1.0 / 1.0);
     //return pow(AlbedoColor3, 1.0 / 1.0);
