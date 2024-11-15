@@ -3,6 +3,8 @@
 #include <EObject.h>
 #include <GameObject.h>
 
+#include "Material.h"
+
 using json = nlohmann::json;
 
 namespace dxe
@@ -19,17 +21,27 @@ namespace dxe
             object->SetGUID(guid);
             return object;
         }
-    };
 
-    struct GenerateObject
-    {
-        std::wstring guid;
-        std::wstring type;
-        std::wstring name;
-        std::wstring parent;
-        std::vector<std::wstring> components;
+        JsonLoader();
+        virtual ~JsonLoader();
 
-        std::wstring componentType;
+        std::unordered_map<std::wstring, json> refGameObjectTable;
+        std::unordered_map<std::wstring, json> refComponentTable;
+        std::unordered_map<std::wstring, json> refMaterialTable;
+
+        std::vector<std::shared_ptr<Component>> componentCache;
+        std::vector<std::shared_ptr<GameObject>> gameObjectCache;
+        std::vector<std::shared_ptr<Material>> materialCache;
+
+        std::vector<std::wstring> modelNameList;
+
+        void PrevProcessingGameObject(json data);
+        void PrevProcessingComponent(json data);
+        void PrevProcessingMaterial(json data);
+
+        void LinkGameObject(json jsonData);
+        void LinkComponent(json jsonData);
+        void LinkMaterial(json jsonData);
     };
 }
 

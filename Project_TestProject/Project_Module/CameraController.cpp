@@ -40,7 +40,6 @@ void CameraController::Update()
     Component::Update();
 
 
-
     if (Input::main->GetMouseDown(KeyCode::RightMouse))
     {
         cameraControl = true;
@@ -52,7 +51,7 @@ void CameraController::Update()
         cameraControl = false;
         Engine::GetMainEngine()->SetCursorHide(cameraControl);
     }
-    if (cameraControl)//Input::main->GetMouse(KeyCode::RightMouse) && 
+    if (cameraControl) //Input::main->GetMouse(KeyCode::RightMouse) && 
     {
         auto mouseDelta = (Input::main->GetMousePosition() - prevMourePosition);
         auto mouseDeltaAngle = (((Vector3(0, 1, 0) * mouseDelta.x) + (Vector3(1, 0, 0) * mouseDelta.y)) * 0.003f);
@@ -66,13 +65,18 @@ void CameraController::Update()
     }
 
     auto moveDirection = Vector3::Zero;
-    moveDirection += gameObject.lock()->transform->up() * ((Input::main->GetKey(KeyCode::E) ? 1 : 0) - (Input::main->GetKey(KeyCode::Q) ? 1 : 0));
-    moveDirection += gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0));
-    moveDirection += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
+    moveDirection += gameObject.lock()->transform->up() * ((Input::main->GetKey(KeyCode::E) ? 1 : 0) - (
+        Input::main->GetKey(KeyCode::Q) ? 1 : 0));
+    moveDirection += gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (
+        Input::main->GetKey(KeyCode::A) ? 1 : 0));
+    moveDirection += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (
+        Input::main->GetKey(KeyCode::S) ? 1 : 0));
     moveDirection.Normalize(moveDirection);
 
     float moveSpeed = 0.1f;
-    gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + Engine::GetMainEngine()->deltaTime * 60 * moveDirection * moveSpeed);
+    gameObject.lock()->transform->worldPosition(
+        gameObject.lock()->transform->worldPosition() + Engine::GetMainEngine()->deltaTime * 60 * moveDirection *
+        moveSpeed);
 }
 
 void CameraController::LateUpdate()

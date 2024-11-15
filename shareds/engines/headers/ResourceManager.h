@@ -48,6 +48,7 @@ namespace dxe
         void Release();
         bool IsLoading();
         bool WaitAll();
+        void Debug();
 
 
         std::shared_ptr<AssimpPack> LoadAssimpPack(const std::wstring& path, const std::wstring& name, bool async = false);

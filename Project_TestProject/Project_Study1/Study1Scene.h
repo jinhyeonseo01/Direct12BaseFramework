@@ -10,17 +10,14 @@ public:
     void ReRef() override;
     Study1Scene();
     Study1Scene(std::wstring name);
-    virtual ~Study1Scene() override;
-    virtual void Init() override;
+    ~Study1Scene() override;
+    void Init() override;
     void Update() override;
     void RenderingBegin() override;
     void RenderingEnd() override;
-
-
 
 public:
     std::shared_ptr<Material> skyMaterial;
     std::shared_ptr<GameObject> camera;
     std::vector<std::shared_ptr<MeshRenderer>> boxMRs;
 };
-

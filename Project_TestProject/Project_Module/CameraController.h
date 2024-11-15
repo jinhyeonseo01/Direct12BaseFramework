@@ -23,7 +23,6 @@ public:
     void Rendering() override;
     void AfterRendering() override;
 
-
 public:
     std::shared_ptr<Camera> camera;
 
@@ -32,4 +31,3 @@ public:
     Vector3 totalAngle = Vector3::Zero;
     bool cameraControl = false;
 };
-

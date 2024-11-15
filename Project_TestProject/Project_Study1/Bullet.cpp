@@ -36,9 +36,9 @@ void Bullet::Update()
     Component::Update();
 
     time -= Engine::GetMainEngine()->deltaTime;
-    gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + 
+    gameObject.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() +
         gameObject.lock()->transform->forward() * Engine::GetMainEngine()->deltaTime * 60 * 5);
-    if(time < 0)
+    if (time < 0)
     {
         Destroy();
     }

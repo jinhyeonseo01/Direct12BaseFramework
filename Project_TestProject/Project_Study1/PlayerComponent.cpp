@@ -7,8 +7,6 @@
 #include "Transform.h"
 
 
-
-
 bool PlayerComponent::isMenu = true;
 bool PlayerComponent::isMenuHelp = false;
 
@@ -104,11 +102,11 @@ void PlayerComponent::Update()
             for (auto mr : MRs)
             {
                 mr->materialList.clear();
-                std::shared_ptr<Material> material = std::make_shared<Material>();
+                auto material = std::make_shared<Material>();
                 material->shader = ResourceManager::main->GetShader(L"forward");
                 material->SetData("color", Vector4(0, 0, 1, 1));
                 material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture"));
-                mr->AddMateiral({ material });
+                mr->AddMateiral({material});
             }
         }
         if (Input::main->GetKeyDown(KeyCode::Num2))
@@ -118,11 +116,11 @@ void PlayerComponent::Update()
             for (auto mr : MRs)
             {
                 mr->materialList.clear();
-                std::shared_ptr<Material> material = std::make_shared<Material>();
+                auto material = std::make_shared<Material>();
                 material->shader = ResourceManager::main->GetShader(L"forward");
                 material->SetData("color", Vector4(0, 0, 1, 1));
                 material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture2"));
-                mr->AddMateiral({ material });
+                mr->AddMateiral({material});
             }
         }
         if (Input::main->GetKeyDown(KeyCode::Num3))
@@ -132,11 +130,11 @@ void PlayerComponent::Update()
             for (auto mr : MRs)
             {
                 mr->materialList.clear();
-                std::shared_ptr<Material> material = std::make_shared<Material>();
+                auto material = std::make_shared<Material>();
                 material->shader = ResourceManager::main->GetShader(L"forward");
                 material->SetData("color", Vector4(0, 0, 1, 1));
                 material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture3"));
-                mr->AddMateiral({ material });
+                mr->AddMateiral({material});
             }
         }
         if (Input::main->GetKeyDown(KeyCode::Num4))
@@ -146,16 +144,15 @@ void PlayerComponent::Update()
             for (auto mr : MRs)
             {
                 mr->materialList.clear();
-                std::shared_ptr<Material> material = std::make_shared<Material>();
+                auto material = std::make_shared<Material>();
                 material->shader = ResourceManager::main->GetShader(L"forward");
                 material->SetData("color", Vector4(0, 0, 1, 1));
                 material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture4"));
-                mr->AddMateiral({ material });
+                mr->AddMateiral({material});
             }
         }
-
     }
-    if(isMenu)
+    if (isMenu)
     {
         if (Input::main->GetMouseDown(KeyCode::LeftMouse) && isPlayer)
         {
@@ -164,7 +161,7 @@ void PlayerComponent::Update()
                 mousePos.x / GraphicManager::main->setting.screenInfo.width,
                 mousePos.y / GraphicManager::main->setting.screenInfo.height);
             mousePos.y = 1 - mousePos.y;
-            mousePos = mousePos*2 - Vector3::One;
+            mousePos = mousePos * 2 - Vector3::One;
             //mousePos.x *= (GraphicManager::main->setting.screenInfo.width / GraphicManager::main->setting.screenInfo.height);
 
             auto startMenu = gameObject.lock()->scene.lock()->Find(L"menu_start");
@@ -180,7 +177,7 @@ void PlayerComponent::Update()
                 menu_help.lock()->transform->localPosition.z = isMenu ? 0.01f : 2.0f;
             }
 
-            if(isMenuHelp)
+            if (isMenuHelp)
             {
                 isMenuHelp = false;
 
@@ -216,54 +213,61 @@ void PlayerComponent::Update()
             auto rootObject = gameObject.lock()->scene.lock()->CreateGameObject(L"Apache");
 
             auto bullet = gameObject.lock()->scene.lock()->CreateGameObjects(ResourceManager::main->GetModel(L"box"));
-            bullet->transform->localScale = Vector3(0.2,0.2,1) * 1.000f;
+            bullet->transform->localScale = Vector3(0.2, 0.2, 1) * 1.000f;
             bullet->SetParent(rootObject);
             auto bulletComp = rootObject->AddComponent<Bullet>();
 
-            rootObject->transform->worldPosition(gameObject.lock()->transform->worldPosition() + gameObject.lock()->transform->forward() * 0.2f);
+            rootObject->transform->worldPosition(
+                gameObject.lock()->transform->worldPosition() + gameObject.lock()->transform->forward() * 0.2f);
             rootObject->transform->worldRotation(gameObject.lock()->transform->worldRotation());
             std::vector<std::shared_ptr<MeshRenderer>> meshRenderers;
             bullet->GetComponentsWithChilds(meshRenderers);
             for (int i = 0; i < meshRenderers.size(); i++)
             {
-                std::shared_ptr<Material> material = std::make_shared<Material>();
+                auto material = std::make_shared<Material>();
                 material->shader = ResourceManager::main->GetShader(L"forward");
                 material->SetData("color", Vector4(0, 0, 1, 1));
                 material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture2"));
-                meshRenderers[i]->AddMateiral({ material });
+                meshRenderers[i]->AddMateiral({material});
             }
-
         }
 
 
         //애니메이션 로직
-        topRoter.lock()->transform->localRotation = topRoter.lock()->transform->localRotation * Quaternion::CreateFromYawPitchRoll(-Engine::GetMainEngine()->deltaTime * 30, 0, 0);
+        topRoter.lock()->transform->localRotation = topRoter.lock()->transform->localRotation *
+            Quaternion::CreateFromYawPitchRoll(-Engine::GetMainEngine()->deltaTime * 30, 0, 0);
         for (auto& back : backRoter)
-            back.lock()->transform->localRotation = back.lock()->transform->localRotation * Quaternion::CreateFromYawPitchRoll(0, Engine::GetMainEngine()->deltaTime * 20, 0);
+            back.lock()->transform->localRotation = back.lock()->transform->localRotation *
+                Quaternion::CreateFromYawPitchRoll(0, Engine::GetMainEngine()->deltaTime * 20, 0);
 
         //각도 로직
-        auto worldDir = ((-gameObject.lock()->transform->forward()) * 10.0f + gameObject.lock()->transform->up() * 3.0f);
-        if(isPlayer)
+        auto worldDir = ((-gameObject.lock()->transform->forward()) * 10.0f + gameObject.lock()->transform->up() *
+            3.0f);
+        if (isPlayer)
             camera.lock()->transform->worldPosition(gameObject.lock()->transform->worldPosition() + worldDir);
 
-        auto dir = ((gameObject.lock()->transform->worldPosition() + gameObject.lock()->transform->forward() * 4) - camera.lock()->transform->worldPosition());
+        auto dir = ((gameObject.lock()->transform->worldPosition() + gameObject.lock()->transform->forward() * 4) -
+            camera.lock()->transform->worldPosition());
         dir.Normalize(dir);
         if (isPlayer)
-        camera.lock()->transform->LookUp(dir, Vector3(0, 1, 0));//gameObject.lock()->transform->up()
+            camera.lock()->transform->LookUp(dir, Vector3(0, 1, 0)); //gameObject.lock()->transform->up()
 
         //이동 로직
-        auto r = gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (Input::main->GetKey(KeyCode::A) ? 1 : 0));
-        r += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (Input::main->GetKey(KeyCode::S) ? 1 : 0));
+        auto r = gameObject.lock()->transform->right() * ((Input::main->GetKey(KeyCode::D) ? 1 : 0) - (
+            Input::main->GetKey(KeyCode::A) ? 1 : 0));
+        r += gameObject.lock()->transform->forward() * ((Input::main->GetKey(KeyCode::W) ? 1 : 0) - (
+            Input::main->GetKey(KeyCode::S) ? 1 : 0));
 
 
         if (!isPlayer)
         {
             r = gameObject.lock()->transform->forward();
             time -= Engine::GetMainEngine()->deltaTime;
-            if(time < 0)
+            if (time < 0)
             {
                 time = 5 + (rand() % 1000) / 1000.0 * 5;
-                gameObject.lock()->transform->worldRotation(Quaternion::CreateFromYawPitchRoll((rand() % 1000) / 1000.0 * 360, 0, 0));
+                gameObject.lock()->transform->worldRotation(
+                    Quaternion::CreateFromYawPitchRoll((rand() % 1000) / 1000.0 * 360, 0, 0));
             }
             auto pos = gameObject.lock()->transform->worldPosition();
             if (pos.x > 50)
@@ -276,7 +280,6 @@ void PlayerComponent::Update()
             if (pos.z < -50)
                 pos.z += 100;
         }
-
 
 
         r.Normalize(r);
@@ -301,21 +304,21 @@ void PlayerComponent::Update()
         if (Equals(velocity.Length(), 0))
             velocity = gameObject.lock()->transform->forward() * 0.01f;
         velocity.Normalize(forward);
-        Ray ray = Ray(gameObject.lock()->transform->worldPosition(), forward);
-        for(auto box : boxs)
+        auto ray = Ray(gameObject.lock()->transform->worldPosition(), forward);
+        for (auto box : boxs)
         {
-            for(auto mesh : box.lock()->meshList)
+            for (auto mesh : box.lock()->meshList)
             {
                 float dis = 10000;
                 Vector3 normal;
-                if(mesh.lock()->Intersects(box.lock()->gameObject.lock()->transform, ray, dis, normal))
+                if (mesh.lock()->Intersects(box.lock()->gameObject.lock()->transform, ray, dis, normal))
                 {
-                    if(dis >= 0 && dis <= 1)
+                    if (dis >= 0 && dis <= 1)
                     {
                         Vector3 objForward = velocity;
                         normal.Normalize(normal);
                         velocity = (objForward - normal.Dot(objForward) * 1.02 * normal) * velocity.Length();
-                        gameObject.lock()->transform->forward(objForward - normal.Dot(objForward)*1.02 * normal);
+                        gameObject.lock()->transform->forward(objForward - normal.Dot(objForward) * 1.02 * normal);
                         angle = gameObject.lock()->transform->worldRotation().ToEuler();
                     }
                     else if (dis >= 0 && dis <= 3)
@@ -324,40 +327,39 @@ void PlayerComponent::Update()
                         normal.Normalize(normal);
                         Vector3 nextForward = (objForward - normal.Dot(objForward) * 1.02 * normal);
                         float a = Engine::GetMainEngine()->deltaTime * 60 * 0.1;
-                        nextForward = (nextForward * a + objForward * (1-a));
+                        nextForward = (nextForward * a + objForward * (1 - a));
                         nextForward.Normalize(nextForward);
                         velocity = nextForward * velocity.Length();
                         gameObject.lock()->transform->forward(nextForward);
                         angle = gameObject.lock()->transform->worldRotation().ToEuler();
                     }
-
                 }
             }
         }
-        
+
         //회전 로직
         if (isPlayer)
-        if (Input::main->GetMouseDown(KeyCode::RightMouse))
-        {
-            cameraControl = !cameraControl;
-            prevPos = Input::main->GetMousePosition();
-            //ShowCursor(cameraControl ? TRUE : FALSE);
-            Engine::GetMainEngine()->SetCursorHide(cameraControl);
-        }
+            if (Input::main->GetMouseDown(KeyCode::RightMouse))
+            {
+                cameraControl = !cameraControl;
+                prevPos = Input::main->GetMousePosition();
+                //ShowCursor(cameraControl ? TRUE : FALSE);
+                Engine::GetMainEngine()->SetCursorHide(cameraControl);
+            }
         if (isPlayer)
-        if (cameraControl)//Input::main->GetMouse(KeyCode::RightMouse) && 
-        {
-            auto pos = (Input::main->GetMousePosition() - prevPos);
-            auto movePos = (((Vector3(0, 1, 0) * pos.x) + (Vector3(1, 0, 0) * pos.y)) * 0.003f);
+            if (cameraControl) //Input::main->GetMouse(KeyCode::RightMouse) && 
+            {
+                auto pos = (Input::main->GetMousePosition() - prevPos);
+                auto movePos = (((Vector3(0, 1, 0) * pos.x) + (Vector3(1, 0, 0) * pos.y)) * 0.003f);
 
-            angle += movePos;
-            angle.z = 0;
-            if (std::abs(angle.x) > 50 * D2R)
-                angle.x = std::sign(angle.x) * 50 * D2R;
-            gameObject.lock()->transform->worldRotation(Quaternion::CreateFromYawPitchRoll(angle));
-            //gameObject.lock()->transform->LookUp(movePos, Vector3(0, 1, 0));
-            prevPos = Input::main->GetMousePosition();
-        }
+                angle += movePos;
+                angle.z = 0;
+                if (std::abs(angle.x) > 50 * D2R)
+                    angle.x = std::sign(angle.x) * 50 * D2R;
+                gameObject.lock()->transform->worldRotation(Quaternion::CreateFromYawPitchRoll(angle));
+                //gameObject.lock()->transform->LookUp(movePos, Vector3(0, 1, 0));
+                prevPos = Input::main->GetMousePosition();
+            }
     }
 }
 

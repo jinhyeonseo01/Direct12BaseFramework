@@ -137,6 +137,16 @@ void Engine::DebugInit()
 
         });
     _debugCommandList.push_back(command);
+
+    command.command = "resource";
+    command.detail = L"리소스 목록";
+    command.func = std::function([&](std::vector<std::wstring>& args) {
+        auto engine = GetEngine(_mainEngineIndex);
+        auto scene = SceneManager::_currentScene;
+        ResourceManager::main->Debug();
+
+        });
+    _debugCommandList.push_back(command);
 }
 
 void Engine::DebugPipeline()

@@ -21,177 +21,198 @@ json JsonLoader::Load(std::wstring path)
 
     std::unordered_map<std::string, std::vector<json>> dataTable;
 
-    std::unordered_map<std::wstring, json> refGameObjectTable;
-    std::unordered_map<std::wstring, json> refComponentTable;
-    std::unordered_map<std::wstring, json> refMaterialTable;
-
-    std::vector<std::shared_ptr<EObject>> objs;
-
-    std::vector<std::wstring> modelList;
+    JsonLoader jsonLoader;
 
     for (auto it = readJson.begin(); it != readJson.end(); ++it)
     {
         auto& key = it.key();
         auto& value = it.value();
-        dataTable[key] = {};
 
-        //value.is_array()
-        for (auto itObj = value.begin(); itObj != value.end(); ++itObj)
-        {
-            auto& objJson = itObj.value();
-            std::wstring guid = std::to_wstring(objJson["guid"].get<std::string>());
-
-            GenerateObject o;
-            if(key == "GameObjects")
-            {
-                auto object = CreateObject<GameObject>(guid);
-                refGameObjectTable[guid] = objJson;
-                object->Init(false);
-                objs.push_back(object);
-            }
-            if (key == "Components")
-            {
-                auto type = std::to_wstring(objJson["type"].get<std::string>());
-                if(type == L"Transform") {
-                    auto object = CreateObject<Transform>(guid);
-                    objs.push_back(object);
-                }
-                if (type == L"MeshRenderer") {
-                    auto object = CreateObject<MeshRenderer>(guid);
-                    objs.push_back(object);
-
-                    auto mesh = objJson["mesh"];
-                    auto path = std::to_wstring(mesh["path"].get<std::string>());
-                    auto modelName = std::to_wstring(mesh["modelName"].get<std::string>());
-
-                    ResourceManager::main->LoadAssimpPack(path, modelName, true);
-                    if(std::find(modelList.begin(), modelList.end(), modelName) == modelList.end())
-                        modelList.push_back(modelName);
-                }
-                if (type == L"MeshFilter") {
-
-                }
-                refComponentTable[guid] = objJson;
-            }
-            if(key == "Materials")
-            {
-                auto material = CreateObject<Material>(guid);
-                refMaterialTable[guid] = objJson;
-                objs.push_back(material);
-
-                auto datas = objJson["datas"];
-                auto textures = datas["textures"];
-
-                for (auto& texture : textures)
-                {
-                    auto path = std::to_wstring(texture["path"].get<std::string>());
-                    auto name = std::to_wstring(texture["originalName"].get<std::string>());
-                    ResourceManager::main->LoadTexture(path, name);
-                }
-                    //material->SetData(textures["name"].get<std::string>(), )
-            }
-        }
+        if (key == "GameObjects")
+            for (auto& objectJson : value)
+                jsonLoader.PrevProcessingGameObject(objectJson);
+        if (key == "Components")
+            for (auto& objectJson : value)
+                jsonLoader.PrevProcessingComponent(objectJson);
+        if (key == "Materials")
+            for (auto& objectJson : value)
+                jsonLoader.PrevProcessingMaterial(objectJson);
     }
     ResourceManager::main->WaitAll();
-    for (auto& modelName : modelList)
-        ResourceManager::main->GetModel(modelName)->CreateGraphicResource();
+    for (auto& modelName : jsonLoader.modelNameList)
+        if (auto model = ResourceManager::main->GetModel(modelName); model != nullptr)
+            model->CreateGraphicResource();
 
-    for (auto& ref : refMaterialTable)
-    {
-        auto material = EObject::FindObjectByGuid<Material>(ref.first);
-        auto datas = ref.second["datas"];
-        auto textures = datas["textures"];
-        auto floats = datas["floats"];
-        auto ints = datas["ints"];
-        auto vectors = datas["vectors"];
+    for (auto& ref : jsonLoader.refMaterialTable)
+        jsonLoader.LinkMaterial(ref.second);
+    for (auto& ref : jsonLoader.refComponentTable)
+        jsonLoader.LinkComponent(ref.second);
+    for (auto& ref : jsonLoader.refGameObjectTable)
+        jsonLoader.LinkGameObject(ref.second);
 
-        for (auto& texture : textures)
-            material->SetData(
-                texture["name"].get<std::string>(), 
-                ResourceManager::main->GetTexture(std::to_wstring(texture["originalName"].get<std::string>())));
-        for (auto& data : floats)
-            material->SetData(data["name"].get<std::string>(), data["data"].get<float>());
-        for (auto& data : ints)
-            material->SetData(data["name"].get<std::string>(), data["data"].get<int>());
-        for (auto& data : vectors)
-            material->SetData(data["name"].get<std::string>(), Vector4(
-                data["data"][0].get<float>(),
-                data["data"][1].get<float>(),
-                data["data"][2].get<float>(),
-                data["data"][3].get<float>()
-            ));
+}
+
+JsonLoader::JsonLoader()
+{
+}
+
+JsonLoader::~JsonLoader()
+{
+}
+
+void JsonLoader::PrevProcessingGameObject(json data)
+{
+    std::wstring guid = std::to_wstring(data["guid"].get<std::string>());
+
+    auto gameObject = CreateObject<GameObject>(guid)->Init(false);
+    refGameObjectTable[guid] = data;
+    gameObjectCache.emplace_back(gameObject);
+}
+
+void JsonLoader::PrevProcessingComponent(json data)
+{
+    std::wstring guid = std::to_wstring(data["guid"].get<std::string>());
+    std::wstring type = std::to_wstring(data["type"].get<std::string>());
+    std::shared_ptr<Component> component;
+    refComponentTable[guid] = data;
+
+    if (type == L"Transform") {
+        auto transform = CreateObject<Transform>(guid);
+        component = transform;
     }
-    for (auto& ref : refComponentTable)
+    if (type == L"MeshRenderer") {
+        auto meshRenderer = CreateObject<MeshRenderer>(guid);
+        component = meshRenderer;
+
+        auto mesh = data["mesh"];
+        auto pack = ResourceManager::main->LoadAssimpPack(
+            std::to_wstring(mesh["path"].get<std::string>()), 
+            std::to_wstring(mesh["modelName"].get<std::string>()), 
+            true);
+        modelNameList.push_back(pack->name);
+    }
+    if (type == L"MeshFilter")
     {
-        auto type = std::to_wstring(ref.second["type"].get<std::string>());
-        if (type == L"Transform") {
-            auto trans = EObject::FindObjectByGuid<Transform>(ref.first);
-            Vector3 pos = Vector3(
-                ref.second["position"][0].get<float>(),
-                ref.second["position"][1].get<float>(),
-                ref.second["position"][2].get<float>());
-            Quaternion rotation = Quaternion(
-                ref.second["rotation"][0].get<float>(),
-                ref.second["rotation"][1].get<float>(),
-                ref.second["rotation"][2].get<float>(),
-                ref.second["rotation"][3].get<float>());
-            Vector3 scale = Vector3(
-                ref.second["scale"][0].get<float>(),
-                ref.second["scale"][1].get<float>(),
-                ref.second["scale"][2].get<float>());
-            trans->localPosition = pos;
-            trans->localRotation = rotation;
-            trans->localScale = scale;
-        }
-        if (type == L"MeshRenderer")
+
+    }
+
+    componentCache.emplace_back(component);
+}
+
+void JsonLoader::PrevProcessingMaterial(json data)
+{
+    std::wstring guid = std::to_wstring(data["guid"].get<std::string>());
+    auto material = CreateObject<Material>(guid);
+    refMaterialTable[guid] = data;
+
+    for (auto& texture : data["datas"]["textures"])
+    {
+        ResourceManager::main->LoadTexture(
+            std::to_wstring(texture["path"].get<std::string>()), 
+            std::to_wstring(texture["originalName"].get<std::string>()));
+    }
+    materialCache.emplace_back(material);
+}
+
+void JsonLoader::LinkGameObject(json jsonData)
+{
+    std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
+    std::wstring parentGuid = std::to_wstring(jsonData["parent"].get<std::string>());
+
+    std::shared_ptr<GameObject> gameObject = EObject::FindObjectByGuid<GameObject>(guid);
+    std::shared_ptr<GameObject> parentObject = EObject::FindObjectByGuid<GameObject>(parentGuid);
+
+    if (gameObject != nullptr)
+    {
+        for (auto& componentGuid : jsonData["components"])
+            gameObject->AddComponent(EObject::FindObjectByGuid<Component>(std::to_wstring(componentGuid.get<std::string>())));
+        gameObject->name = std::to_wstring(jsonData["name"].get<std::string>());
+        gameObject->Init();
+        gameObject->SetParent(parentObject);
+        SceneManager::_currentScene->AddGameObject(gameObject);
+    }
+}
+
+void JsonLoader::LinkComponent(json jsonData)
+{
+    std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
+    std::wstring type = std::to_wstring(jsonData["type"].get<std::string>());
+
+    if (type == L"Transform") {
+        auto transform = EObject::FindObjectByGuid<Transform>(guid);
+        Vector3 pos = Vector3(
+            jsonData["position"][0].get<float>(),
+            jsonData["position"][1].get<float>(),
+            jsonData["position"][2].get<float>());
+        Quaternion rotation = Quaternion(
+            jsonData["rotation"][0].get<float>(),
+            jsonData["rotation"][1].get<float>(),
+            jsonData["rotation"][2].get<float>(),
+            jsonData["rotation"][3].get<float>());
+        Vector3 scale = Vector3(
+            jsonData["scale"][0].get<float>(),
+            jsonData["scale"][1].get<float>(),
+            jsonData["scale"][2].get<float>());
+        transform->localPosition = pos;
+        transform->localRotation = rotation;
+        transform->localScale = scale;
+    }
+
+
+    if (type == L"MeshRenderer")
+    {
+        auto meshRenderer = EObject::FindObjectByGuid<MeshRenderer>(guid);
+        auto meshInfo = jsonData["mesh"];
+        auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
+
+        auto model = ResourceManager::main->GetModel(modelName);
+        if (model != nullptr)
         {
-            auto mr = EObject::FindObjectByGuid<MeshRenderer>(ref.first);
-            auto meshInfo = ref.second["mesh"];
-            auto modelName = std::to_wstring(meshInfo["modelName"].get<std::string>());
-            auto model = ResourceManager::main->GetModel(modelName);
-            if (model != nullptr)
+            auto mesh = model->GetMeshsByName(meshInfo["meshName"].get<std::string>());
+
+            for (auto& materialGuid : jsonData["materials"])
             {
-                auto mesh = model->GetMeshsByName(meshInfo["meshName"].get<std::string>());
-                //auto material = std::make_shared<Material>();
-                std::vector<std::wstring> materialsGuid;
-                for (auto& materialGuid : ref.second["materials"])
-                    materialsGuid.push_back(std::to_wstring(materialGuid.get<std::string>()));
-                for (auto materialGuid : materialsGuid)
-                {
-                    auto material = EObject::FindObjectByGuid<Material>(materialGuid);
-                    material->shader = ResourceManager::main->GetShader(L"forward");
-                    mr->AddMateiral({ material });
-                }
-
-                mr->AddMesh(mesh);
-                mr->SetModel(model);
-                //Debug::log << meshInfo["meshName"].get<std::string>() << "\n";
+                auto guid = std::to_wstring(materialGuid.get<std::string>());
+                auto material = EObject::FindObjectByGuid<Material>(guid);
+                material->shader = ResourceManager::main->GetShader(std::to_wstring(refMaterialTable[guid]["shaderName"].get<std::string>()));
+                if (material->shader.lock() == nullptr)
+                    Debug::log << "Material ½¦ÀÌ´õ ¸ÅÄª ½ÇÆÐ\n";
+                meshRenderer->AddMateiral({ material });
             }
+
+            meshRenderer->AddMesh(mesh);
+            meshRenderer->SetModel(model);
+            //Debug::log << meshInfo["meshName"].get<std::string>() << "\n";
         }
     }
-    for (auto& ref : refGameObjectTable)
-    {
-        auto parentGuid = std::to_wstring(ref.second["parent"].get<std::string>());
-        auto name = std::to_wstring(ref.second["name"].get<std::string>());
 
-        auto obj = EObject::FindObjectByGuid<GameObject>(ref.first);
-        auto parentObj = EObject::FindObjectByGuid<GameObject>(parentGuid);
-        std::vector<std::wstring> componentGuids;
-        for (auto& compoGuid : ref.second["components"])
-            componentGuids.push_back(std::to_wstring(compoGuid.get<std::string>()));
 
-        if (obj != nullptr)
-        {
-            for(auto& componentGuid : componentGuids) {
-                auto component = EObject::FindObjectByGuid<Component>(componentGuid);
-                obj->AddComponent(component);
-            }
-            obj->name = name;
-            obj->Init();
-            obj->SetParent(parentObj);
-            SceneManager::_currentScene->AddGameObject(obj);
-        }
+}
 
-    }
+void JsonLoader::LinkMaterial(json jsonData)
+{
+    std::wstring guid = std::to_wstring(jsonData["guid"].get<std::string>());
 
+    auto material = EObject::FindObjectByGuid<Material>(guid);
+    auto datas = jsonData["datas"];
+    auto textures = datas["textures"];
+    auto floats = datas["floats"];
+    auto ints = datas["ints"];
+    auto vectors = datas["vectors"];
+
+    for (auto& texture : textures)
+        material->SetData(
+            texture["name"].get<std::string>(),
+            ResourceManager::main->GetTexture(std::to_wstring(texture["originalName"].get<std::string>())));
+    for (auto& data : floats)
+        material->SetData(data["name"].get<std::string>(), data["data"].get<float>());
+    for (auto& data : ints)
+        material->SetData(data["name"].get<std::string>(), data["data"].get<int>());
+    for (auto& data : vectors)
+        material->SetData(data["name"].get<std::string>(), Vector4(
+            data["data"][0].get<float>(),
+            data["data"][1].get<float>(),
+            data["data"][2].get<float>(),
+            data["data"][3].get<float>()
+        ));
 }

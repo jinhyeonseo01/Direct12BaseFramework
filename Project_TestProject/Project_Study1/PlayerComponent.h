@@ -49,4 +49,3 @@ public:
 
     float time = 5;
 };
-

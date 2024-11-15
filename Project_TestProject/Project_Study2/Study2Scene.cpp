@@ -21,17 +21,14 @@ void Study2Scene::ReRef()
 
 Study2Scene::Study2Scene()
 {
-
 }
 
 Study2Scene::Study2Scene(std::wstring name) : Scene(name)
 {
-
 }
 
 Study2Scene::~Study2Scene()
 {
-
 }
 
 void Study2Scene::Init()
@@ -67,13 +64,12 @@ void Study2Scene::Init()
     shader->Init();
 
 
-
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
     cameraObj->AddComponent<Camera>();
     camera = cameraObj;
 
-    ResourceManager::main->LoadAssimpPacks({ {L"resources/Models/SkyBox.obj",L"SkyBox"} }, true);
+    ResourceManager::main->LoadAssimpPacks({{L"resources/Models/SkyBox.obj", L"SkyBox"}}, true);
     ResourceManager::main->LoadTexture(L"resources/Textures/SkyBoxCubeMap2.png", L"skyTexture", false);
     ResourceManager::main->WaitAll();
 
@@ -266,7 +262,6 @@ void Study2Scene::Init()
 void Study2Scene::Update()
 {
     Scene::Update();
-
 }
 
 void Study2Scene::RenderingBegin()
@@ -276,18 +271,17 @@ void Study2Scene::RenderingBegin()
     auto cameraComponent = camera->GetComponent<Camera>();
     auto _aspect = GraphicManager::main->setting.screenInfo.width / GraphicManager::main->setting.screenInfo.height;
 
-    cameraComponent->cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(cameraComponent->_fovy * D2R, _aspect, cameraComponent->_near, cameraComponent->_far);
+    cameraComponent->cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(
+        cameraComponent->_fovy * D2R, _aspect, cameraComponent->_near, cameraComponent->_far);
     cameraComponent->cameraInfo.viewMatrix = XMMatrixLookToLH(camera->transform->worldPosition(),
-        camera->transform->forward(),
-        camera->transform->up());
+                                                              camera->transform->forward(),
+                                                              camera->transform->up());
 
-    auto cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer("CameraParams", sizeof(CameraParams), 3);
+    auto cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
+        "CameraParams", sizeof(CameraParams), 3);
     cameraBuffer.SetData(&cameraComponent->cameraInfo, sizeof(CameraParams));
 
     GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
-
-
-
 
 
     auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
@@ -340,5 +334,4 @@ void Study2Scene::RenderingBegin()
 void Study2Scene::RenderingEnd()
 {
     Scene::RenderingEnd();
-
 }

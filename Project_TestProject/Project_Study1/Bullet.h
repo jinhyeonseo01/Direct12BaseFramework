@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 
-class Bullet :public Component
+class Bullet : public Component
 {
 public:
     ~Bullet() override;
@@ -22,4 +22,3 @@ public:
 
     float time = 10;
 };
-

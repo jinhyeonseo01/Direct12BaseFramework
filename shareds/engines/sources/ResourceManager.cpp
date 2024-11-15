@@ -140,6 +140,22 @@ bool ResourceManager::WaitAll()
     return true;
 }
 
+void ResourceManager::Debug()
+{
+    Debug::log << "Model" << "\n";
+    for (auto& data : modelTable)
+        Debug::log << "   -" << data.first << "\n";
+    Debug::log << "Texture" << "\n";
+    for (auto& data : textureTable)
+        Debug::log << "   -" << data.first << "\n";
+    Debug::log << "Shader" << "\n";
+    for (auto& data : shaderTable)
+        Debug::log << "   -" << data.first << "\n";
+    Debug::log << "Assimp Package" << "\n";
+    for (auto& data : assimpPackTable)
+        Debug::log << "   -" << data.first << "\n";
+}
+
 std::shared_ptr<AssimpPack> ResourceManager::LoadAssimpPack(const std::wstring& path, const std::wstring& name, bool async)
 {
     if(!assimpPackTable.contains(name))
