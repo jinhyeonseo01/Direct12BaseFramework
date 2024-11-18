@@ -53,37 +53,23 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
 
             //--------- Vertex µî·Ï ---------
             Vertex vert;
-            Matrix fliper(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            );
             for (int j = 0; j < currentAIMesh->mNumVertices; j++)
             {
                 vert = {};
-                vert.position = Vector3::Transform(convert_assimp::Format(currentAIMesh->mVertices[j]), fliper);
-                //Debug::log << vert.position << "\n";
-                //vert.position.x = -vert.position.x;
-                //vert.position.z = -vert.position.z;
-                vert.normal = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mNormals[j]), fliper);
+                vert.position = convert_assimp::Format(currentAIMesh->mVertices[j]);
+                if (currentAIMesh->HasNormals())
+                    vert.normal = convert_assimp::Format(currentAIMesh->mNormals[j]);
                 if (currentAIMesh->HasVertexColors(0))
                     vert.color = convert_assimp::Format(currentAIMesh->mColors[0][j]);
-                if (currentAIMesh->HasTextureCoords(0))
+                if (currentAIMesh->HasTangentsAndBitangents())
                 {
-                    vert.tangent =
-                        Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mTangents[j]), fliper);
-                    vert.bitangent = Vector3::TransformNormal(convert_assimp::Format(currentAIMesh->mBitangents[j]),
-                                                              fliper);
-                    for (int k = 0; k < 8; k++)
-                        if (currentAIMesh->HasTextureCoords(k))
-                        {
-                            vert.uvs[k] = convert_assimp::Format(currentAIMesh->mTextureCoords[k][j]);
-                            auto temp = vert.uvs[k].x;
-                            //vert.uvs[k].x = 1 - vert.uvs[k].y;
-                            //vert.uvs[k].y = 1 - temp;
-                        }
+                    vert.tangent = convert_assimp::Format(currentAIMesh->mTangents[j]);
+                    vert.bitangent = convert_assimp::Format(currentAIMesh->mBitangents[j]);
                 }
+                for (int k = 0; k < 8; k++)
+                    if (currentAIMesh->HasTextureCoords(k))
+                        vert.uvs[k] = convert_assimp::Format(currentAIMesh->mTextureCoords[k][j]);
+                
                 vert.boneWeight = Vector4::Zero;
                 vert.boneId = Vector4(-1, -1, -1, -1);
                 vertexs.push_back(vert);
@@ -151,8 +137,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
                     if (findIndex != -1)
                     {
                         reinterpret_cast<float*>(&currentVertex.boneId.x)[findIndex] = static_cast<float>(bone->boneId);
-                        reinterpret_cast<float*>(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[k].
-                            mWeight;
+                        reinterpret_cast<float*>(&currentVertex.boneWeight.x)[findIndex] = currentAIBone->mWeights[k].mWeight;
                     }
                 }
             }
@@ -215,7 +200,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
         Debug::log << this->rootBoneNode->parent->transformMatrix << "\n";
     }
     else*/
-    rootNode->transformMatrix = Matrix::CreateRotationY(180 * D2R) * rootNode->transformMatrix;
+    //rootNode->transformMatrix = Matrix::CreateRotationY(180 * D2R) * rootNode->transformMatrix;
     isSkinned = _boneList.size() != 0;
 }
 

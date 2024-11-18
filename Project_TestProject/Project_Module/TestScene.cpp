@@ -79,7 +79,8 @@ void TestScene::Init()
     skyMaterial->SetData("skyTexture", ResourceManager::main->GetTexture(L"skyTexture"));
 
 
-    JsonLoader::Load(L"resources/scenes/SampleScene.json");
+    //JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    JsonLoader::Load(L"resources/scenes/SampleScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
 }
 
 void TestScene::Update()

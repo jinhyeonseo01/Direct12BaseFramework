@@ -20,4 +20,6 @@ public:
     void BeforeRendering() override;
     void Rendering() override;
     void AfterRendering() override;
+
+    std::unordered_map<std::wstring, std::weak_ptr<Transform>> nameToGameObject;
 };

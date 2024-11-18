@@ -12,7 +12,7 @@ namespace dxe
     class JsonLoader
     {
     public:
-        static json Load(std::wstring path);
+        static json Load(std::wstring path, std::shared_ptr<Scene> scene);
 
         template <class T, std::enable_if_t<std::is_base_of_v<EObject, T>, int>  = 0>
         static std::shared_ptr<T> CreateObject(const std::wstring& guid)
@@ -34,6 +34,8 @@ namespace dxe
         std::vector<std::shared_ptr<Material>> materialCache;
 
         std::vector<std::wstring> modelNameList;
+
+        std::weak_ptr<Scene> scene;
 
         void PrevProcessingGameObject(json data);
         void PrevProcessingComponent(json data);

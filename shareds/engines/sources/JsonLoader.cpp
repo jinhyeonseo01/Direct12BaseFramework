@@ -9,19 +9,24 @@
 #include "SceneManager.h"
 
 
-json JsonLoader::Load(std::wstring path)
+json JsonLoader::Load(std::wstring path, std::shared_ptr<Scene> scene)
 {
     std::ifstream reader{path};
     if (!reader)
+    {
+        Debug::log << "Json Load Fail : Wrong Path\n";
         return {};
+    }
 
     json readJson;
     reader >> readJson;
     readJson = readJson["references"];
 
+
     std::unordered_map<std::string, std::vector<json>> dataTable;
 
     JsonLoader jsonLoader;
+    jsonLoader.scene = scene;
 
     for (auto it = readJson.begin(); it != readJson.end(); ++it)
     {
@@ -130,7 +135,7 @@ void JsonLoader::LinkGameObject(json jsonData)
         gameObject->name = std::to_wstring(jsonData["name"].get<std::string>());
         gameObject->Init();
         gameObject->SetParent(parentObject);
-        SceneManager::_currentScene->AddGameObject(gameObject);
+        scene.lock()->AddGameObject(gameObject);
     }
 }
 

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SkinnedHierarchy.h"
 
+#include "GameObject.h"
+
 SkinnedHierarchy::SkinnedHierarchy()
 {
 }
@@ -32,6 +34,12 @@ void SkinnedHierarchy::Init()
 void SkinnedHierarchy::Start()
 {
     RendererComponent::Start();
+    std::vector<std::shared_ptr<GameObject>> gameObjects;
+    gameObjects.reserve(256);
+    gameObject.lock()->GetChildsAll(gameObjects);
+
+    for (auto& obj : gameObjects)
+        nameToGameObject.emplace(obj->name, obj->transform);
 }
 
 void SkinnedHierarchy::Update()

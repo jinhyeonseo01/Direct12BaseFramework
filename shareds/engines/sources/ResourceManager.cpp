@@ -4,6 +4,8 @@
 #include "GraphicManager.h"
 #include "Model.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>            // aiScene 구조체 정의
 
 ResourceManager* ResourceManager::main = nullptr;
 
@@ -20,6 +22,7 @@ ResourceManager::~ResourceManager()
 
 AssimpPack::AssimpPack()
 {
+
 }
 
 AssimpPack::~AssimpPack()
@@ -49,7 +52,7 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
                 pack->importer->SetPropertyFloat(AI_CONFIG_APP_SCALE_KEY, 1.0f);
                 pack->scene = pack->importer->ReadFile(path + "\0",
 
-                                                       aiProcess_MakeLeftHanded | // 왼손 좌표계로 변경
+                                                       //aiProcess_MakeLeftHanded | // 왼손 좌표계로 변경
                                                        //aiProcess_ConvertToLeftHanded |
                                                        aiProcess_FlipWindingOrder | //CW, CCW 바꾸는거임.
                                                        aiProcess_FlipUVs | // 말그대로 uv의 y축을 뒤집음. 그리고 bitangent도 뒤집음.
@@ -90,6 +93,8 @@ std::shared_ptr<AssimpPack> AssimpPack::Load(std::wstring path, std::wstring nam
                 else
                 {
                     Debug::log << "모델 로드 성공 : " << path << "\n";
+                    MakeLeftHandedProcess leftHandedProcess;
+                    leftHandedProcess.Execute(const_cast<aiScene*>(pack->scene));
                     ResourceManager::main->LoadModel(pack->shared_from_this());
                 }
             }
