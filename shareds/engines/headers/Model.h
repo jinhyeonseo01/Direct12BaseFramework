@@ -37,6 +37,7 @@ namespace dxe
 
         std::shared_ptr<Mesh> AddMesh(const std::shared_ptr<Mesh>& mesh);
         std::shared_ptr<ModelNode> AddNode(const std::shared_ptr<ModelNode>& parentNode, aiNode* currentNode);
+        aiNode* FindMeshLinkNode(unsigned int meshIndex, aiNode* currentNode);
         std::shared_ptr<Bone> AddBone(std::shared_ptr<Bone> bone);
 
         std::vector<std::shared_ptr<Mesh>> GetMeshsByName(const std::string& name);

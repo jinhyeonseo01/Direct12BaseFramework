@@ -155,6 +155,14 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
             auto meshName = std::string(currentAIMesh->mName.C_Str(), currentAIMesh->mName.length);
             str::trim(meshName);
             if (meshName == "Scene")
+                if (auto node = FindMeshLinkNode(i, pack->scene->mRootNode); node != nullptr)
+                {
+                    auto name = std::string(node->mName.C_Str(), node->mName.length);
+                    str::trim(name);
+                    meshName = name;
+                }
+            
+            if (meshName == "Scene")
                 meshName = std::to_string(pack->name);
             mesh->SetName(meshName);
             mesh->Init(std::move(vertexs), std::move(indexs));
@@ -241,6 +249,23 @@ std::shared_ptr<ModelNode> Model::AddNode(const std::shared_ptr<ModelNode>& pare
         AddNode(thisNode, currentNode->mChildren[i]);
     }
     return thisNode;
+}
+
+aiNode* Model::FindMeshLinkNode(unsigned int meshIndex, aiNode* currentNode)
+{
+    if (currentNode == nullptr)
+        return nullptr;
+    auto name = std::string(currentNode->mName.C_Str(), currentNode->mName.length);
+    for (int i = 0; i < currentNode->mNumMeshes; i++)
+        if (meshIndex == currentNode->mMeshes[i])
+            return currentNode;
+    aiNode* findNode = nullptr;
+    for (int i = 0; i < currentNode->mNumChildren; i++)
+    {
+        if ((findNode = FindMeshLinkNode(meshIndex, currentNode->mChildren[i])) != nullptr)
+            return findNode;
+    }
+    return findNode;
 }
 
 std::shared_ptr<ModelNode> Model::GetNodeByName(const std::string& name)
