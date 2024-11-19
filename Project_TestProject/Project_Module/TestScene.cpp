@@ -80,7 +80,7 @@ void TestScene::Init()
 
 
     //JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
-    JsonLoader::Load(L"resources/scenes/Southern_house.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    JsonLoader::Load(L"resources/scenes/DemoScene_CountryHouse.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
 }
 
 void TestScene::Update()
