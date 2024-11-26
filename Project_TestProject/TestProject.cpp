@@ -45,8 +45,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
 
         //auto scene = SceneManager::CreateScene<Study1Scene>(L"Study1 Scene");
-        //auto scene = SceneManager::CreateScene<Study2Scene>(L"Study2 Scene");
-        auto scene = SceneManager::CreateScene<TestScene>(L"Test Scene");
+        auto scene = SceneManager::CreateScene<Study2Scene>(L"Study2 Scene");
+        //auto scene = SceneManager::CreateScene<TestScene>(L"Test Scene");
 
         while (!dxe::Engine::GetEngineList().empty())
         {

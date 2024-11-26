@@ -3,11 +3,14 @@
 #include <DXEngine.h>
 #include "GraphicManager.h"
 #include "Camera.h"
+#include "JsonLoader.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include "MeshSample.h"
 #include "Scene.h"
+#include "../Project_Module/CameraController.h"
+#include "../Project_Study1/PlayerComponent.h"
 
 void* Study2Scene::Clone()
 {
@@ -67,16 +70,9 @@ void Study2Scene::Init()
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
     cameraObj->AddComponent<Camera>();
+    //cameraObj->AddComponent<CameraController>();
     camera = cameraObj;
 
-    ResourceManager::main->LoadAssimpPacks({{L"resources/Models/SkyBox.obj", L"SkyBox"}}, true);
-    ResourceManager::main->LoadTexture(L"resources/Textures/SkyBoxCubeMap2.png", L"skyTexture", false);
-    ResourceManager::main->WaitAll();
-
-    auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
-    skyBox->CreateGraphicResource();
-
-    /*
 
     //ResourceManager::main->LoadAssimpPack(L"Ellen.fbx", L"Ellen");
     ResourceManager::main->LoadAssimpPacks({
@@ -104,28 +100,32 @@ void Study2Scene::Init()
 
     ResourceManager::main->WaitAll();
 
-
     auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
     skyBox->CreateGraphicResource();
-    auto apacheModel = ResourceManager::main->GetModel(L"Apache");
-    apacheModel->CreateGraphicResource();
     auto bModel = ResourceManager::main->GetModel(L"B");
     bModel->CreateGraphicResource();
     auto boxModel = ResourceManager::main->GetModel(L"box");
     boxModel->CreateGraphicResource();
 
+    JsonLoader::Load(L"resources/scenes/Study2 Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+
+    auto apacheModel = ResourceManager::main->GetModel(L"Apache");
+
+
 
 
     quad = MeshSample::CreateQuad();
     quad->CreateBothBuffer();
+
+
     auto menu = CreateGameObject(L"menu");
     auto menuMR = menu->AddComponent<MeshRenderer>();
     menuMR->AddMesh({ quad });
-    std::shared_ptr<Material> menuMaterial = std::make_shared<Material>();
+    auto menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
     menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"menu"));
     menuMR->AddMateiral({ menuMaterial });
-    menu->transform->localPosition = Vector3(0, 0, 0.11);
+    menu->transform->localPosition = Vector3(0, 0, 0.1105);
     menu->transform->localScale = Vector3(2, 2, 2);
 
 
@@ -136,7 +136,7 @@ void Study2Scene::Init()
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
     menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"start"));
     menuMR->AddMateiral({ menuMaterial });
-    menu->transform->localPosition = Vector3(0, -0.5, 0.1);
+    menu->transform->localPosition = Vector3(0, -0.5, 0.1101);
     menu->transform->localScale = Vector3(400 / 1280.0, 150 / 720.0, 2);
 
 
@@ -147,7 +147,7 @@ void Study2Scene::Init()
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
     menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"help"));
     menuMR->AddMateiral({ menuMaterial });
-    menu->transform->localPosition = Vector3(0, -0.8, 0.1);
+    menu->transform->localPosition = Vector3(0, -0.8, 0.1102);
     menu->transform->localScale = Vector3(400 / 1280.0, 150 / 720.0, 2);
 
 
@@ -162,15 +162,11 @@ void Study2Scene::Init()
     menu->transform->localScale = Vector3(1000 * 2 / 1280.0, 600 * 2 / 720.0, 2);
 
 
-
-
-    auto rootObject = CreateGameObject(L"Apache");
-    auto apache = CreateGameObjects(apacheModel, apacheModel->rootNode.get());
-    apache->transform->localScale = Vector3::One * 0.002f;
-    apache->SetParent(rootObject);
-    auto player = rootObject->AddComponent<PlayerComponent>();
-
     std::vector<std::shared_ptr<MeshRenderer>> meshRenderers;
+
+    auto apache = SceneManager::GetCurrentScene()->Find(L"Apache");
+    auto player = apache->AddComponent<PlayerComponent>();
+    /*
     apache->GetComponentsWithChilds(meshRenderers);
     for (int i = 0; i < meshRenderers.size(); i++)
     {
@@ -180,18 +176,19 @@ void Study2Scene::Init()
         material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"ApacheTexture"));
         meshRenderers[i]->AddMateiral({ material });
     }
+    */
 
-    rootObject = CreateGameObject(L"B2");
+    auto rootObject = CreateGameObject(L"B2");
     auto b = CreateGameObjects(bModel, bModel->rootNode.get());
-    b->transform->localScale = Vector3::One * 0.01f;
-    b->transform->localPosition = -Vector3(1, 0, 1) * 50 + Vector3(0, -20, 0);
+    b->transform->localScale = Vector3::One * 10;
+    b->transform->localPosition = (-Vector3(1, 0, 1) + Vector3(0, -0.3, 0)) * 50 * 10;
     b->SetParent(rootObject);
 
     meshRenderers.clear();
     b->GetComponentsWithChilds(meshRenderers);
     for (int i = 0; i < meshRenderers.size(); i++)
     {
-        std::shared_ptr<Material> material = std::make_shared<Material>();
+        auto material = std::make_shared<Material>();
         material->shader = ResourceManager::main->GetShader(L"terrain");
         material->SetData("color", Vector4(0, 0, 1, 1));
         material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"Grass01"));
@@ -203,7 +200,7 @@ void Study2Scene::Init()
     srand(11);
     for (int i = 0; i < 5; i++)
     {
-        rootObject = CreateGameObject(L"Box_" + i);
+        rootObject = CreateGameObject(L"Box_" + std::to_wstring(i));
         auto box = CreateGameObjects(boxModel);
         box->transform->localScale = Vector3::One;
         box->SetParent(rootObject);
@@ -230,7 +227,7 @@ void Study2Scene::Init()
     {
         rootObject = CreateGameObject(L"Apache");
         apache = CreateGameObjects(apacheModel, apacheModel->rootNode.get());
-        apache->transform->localScale = Vector3::One * 0.004f;
+        //apache->transform->localScale = Vector3::One * 0.004f;
         apache->SetParent(rootObject);
         auto enemy = rootObject->AddComponent<PlayerComponent>();
         enemy->isPlayer = false;
@@ -252,11 +249,12 @@ void Study2Scene::Init()
     for (auto b : boxMRs)
         player->boxs.push_back(b);
 
-*/
+
 
     skyMaterial = std::make_shared<Material>();
     skyMaterial->shader = ResourceManager::main->GetShader(L"sky");
     skyMaterial->SetData("skyTexture", ResourceManager::main->GetTexture(L"skyTexture"));
+
 }
 
 void Study2Scene::Update()

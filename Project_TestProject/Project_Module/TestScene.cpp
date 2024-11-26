@@ -80,7 +80,8 @@ void TestScene::Init()
 
 
     //JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
-    JsonLoader::Load(L"resources/scenes/SimplePoly City - Low Poly Assets_Demo Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    //JsonLoader::Load(L"resources/scenes/SimplePoly City - Low Poly Assets_Demo Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
 }
 
 void TestScene::Update()

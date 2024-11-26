@@ -74,6 +74,13 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
     return shaderCode;
 }
 
+std::shared_ptr<ShaderCode> Shader::Loads(std::wstring path, std::vector<std::pair<std::string, std::string>>,
+    std::vector<D3D_SHADER_MACRO>& shaderMacro)
+{
+    std::string endPointName;
+    std::string shaderVersion;
+}
+
 ShaderRegisterInfo ShaderProfileInfo::GetRegisterByName(const std::string& name)
 {
     if (_nameToRegisterTable.contains(name))

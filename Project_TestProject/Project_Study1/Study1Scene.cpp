@@ -116,6 +116,7 @@ void Study1Scene::Init()
 
     quad = MeshSample::CreateQuad();
     quad->CreateBothBuffer();
+
     auto menu = CreateGameObject(L"menu");
     auto menuMR = menu->AddComponent<MeshRenderer>();
     menuMR->AddMesh({quad});

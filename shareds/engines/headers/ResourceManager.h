@@ -19,7 +19,7 @@ namespace dxe
         virtual ~AssimpPack();
 
         std::shared_ptr<AssimpPack> Init();
-        std::shared_ptr<AssimpPack> Load(std::wstring path, std::wstring name, bool async = false);
+        std::shared_ptr<AssimpPack> Load(std::wstring path, std::wstring name, bool async = false, bool xFlip = false);
 
     public:
         std::shared_ptr<std::jthread> asyncLoadThread;

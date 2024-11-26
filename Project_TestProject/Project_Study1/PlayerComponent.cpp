@@ -47,7 +47,7 @@ void PlayerComponent::Start()
     gameObject.lock()->rootParent.lock()->GetChildsAllByName(L"Back_Propeller", targets);
     backRoter.push_back(targets[0]);
     targets.clear();
-    gameObject.lock()->rootParent.lock()->GetChildsAllByName(L"Back_Propeller.001", targets);
+    gameObject.lock()->rootParent.lock()->GetChildsAllByName(L"Back_Propeller_001", targets);
     backRoter.push_back(targets[0]);
 
     targets.clear();

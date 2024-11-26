@@ -198,5 +198,8 @@ namespace dxe
             std::wstring path, std::string endPointName,
             std::string shaderVersion,
             std::vector<D3D_SHADER_MACRO>& shaderMacro);
+        static std::shared_ptr<ShaderCode> Loads(
+            std::wstring path, std::vector<std::pair<std::string, std::string>>,
+            std::vector<D3D_SHADER_MACRO>& shaderMacro);
     };
 }

@@ -159,7 +159,7 @@ void Model::Init(std::shared_ptr<AssimpPack> pack)
             {
                 auto name = std::string(node->mName.C_Str(), node->mName.length);
                 str::trim(name);
-                Debug::log << "이름 찾기 실패:" << meshName << " 교체 : " << name << "\n";
+                Debug::log << "이름 교체 : " << meshName << " -> " << name << "\n";
                 meshName = name;
             }
 

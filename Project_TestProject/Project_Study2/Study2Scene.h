@@ -20,4 +20,7 @@ public:
     std::shared_ptr<Material> skyMaterial;
     std::shared_ptr<GameObject> camera;
     std::vector<std::shared_ptr<MeshRenderer>> boxMRs;
+
+
+    std::shared_ptr<Mesh> quad;
 };

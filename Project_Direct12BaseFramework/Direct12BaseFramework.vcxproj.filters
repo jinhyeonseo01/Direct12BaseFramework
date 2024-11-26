@@ -255,6 +255,9 @@
     <ClInclude Include="..\shareds\engines\headers\CBuffer_struct.h">
       <Filter>Engine\shader</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Collider.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
@@ -434,6 +437,9 @@
     <ClCompile Include="..\shareds\engines\sources\JsonLoader.cpp">
       <Filter>Engine\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Collider.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc">
@@ -469,5 +475,10 @@
     <Text Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
       <Filter>Engine\shader</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\tree.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
