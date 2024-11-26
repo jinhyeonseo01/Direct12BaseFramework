@@ -177,7 +177,6 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Module\CameraController.h" />
     <ClInclude Include="Project_Module\CameraController.h" />
     <ClInclude Include="Project_Module\TestScene.h" />
     <ClInclude Include="Project_Study1\Bullet.h" />

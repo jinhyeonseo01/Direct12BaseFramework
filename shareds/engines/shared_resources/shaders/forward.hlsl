@@ -78,6 +78,7 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
     else
     {
         output.worldPos = mul(output.worldPos, WorldMatrix);
+
     }
 
     float4 viewPos = mul(output.worldPos, ViewMatrix);

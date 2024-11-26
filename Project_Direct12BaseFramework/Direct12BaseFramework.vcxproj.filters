@@ -463,31 +463,31 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
-      <Filter>Engine\shader</Filter>
-    </Text>
-    <Text Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
-      <Filter>Engine\shader</Filter>
-    </Text>
-    <Text Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
-      <Filter>Engine\shader</Filter>
-    </Text>
-    <Text Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
-      <Filter>Engine\shader</Filter>
-    </Text>
-    <Text Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
-      <Filter>Engine\shader</Filter>
-    </Text>
     <Text Include="..\shareds\engines\shared_resources\shaders\cbuffer_refister_list.txt">
       <Filter>Engine\shader\Cbuffer</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\tree.hlsl">
-      <Filter>Engine\shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\shareds\engines\shared_resources\shaders\header_camera.hlsl">
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\header_camera.hlsl">
       <Filter>Engine\shader\Cbuffer</Filter>
-    </FxCompile>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\default_forward.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\forward.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\skyBox.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\tree.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

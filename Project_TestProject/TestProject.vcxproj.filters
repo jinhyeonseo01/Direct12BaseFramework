@@ -47,9 +47,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Module\CameraController.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Project_Module\CameraController.h">
       <Filter>소스 파일\모듈 개발</Filter>
     </ClInclude>

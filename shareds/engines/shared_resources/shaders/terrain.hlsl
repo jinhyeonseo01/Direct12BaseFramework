@@ -102,14 +102,14 @@ float4 PS_Main(VS_OUT input) : SV_Target
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;
-    float split1 = 100;
-    float split2 = 600;
+    float split1 = 1;
+    float split2 = 6;
 
     if (input.localPos.y >= split1)
-        finalColor = lerp(AlbedoColor, AlbedoColor2, saturate((input.localPos.y - split1) / 200));
+        finalColor = lerp(AlbedoColor, AlbedoColor2, saturate((input.localPos.y - split1) / 2));
 
     if (input.localPos.y >= split2)
-        finalColor = lerp(finalColor, AlbedoColor3, saturate((input.localPos.y - split2) / 200));
+        finalColor = lerp(finalColor, AlbedoColor3, saturate((input.localPos.y - split2) / 2));
 
     //return pow(AlbedoColor, 1.0 / 1.0);
     //return pow(AlbedoColor2, 1.0 / 1.0);

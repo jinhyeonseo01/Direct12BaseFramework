@@ -285,42 +285,49 @@ void Study2Scene::RenderingBegin()
     auto pool = GraphicManager::main->GetCurrentCBufferPool();
     auto table = GraphicManager::main->GetCurrentDescriptorTable();
 
-    skyShader->SetPipeline(list);
+    if (true) // SkyBox
+    {
 
-    list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    list->IASetVertexBuffers(0, 1, &skyMesh->_vertexBufferView);
-    list->IASetIndexBuffer(&skyMesh->_indexBufferView);
-
-
-    auto cbuffer = pool->PopCBuffer("TransformParams");
-    TransformParams data;
-
-    data.isSkinned = 0;
-    data.WorldMatrix = Matrix::CreateTranslation(camera->transform->worldPosition());
-    data.WorldMatrix = Matrix::CreateScale(Vector3(50, 50, 50)) * data.WorldMatrix;
-    data.NormalMatrix = data.WorldMatrix.Invert().Transpose();
-    cbuffer.SetData(&data, sizeof(data));
-    table->SetCurrentGroupHandle(skyShader, "TransformParams", cbuffer.handle);
+        float skyBoxSize = 50;
 
 
-    auto cbuffer2 = pool->PopCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 512);
-    DefaultMaterialParams data2;
-    skyMaterial->GetTextureDatas(table, skyShader);
-    skyMaterial->GetData("color", data2.color);
+        skyShader->SetPipeline(list);
 
-    cbuffer2.SetData(&data2, sizeof(data2));
-    table->SetCurrentGroupHandle(skyShader, "DefaultMaterialParams", cbuffer2.handle);
-
-    table->RecycleCurrentGroupHandle(skyShader, "CameraParams");
+        list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        list->IASetVertexBuffers(0, 1, &skyMesh->_vertexBufferView);
+        list->IASetIndexBuffer(&skyMesh->_indexBufferView);
 
 
-    auto tableGroupGpuHandle = table->GetCurrentGroupGPUHandle(0);
-    list->SetGraphicsRootDescriptorTable(1, tableGroupGpuHandle);
+        auto cbuffer = pool->PopCBuffer("TransformParams");
+        TransformParams data;
 
-    list->DrawIndexedInstanced(skyMesh->indexCount, 1, 0, 0, 0);
-    //list->DrawInstanced(mesh->vertexCount, 1, 0, 0);
+        data.isSkinned = 0;
+        data.WorldMatrix = Matrix::CreateTranslation(camera->transform->worldPosition());
+        data.WorldMatrix = Matrix::CreateScale(skyBoxSize) * data.WorldMatrix;
+        data.NormalMatrix = data.WorldMatrix.Invert().Transpose();
+        cbuffer.SetData(&data, sizeof(data));
+        table->SetCurrentGroupHandle(skyShader, "TransformParams", cbuffer.handle);
 
-    table->SetNextGroupHandle();
+
+        auto cbuffer2 = pool->PopCBuffer("DefaultMaterialParams", sizeof(DefaultMaterialParams), 512);
+        DefaultMaterialParams data2;
+        skyMaterial->GetTextureDatas(table, skyShader);
+        skyMaterial->GetData("color", data2.color);
+
+        cbuffer2.SetData(&data2, sizeof(data2));
+        table->SetCurrentGroupHandle(skyShader, "DefaultMaterialParams", cbuffer2.handle);
+
+        table->RecycleCurrentGroupHandle(skyShader, "CameraParams");
+
+
+        auto tableGroupGpuHandle = table->GetCurrentGroupGPUHandle(0);
+        list->SetGraphicsRootDescriptorTable(1, tableGroupGpuHandle);
+
+        list->DrawIndexedInstanced(skyMesh->indexCount, 1, 0, 0, 0);
+        //list->DrawInstanced(mesh->vertexCount, 1, 0, 0);
+
+        table->SetNextGroupHandle();
+    }
 }
 
 void Study2Scene::RenderingEnd()
