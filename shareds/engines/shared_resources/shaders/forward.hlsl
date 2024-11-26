@@ -1,11 +1,8 @@
-cbuffer CameraParams : register(b0)
-{
-    row_major matrix ViewMatrix;
-    row_major matrix ProjectionMatrix;
-};
+#include "header_camera.hlsl"
 
 cbuffer ObjectParams : register(b4)
 {
+
 };
 
 cbuffer BoneParams : register(b3)

@@ -1,14 +1,10 @@
+#include "header_camera.hlsl"
+
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
     row_major matrix NormalMatrix;
     unsigned int isSkinned;
-};
-
-cbuffer CameraParams : register(b0)
-{
-    row_major matrix ViewMatrix;
-    row_major matrix ProjectionMatrix;
 };
 
 Texture2D _BaseMap : register(t0);

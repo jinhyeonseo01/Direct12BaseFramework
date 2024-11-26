@@ -253,6 +253,23 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(std::wstring path, std::wstr
     return main->shaderTable[name];
 }
 
+std::shared_ptr<Shader> ResourceManager::LoadShaderEx(std::wstring path, std::wstring name,
+    std::vector<std::pair<std::string, std::string>> shaderParams,
+    std::vector<D3D_SHADER_MACRO> shaderDefines, std::vector<std::shared_ptr<RenderTexture>> rtgs)
+{
+    if (!main->shaderTable.contains(name))
+    {
+        auto shader = Shader::LoadEx(path, shaderParams, shaderDefines);
+        if (shader == nullptr)
+            return nullptr;
+        shader->SetRenderTargets(rtgs);
+        shaderTable[name] = shader;
+        shaderList.push_back(shader);
+        return shader;
+    }
+    return main->shaderTable[name];
+}
+
 std::shared_ptr<Model> ResourceManager::GetModel(std::wstring name)
 {
     if (modelTable.contains(name))

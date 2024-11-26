@@ -194,12 +194,13 @@ namespace dxe
 
         void Profile();
         static std::shared_ptr<Shader> Load(std::wstring path);
+        static std::shared_ptr<Shader> LoadEx(
+            std::wstring path, std::vector<std::pair<std::string, std::string>> shaderParams,
+            const std::vector<D3D_SHADER_MACRO>& shaderDefines);
+
         static std::shared_ptr<ShaderCode> Load(
             std::wstring path, std::string endPointName,
-            std::string shaderVersion,
-            std::vector<D3D_SHADER_MACRO>& shaderMacro);
-        static std::shared_ptr<ShaderCode> Loads(
-            std::wstring path, std::vector<std::pair<std::string, std::string>>,
-            std::vector<D3D_SHADER_MACRO>& shaderMacro);
+            std::string shaderType,
+            const std::vector<D3D_SHADER_MACRO>& shaderDefines);
     };
 }

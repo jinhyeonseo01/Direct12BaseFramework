@@ -61,6 +61,10 @@ namespace dxe
             std::vector<std::pair<std::wstring, std::wstring>> texturePairs, bool mipmap = false);
         std::shared_ptr<Shader> LoadShader(std::wstring path, std::wstring name,
                                            std::vector<std::shared_ptr<RenderTexture>> rtgs);
+        std::shared_ptr<Shader> LoadShaderEx(std::wstring path, std::wstring name,
+            std::vector<std::pair<std::string, std::string>> shaderParams,
+            std::vector<D3D_SHADER_MACRO> shaderDefines,
+            std::vector<std::shared_ptr<RenderTexture>> rtgs);
 
         std::shared_ptr<Model> GetModel(std::wstring name);
         std::shared_ptr<AssimpPack> GetAssimpPack(std::wstring name);

@@ -1,0 +1,2 @@
+header_camera.hlsl
+ - cbuffer CameraParams : register(b0)

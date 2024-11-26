@@ -24,6 +24,44 @@ Vector3 Camera::GetScreenToWorldDirection(Vector2 mousePosition)
     return Vector3();
 }
 
+CameraParams Camera::GetCameraParams()
+{
+    CameraParams params;
+
+    cameraInfo.cameraScreenData = Vector4(
+        GraphicManager::main->setting.screenInfo.width,
+        GraphicManager::main->setting.screenInfo.height,
+        GraphicManager::main->setting.screenInfo.x,
+        GraphicManager::main->setting.screenInfo.y);
+    cameraInfo.cameraFrustumData = Vector4(_fovy * D2R, cameraInfo.cameraScreenData.x / cameraInfo.cameraScreenData.y, _near, _far);
+
+    auto worldPosition = gameObject.lock()->transform->worldPosition();
+    auto worldDirection = gameObject.lock()->transform->forward();
+    auto worldUp = gameObject.lock()->transform->up();
+
+    cameraInfo.cameraPos = Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1);
+    cameraInfo.cameraDirection = Vector4(worldDirection.x, worldDirection.y, worldDirection.z, 0);
+    cameraInfo.cameraUp = Vector4(worldUp.x, worldUp.y, worldUp.z, 0);
+
+    cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(
+        cameraInfo.cameraFrustumData.x, 
+        cameraInfo.cameraFrustumData.y,
+        cameraInfo.cameraFrustumData.z, 
+        cameraInfo.cameraFrustumData.w);
+
+    cameraInfo.viewMatrix = XMMatrixLookToLH(
+        cameraInfo.cameraPos,
+        cameraInfo.cameraDirection,
+        cameraInfo.cameraUp);
+    cameraInfo.VPMatrix = cameraInfo.viewMatrix * cameraInfo.projectionMatrix;
+
+    cameraInfo.InvertViewMatrix = cameraInfo.viewMatrix.Invert();
+    cameraInfo.InvertProjectionMatrix = cameraInfo.projectionMatrix.Invert();
+    cameraInfo.InvertVPMatrix = cameraInfo.VPMatrix.Invert();
+
+    return cameraInfo;
+}
+
 void* Camera::Clone()
 {
     auto thisObject = GetThis<Camera>();

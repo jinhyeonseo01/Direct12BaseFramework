@@ -19,4 +19,17 @@ struct alignas(16) CameraParams
 {
     Matrix viewMatrix = Matrix::Identity;
     Matrix projectionMatrix = Matrix::Identity;
+
+    Matrix ViewMatrix;
+    Matrix ProjectionMatrix;
+    Matrix VPMatrix;
+    Matrix InvertViewMatrix;
+    Matrix InvertProjectionMatrix;
+    Matrix InvertVPMatrix;
+
+    Vector4 cameraPos; // worldPos
+    Vector4 cameraDirection; // worldDirction
+    Vector4 cameraUp; // world Up Dirction
+    Vector4 cameraFrustumData; // x:fovy, y:aspect, z:near, w:far
+    Vector4 cameraScreenData; // x:screenx, y:screeny, z:offsetx, w:offsety
 };

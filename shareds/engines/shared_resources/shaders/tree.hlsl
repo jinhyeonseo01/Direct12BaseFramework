@@ -1,3 +1,5 @@
+#include "header_camera.hlsl"
+
 cbuffer TransformParams : register(b2)
 {
     row_major matrix WorldMatrix;
@@ -5,11 +7,6 @@ cbuffer TransformParams : register(b2)
     unsigned int isSkinned;
 };
 
-cbuffer CameraParams : register(b0)
-{
-    row_major matrix ViewMatrix;
-    row_major matrix ProjectionMatrix;
-};
 
 Texture2D _BaseMap : register(t0);
 SamplerState sampler_no_mip : register(s1);
@@ -18,7 +15,6 @@ SamplerState sampler_no_mip : register(s1);
 struct VS_IN
 {
     float3 pos : POSITION;
-    float3 uv : TEXCOORD0;
 };
 
 struct VS_OUT
@@ -39,15 +35,17 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 
     float4 viewPos = mul(float4(input.pos, 1.0f), WorldMatrix);
     //viewPos = float4(input.pos.xy, 0.1f, 1.0f);
-    output.uv = input.uv.xy;
     output.pos = viewPos; //mul(viewPos, ProjectionMatrix)
     return output;
 }
 
-GS_OUT GS_Main(VS_OUT input) : SV_Target
+[maxvrtexcount(4)]
+GS_OUT GS_Main(point VS_OUT input, inout TriangleStream<GS_OUT> outStream)
 {
     GS_OUT output = (GS_OUT)0;
-    
+
+    //output.pos = 
+
     return output;
 }
 

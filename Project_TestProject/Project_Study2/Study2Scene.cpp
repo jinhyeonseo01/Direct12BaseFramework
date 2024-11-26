@@ -267,17 +267,11 @@ void Study2Scene::RenderingBegin()
     Scene::RenderingBegin();
 
     auto cameraComponent = camera->GetComponent<Camera>();
-    auto _aspect = GraphicManager::main->setting.screenInfo.width / GraphicManager::main->setting.screenInfo.height;
-
-    cameraComponent->cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(
-        cameraComponent->_fovy * D2R, _aspect, cameraComponent->_near, cameraComponent->_far);
-    cameraComponent->cameraInfo.viewMatrix = XMMatrixLookToLH(camera->transform->worldPosition(),
-                                                              camera->transform->forward(),
-                                                              camera->transform->up());
+    auto cameraData = cameraComponent->GetCameraParams();
 
     auto cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
         "CameraParams", sizeof(CameraParams), 3);
-    cameraBuffer.SetData(&cameraComponent->cameraInfo, sizeof(CameraParams));
+    cameraBuffer.SetData(&cameraData, sizeof(CameraParams));
 
     GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
 

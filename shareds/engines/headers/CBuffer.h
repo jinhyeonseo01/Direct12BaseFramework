@@ -14,7 +14,7 @@ public:
     unsigned char* _cbufferOriginalAddress = nullptr;
     int _cbufferSize = 0;
 
-    void SetData(void* data, int size);
+    void SetData(const void* data, int size) const;
 };
 
 

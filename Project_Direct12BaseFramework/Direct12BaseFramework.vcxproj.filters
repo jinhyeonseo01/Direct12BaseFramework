@@ -49,6 +49,9 @@
     <Filter Include="Profiler">
       <UniqueIdentifier>{def7343f-8a58-4a84-8d29-b3a8634d7c50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\shader\Cbuffer">
+      <UniqueIdentifier>{eba22cea-c9cc-411c-b160-8d66a7e7a271}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shareds\constants\headers\convert_math.h">
@@ -252,11 +255,11 @@
     <ClInclude Include="..\shareds\engines\headers\JsonLoader.h">
       <Filter>Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\CBuffer_struct.h">
-      <Filter>Engine\shader</Filter>
-    </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\Collider.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\CBuffer_struct.h">
+      <Filter>Engine\shader\Cbuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -475,10 +478,16 @@
     <Text Include="..\shareds\engines\shared_resources\shaders\terrain.hlsl">
       <Filter>Engine\shader</Filter>
     </Text>
+    <Text Include="..\shareds\engines\shared_resources\shaders\cbuffer_refister_list.txt">
+      <Filter>Engine\shader\Cbuffer</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\shareds\engines\shared_resources\shaders\tree.hlsl">
       <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\header_camera.hlsl">
+      <Filter>Engine\shader\Cbuffer</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

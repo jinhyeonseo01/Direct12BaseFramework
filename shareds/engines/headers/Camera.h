@@ -26,6 +26,8 @@ namespace dxe
 
         Vector3 GetScreenToWorldDirection(Vector2 mousePosition);
 
+        CameraParams GetCameraParams();
+
     public:
         void* Clone() override;
         void ReRef() override;

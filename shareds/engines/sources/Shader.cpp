@@ -6,14 +6,14 @@
 
 
 std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPointName,
-                                         std::string shaderVersion, std::vector<D3D_SHADER_MACRO>& shaderMacro)
+                                         std::string shaderType, const std::vector<D3D_SHADER_MACRO>& shaderDefines)
 {
     std::wstring shaderPath = path;
 
     std::wstring ext = std::filesystem::path(shaderPath).extension();
 
     auto shaderCode = std::make_shared<ShaderCode>();
-    shaderCode->shaderType = shaderVersion;
+    shaderCode->shaderType = shaderType;
     shaderCode->endPointName = endPointName;
 
     if (ext == L".hlsl" || ext == L".HLSL")
@@ -40,7 +40,7 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
 
         ComPtr<ID3DBlob> _shaderBlob;
 
-        if (!DXSuccess(::D3DCompileFromFile(shaderPath.c_str(), shaderMacro.data(), D3D_COMPILE_STANDARD_FILE_INCLUDE
+        if (!DXSuccess(::D3DCompileFromFile(shaderPath.c_str(), shaderDefines.data(), D3D_COMPILE_STANDARD_FILE_INCLUDE
                                             , functionName.c_str(), version.c_str(), compileFlag, 0,
                                             _shaderBlob.GetAddressOf(), shaderCode->_errorBlob.GetAddressOf())))
         {
@@ -72,13 +72,6 @@ std::shared_ptr<ShaderCode> Shader::Load(std::wstring path, std::string endPoint
     }
 
     return shaderCode;
-}
-
-std::shared_ptr<ShaderCode> Shader::Loads(std::wstring path, std::vector<std::pair<std::string, std::string>>,
-    std::vector<D3D_SHADER_MACRO>& shaderMacro)
-{
-    std::string endPointName;
-    std::string shaderVersion;
 }
 
 ShaderRegisterInfo ShaderProfileInfo::GetRegisterByName(const std::string& name)
@@ -633,6 +626,25 @@ std::shared_ptr<Shader> Shader::Load(std::wstring path)
 
     shader->_shaderCodeTable.emplace(shaderVS->shaderType, shaderVS);
     shader->_shaderCodeTable.emplace(shaderPS->shaderType, shaderPS);
+
+    shader->Profile();
+
+    return shader;
+}
+
+
+std::shared_ptr<Shader> Shader::LoadEx(std::wstring path, const std::vector<std::pair<std::string, std::string>> shaderParams, const std::vector<
+                                           D3D_SHADER_MACRO>& shaderDefines)
+{
+    std::wstring shaderPath = GraphicManager::main->setting.shaderRootPath + path;
+
+    auto shader = std::make_shared<Shader>();
+
+    for (auto& pair : shaderParams)
+    {
+        auto shaderCodeData = Load(shaderPath, pair.first, pair.second, shaderDefines);
+        shader->_shaderCodeTable.emplace(shaderCodeData->shaderType, shaderCodeData);
+    }
 
     shader->Profile();
 

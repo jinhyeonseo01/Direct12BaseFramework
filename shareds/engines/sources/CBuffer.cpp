@@ -4,7 +4,7 @@
 #include "GraphicManager.h"
 #include "graphic_config.h"
 
-void CBufferView::SetData(void* data, int size)
+void CBufferView::SetData(const void* data, int size) const
 {
     assert(size <= _cbufferSize);
     std::memcpy(_cbufferAddress, data, size);
