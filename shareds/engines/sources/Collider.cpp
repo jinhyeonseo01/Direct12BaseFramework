@@ -113,9 +113,9 @@ void Collider::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void Collider::Rendering()
+void Collider::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void Collider::AfterRendering()

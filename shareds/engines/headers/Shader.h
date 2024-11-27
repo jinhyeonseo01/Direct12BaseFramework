@@ -28,10 +28,11 @@ namespace dxe
 
     enum class RenderQueueType
     {
-        Opaque,
-        AlphaTest,
-        Transparent,
-        Geometry
+        Sky = 1000,
+        Opaque = 2000,
+        AlphaTest = 2500,
+        Transparent = 3000,
+        Geometry = 1500
     };
 
     enum class FrontWise
@@ -42,7 +43,7 @@ namespace dxe
 
     enum class BlendType
     {
-        AlphaBlend, //FinalColor = SrcColor * SrcAlpha + DestColor * (1 - SrcAlpha)
+        AlphaBlend = 0, //FinalColor = SrcColor * SrcAlpha + DestColor * (1 - SrcAlpha)
         Add, //FinalColor = SrcColor + DestColor
         Multiple, //FinalColor = SrcColor * DestColor
         ColorDodge, //FinalColor = DestColor / (1 - SrcColor)
@@ -159,7 +160,10 @@ namespace dxe
         //D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
         //D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST
 
-        BlendType _blendType[8] = {BlendType::AlphaBlend};
+        BlendType _blendType[8] = {
+            BlendType::AlphaBlend,BlendType::AlphaBlend ,BlendType::AlphaBlend,BlendType::AlphaBlend ,
+            BlendType::AlphaBlend,BlendType::AlphaBlend ,BlendType::AlphaBlend,BlendType::AlphaBlend
+        };
         int _renderQueue = 2000;
         RenderQueueType _renderQueueType = RenderQueueType::Opaque;
         bool isMsaaDisable = true;

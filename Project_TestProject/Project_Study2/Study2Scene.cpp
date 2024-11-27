@@ -9,6 +9,8 @@
 #include "MeshRenderer.h"
 #include "MeshSample.h"
 #include "Scene.h"
+#include "TreeRenderer.h"
+#include "CBuffer_struct.h"
 #include "../Project_Module/CameraController.h"
 #include "../Project_Study1/PlayerComponent.h"
 
@@ -67,6 +69,23 @@ void Study2Scene::Init()
     shader->Init();
 
 
+    shader = ResourceManager::main->LoadShaderEx(L"tree.hlsl", L"tree",{
+        {"GS_Main", "gs"},
+        {"VS_Main", "vs"},
+        {"PS_Main", "ps"} },
+        GraphicManager::main->setting.shaderMacro,
+        rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::BACK;
+    info._zWrite = false;
+    info._zTest = true;
+    info._renderQueueType = RenderQueueType::Transparent;
+    info._blendType[0] = BlendType::AlphaBlend;
+    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
+
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
     cameraObj->AddComponent<Camera>();
@@ -86,6 +105,7 @@ void Study2Scene::Init()
     ResourceManager::main->LoadTexture(L"resources/Textures/Start.png", L"start", true);
     ResourceManager::main->LoadTexture(L"resources/Textures/help.png", L"help", true);
     ResourceManager::main->LoadTexture(L"resources/Textures/Info.png", L"info", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/tree.png", L"tree", true);
 
     auto apacheTexture = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_White.png", L"ApacheTexture", true);
     auto apacheTexture2 = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_Orange.png", L"ApacheTexture2", true);
@@ -184,6 +204,13 @@ void Study2Scene::Init()
     b->transform->localPosition = (-Vector3(1, 0, 1) + Vector3(0, -0.3, 0)) * 50 * 10;
     b->SetParent(rootObject);
 
+    auto tree = CreateGameObject(L"Trees");
+    auto treeRenderer = tree->AddComponent<TreeRenderer>();
+    auto treeMaterial = std::make_shared<Material>();
+    treeMaterial->shader = ResourceManager::main->GetShader(L"tree");
+    treeMaterial->SetData("_BaseMap",ResourceManager::main->GetTexture(L"tree"));
+    treeRenderer->AddMateiral({ treeMaterial });
+
     meshRenderers.clear();
     b->GetComponentsWithChilds(meshRenderers);
     for (int i = 0; i < meshRenderers.size(); i++)
@@ -268,7 +295,7 @@ void Study2Scene::RenderingBegin()
 
     auto cameraComponent = camera->GetComponent<Camera>();
     auto cameraData = cameraComponent->GetCameraParams();
-
+    _cameraParams = cameraData;
     auto cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
         "CameraParams", sizeof(CameraParams), 3);
     cameraBuffer.SetData(&cameraData, sizeof(CameraParams));

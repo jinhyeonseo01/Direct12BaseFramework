@@ -114,7 +114,7 @@ namespace dxe
     {
     }
 
-    void Component::Rendering()
+    void Component::Rendering(const RenderPacket& renderPack)
     {
     }
 

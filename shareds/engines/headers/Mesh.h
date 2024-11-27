@@ -27,6 +27,7 @@ namespace dxe
         BoundingOrientedBox GetWorldOBB(std::shared_ptr<Transform> trans);
         void CalculateBound();
         void Init(const std::vector<Vertex>& _vertexList, const std::vector<uint32_t>& _indexBuffer);
+        void Init(const std::vector<Vertex>& _vertexList);
         bool Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, float& dis, Vector3& normal);
         bool Intersects(std::shared_ptr<Transform> trans, const BoundingOrientedBox& worldBox);
 

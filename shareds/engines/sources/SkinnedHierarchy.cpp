@@ -77,9 +77,9 @@ void SkinnedHierarchy::BeforeRendering()
     RendererComponent::BeforeRendering();
 }
 
-void SkinnedHierarchy::Rendering()
+void SkinnedHierarchy::Rendering(const RenderPacket& renderPack)
 {
-    RendererComponent::Rendering();
+    RendererComponent::Rendering(renderPack);
 }
 
 void SkinnedHierarchy::AfterRendering()

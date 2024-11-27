@@ -77,9 +77,9 @@ void SkinnedMeshRenderer::BeforeRendering()
     RendererComponent::BeforeRendering();
 }
 
-void SkinnedMeshRenderer::Rendering()
+void SkinnedMeshRenderer::Rendering(const RenderPacket& renderPack)
 {
-    RendererComponent::Rendering();
+    RendererComponent::Rendering(renderPack);
 
 
     for (int i = 0; i < materials.size(); i++)

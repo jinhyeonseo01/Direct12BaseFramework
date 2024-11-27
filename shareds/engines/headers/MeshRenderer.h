@@ -22,7 +22,9 @@ namespace dxe
         void OnDestroy() override;
         void OnComponentDestroy() override;
         void BeforeRendering() override;
-        void Rendering() override;
+        void Rendering(const RenderPacket& renderPack) override;
         void AfterRendering() override;
+
+        Vector3 pos;
     };
 }

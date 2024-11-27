@@ -43,20 +43,20 @@ CameraParams Camera::GetCameraParams()
     cameraInfo.cameraDirection = Vector4(worldDirection.x, worldDirection.y, worldDirection.z, 0);
     cameraInfo.cameraUp = Vector4(worldUp.x, worldUp.y, worldUp.z, 0);
 
-    cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(
+    cameraInfo.ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(
         cameraInfo.cameraFrustumData.x, 
         cameraInfo.cameraFrustumData.y,
         cameraInfo.cameraFrustumData.z, 
         cameraInfo.cameraFrustumData.w);
 
-    cameraInfo.viewMatrix = XMMatrixLookToLH(
+    cameraInfo.ViewMatrix = XMMatrixLookToLH(
         cameraInfo.cameraPos,
         cameraInfo.cameraDirection,
         cameraInfo.cameraUp);
-    cameraInfo.VPMatrix = cameraInfo.viewMatrix * cameraInfo.projectionMatrix;
+    cameraInfo.VPMatrix = cameraInfo.ViewMatrix * cameraInfo.ProjectionMatrix;
 
-    cameraInfo.InvertViewMatrix = cameraInfo.viewMatrix.Invert();
-    cameraInfo.InvertProjectionMatrix = cameraInfo.projectionMatrix.Invert();
+    cameraInfo.InvertViewMatrix = cameraInfo.ViewMatrix.Invert();
+    cameraInfo.InvertProjectionMatrix = cameraInfo.ProjectionMatrix.Invert();
     cameraInfo.InvertVPMatrix = cameraInfo.VPMatrix.Invert();
 
     return cameraInfo;
@@ -129,9 +129,9 @@ void Camera::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void Camera::Rendering()
+void Camera::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void Camera::AfterRendering()

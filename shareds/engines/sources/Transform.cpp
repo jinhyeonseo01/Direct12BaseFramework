@@ -412,9 +412,9 @@ void Transform::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void Transform::Rendering()
+void Transform::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void Transform::AfterRendering()

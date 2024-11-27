@@ -41,7 +41,7 @@ namespace dxe
         void OnComponentDestroy() override;
         void Destroy() override;
         void BeforeRendering() override;
-        void Rendering() override;
+        void Rendering(const RenderPacket& renderPack) override;
         void AfterRendering() override;
     };
 }

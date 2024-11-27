@@ -1,3 +1,5 @@
+#pragma once
+
 struct alignas(16) TransformParams
 {
     Matrix WorldMatrix = Matrix::Identity;
@@ -17,11 +19,8 @@ struct alignas(16) DefaultMaterialParams
 
 struct alignas(16) CameraParams
 {
-    Matrix viewMatrix = Matrix::Identity;
-    Matrix projectionMatrix = Matrix::Identity;
-
-    Matrix ViewMatrix;
-    Matrix ProjectionMatrix;
+    Matrix ViewMatrix = Matrix::Identity;
+    Matrix ProjectionMatrix = Matrix::Identity;
     Matrix VPMatrix;
     Matrix InvertViewMatrix;
     Matrix InvertProjectionMatrix;

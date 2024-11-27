@@ -90,6 +90,13 @@ void Mesh::Init(const std::vector<Vertex>& _vertexList, const std::vector<uint32
         SetName("none");
 }
 
+void Mesh::Init(const std::vector<Vertex>& _vertexList)
+{
+    this->_vertexList = _vertexList;
+    if (this->name.empty())
+        SetName("none");
+}
+
 bool Mesh::Intersects(std::shared_ptr<Transform> trans, const Ray& worldRay, float& dis, Vector3& normal)
 {
     BoundingOrientedBox worldOBB;

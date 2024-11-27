@@ -184,21 +184,11 @@ void Engine::RenderingPipeline()
         //GetAcrive -> prevRendering
     }
 
-    for (int i = gameObjects.size() - 1; i >= 0; --i)
-    {
-        std::shared_ptr<GameObject>& currentObject = gameObjects[i];
-
-        if ((!currentObject->IsDestroy()) && currentObject->GetActive() && currentObject->IsReady())
-        {
-            std::vector<std::shared_ptr<RendererComponent>> renderers;
-            currentObject->GetComponents<RendererComponent>(renderers);
-            for (auto& r : renderers)
-            {
-                r->Rendering();
-            }
-        }
-        //GetAcrive -> prevRendering
-    }
+    std::sort(scene->_renderPacketList.begin(), scene->_renderPacketList.end());
+    for (auto& renderPacket : scene->_renderPacketList)
+        if (auto renderer = renderPacket.component.lock(); renderer)
+            renderer->Rendering(renderPacket);
+    
     for (int i = gameObjects.size() - 1; i >= 0; --i)
     {
         std::shared_ptr<GameObject>& currentObject = gameObjects[i];

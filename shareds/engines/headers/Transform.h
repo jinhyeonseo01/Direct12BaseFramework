@@ -76,7 +76,7 @@ namespace dxe
         void Init() override;
         void OnComponentDestroy() override;
         void BeforeRendering() override;
-        void Rendering() override;
+        void Rendering(const RenderPacket& renderPack) override;
         void AfterRendering() override;
     };
 }

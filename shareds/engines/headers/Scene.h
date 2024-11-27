@@ -1,8 +1,10 @@
 #pragma once
 #include <stdafx.h>
 
+#include "CBuffer_struct.h"
 #include "EObject.h"
 #include "Model.h"
+#include "RenderPacket.h"
 
 namespace dxe
 {
@@ -30,6 +32,12 @@ namespace dxe
 
         std::vector<std::shared_ptr<GameObject>> _gameObjectList;
         std::vector<std::shared_ptr<GameObject>> _destroyObject;
+
+        std::vector<RenderPacket> _renderPacketList;
+
+        CameraParams _cameraParams;
+
+        void AddRenderPacket(const RenderPacket& renderPacket);
 
         static void LoadJsonObject(Scene& scene, std::wstring json);
 

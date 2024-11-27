@@ -1,120 +1,136 @@
-#include "stdafx.h"
-#include "MeshRenderer.h"
+#include "TreeRenderer.h"
 
 #include "CBuffer_struct.h"
 #include "GameObject.h"
 #include "GraphicManager.h"
 #include "Mesh.h"
-#include "Model.h"
 #include "Scene.h"
 #include "SceneManager.h"
 #include "Transform.h"
 
-MeshRenderer::MeshRenderer()
+TreeRenderer::~TreeRenderer()
 {
 }
 
-MeshRenderer::~MeshRenderer()
-{
-}
-
-void* MeshRenderer::Clone()
+void* TreeRenderer::Clone()
 {
     return RendererComponent::Clone();
 }
 
-void MeshRenderer::ReRef()
+void TreeRenderer::ReRef()
 {
     RendererComponent::ReRef();
 }
 
-void MeshRenderer::Destroy()
+void TreeRenderer::Destroy()
 {
     RendererComponent::Destroy();
 }
 
-void MeshRenderer::Init()
+void TreeRenderer::Init()
 {
     RendererComponent::Init();
+
+    std::vector<std::shared_ptr<GameObject>> targets;
+    targets.clear();
+    gameObject.lock()->scene.lock()->Finds(L"B2", targets, false);
+    auto t = targets[0];
+    targets.clear();
+    t->GetChildsAllByName(L"default", targets);
+    ter = targets[0];
+
+    hmT = ResourceManager::main->GetTexture(L"hm");
+
+
+    points = std::make_shared<Mesh>();
+    std::vector<Vertex> pointList;
+    Vertex vert;
+
+
+    for (int i = 0; i < 100; i++)
+    {
+        auto localPos = ter.lock()->transform->WorldToLocal_Position(Vector3((rand() % 1000)/1000.0 * 1000.0 - 500.0, 0, (rand() % 1000) / 1000.0 * 1000.0 - 500.0));
+        Vector4 color = hmT.lock()->GetPixel(
+            (std::round(std::abs(localPos.x)) / 100) * hmT.lock()->_size.x,
+            (1 - std::round(std::abs(localPos.z)) / 100) * hmT.lock()->_size.y, 1
+        );
+        localPos.y = (color.x * 100);
+
+        auto worldPos = ter.lock()->transform->LocalToWorld_Position(localPos);
+        vert.position = worldPos;
+        pointList.push_back(vert);
+    }
+    points->Init(pointList);
+    points->CreateVertexBuffer();
 }
 
-void MeshRenderer::Start()
+void TreeRenderer::Start()
 {
     RendererComponent::Start();
 }
 
-void MeshRenderer::Update()
+void TreeRenderer::Update()
 {
     RendererComponent::Update();
 }
 
-void MeshRenderer::LateUpdate()
+void TreeRenderer::LateUpdate()
 {
     RendererComponent::LateUpdate();
-    pos = gameObject.lock()->transform->worldPosition();
 }
 
-void MeshRenderer::OnEnable()
+void TreeRenderer::OnEnable()
 {
     RendererComponent::OnEnable();
 }
 
-void MeshRenderer::OnDisable()
+void TreeRenderer::OnDisable()
 {
     RendererComponent::OnDisable();
 }
 
-void MeshRenderer::OnDestroy()
+void TreeRenderer::OnDestroy()
 {
     RendererComponent::OnDestroy();
 }
 
-void MeshRenderer::OnComponentDestroy()
+void TreeRenderer::OnComponentDestroy()
 {
     RendererComponent::OnComponentDestroy();
 }
 
-void MeshRenderer::BeforeRendering()
+void TreeRenderer::BeforeRendering()
 {
     RendererComponent::BeforeRendering();
 
     for (int i = 0; i < materialList.size(); i++)
     {
-        if (meshList.size() == 0)
-            break;
         auto material = materialList[i]; //.lock()
-        auto mesh = meshList[i % meshList.size()].lock();
         if (!material)
             continue;
-        if (!mesh)
-            continue;
-        RenderPacket pack( mesh,material,std::dynamic_pointer_cast<Component>(this->shared_from_this()),
-            0);
-        //Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), pos)
+        RenderPacket pack(std::weak_ptr<Mesh>(), material, std::dynamic_pointer_cast<Component>(this->shared_from_this()),
+            Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
     }
 }
 
-void MeshRenderer::Rendering(const RenderPacket& renderPack)
+void TreeRenderer::Rendering(const RenderPacket& renderPack)
 {
     RendererComponent::Rendering(renderPack);
-    
-    auto material = renderPack.material.lock(); //.lock()
-    auto mesh = renderPack.mesh.lock();
-    if (!material)
-        return;
-    if (!mesh)
-        return;
 
     auto list = GraphicManager::main->GetCurrentCommandList();
     auto pool = GraphicManager::main->GetCurrentCBufferPool();
     auto table = GraphicManager::main->GetCurrentDescriptorTable();
 
+    auto material = renderPack.material.lock(); //.lock()
+    auto mesh = renderPack.mesh.lock();
+    if (!material)
+        return;
+
     material->shader.lock()->SetPipeline(list);
 
-    list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    list->IASetVertexBuffers(0, 1, &mesh->_vertexBufferView);
-    list->IASetIndexBuffer(&mesh->_indexBufferView);
+    list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+    list->IASetVertexBuffers(0, 1, &points->_vertexBufferView);
 
 
     auto cbuffer = pool->PopCBuffer("TransformParams");
@@ -142,14 +158,14 @@ void MeshRenderer::Rendering(const RenderPacket& renderPack)
     list->SetGraphicsRootDescriptorTable(1, a);
 
 
-    list->DrawIndexedInstanced(mesh->indexCount, 1, 0, 0, 0);
+    list->DrawInstanced(points->vertexCount, 1, 0, 0);
+    //list->DrawIndexedInstanced(mesh->indexCount, 1, 0, 0, 0);
     //list->DrawInstanced(mesh->vertexCount, 1, 0, 0);
 
     table->SetNextGroupHandle();
-    
 }
 
-void MeshRenderer::AfterRendering()
+void TreeRenderer::AfterRendering()
 {
     RendererComponent::AfterRendering();
 }

@@ -12,6 +12,7 @@ namespace dxe
 {
     Scene::Scene()
     {
+        _renderPacketList.reserve(8000);
     }
 
     Scene::Scene(std::wstring name)
@@ -72,6 +73,12 @@ namespace dxe
 
     void Scene::RenderingEnd()
     {
+        _renderPacketList.clear();
+    }
+
+    void Scene::AddRenderPacket(const RenderPacket& renderPacket)
+    {
+        _renderPacketList.push_back(renderPacket);
     }
 
     void Scene::LoadJsonObject(Scene& scene, std::wstring json)

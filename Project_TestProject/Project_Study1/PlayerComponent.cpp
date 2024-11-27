@@ -393,9 +393,9 @@ void PlayerComponent::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void PlayerComponent::Rendering()
+void PlayerComponent::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void PlayerComponent::AfterRendering()

@@ -74,9 +74,9 @@ void Bullet::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void Bullet::Rendering()
+void Bullet::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void Bullet::AfterRendering()

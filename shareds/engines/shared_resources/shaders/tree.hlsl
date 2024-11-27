@@ -19,13 +19,12 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 pos : SV_Position;
-    float2 uv : TEXCOORD0;
+    float4 pos : SV_POSITION;
 };
 
 struct GS_OUT
 {
-    float4 pos : SV_Position;
+    float4 pos : SV_POSITION;
     float2 uv : TEXCOORD0;
 };
 
@@ -33,20 +32,55 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 {
     VS_OUT output = (VS_OUT)0;
 
-    float4 viewPos = mul(float4(input.pos, 1.0f), WorldMatrix);
+    //float4 viewPos = mul(float4(input.pos, 1.0f), WorldMatrix);
     //viewPos = float4(input.pos.xy, 0.1f, 1.0f);
-    output.pos = viewPos; //mul(viewPos, ProjectionMatrix)
+    output.pos = float4(input.pos, 1.0f); //mul(viewPos, ProjectionMatrix)
     return output;
 }
 
-[maxvrtexcount(4)]
-GS_OUT GS_Main(point VS_OUT input, inout TriangleStream<GS_OUT> outStream)
+[maxvertexcount(6)]
+void GS_Main(point VS_OUT input[1], inout TriangleStream<GS_OUT> outStream)
 {
     GS_OUT output = (GS_OUT)0;
 
-    //output.pos = 
+    // 벡터 계산
+    float3 basePos = input[0].pos.xyz;
+    float3 up = float3(0, 1, 0);
+    float3 right = normalize(cross(up, normalize(cameraPos.xyz - basePos)));
+    float3 forward = cross(right, up); // 사용하지 않더라도 계산됨
+    float size = 20;
+    // 정점 1
+    output.pos = mul(float4(basePos + up * size*2 + right * size, 1), VPMatrix);
+    output.uv = float2(0, 0);
+    outStream.Append(output);
 
-    return output;
+    // 정점 2
+    output.pos = mul(float4(basePos + up * size*2 - right * size, 1), VPMatrix);
+    output.uv = float2(1, 0);
+    outStream.Append(output);
+
+    // 정점 3
+    output.pos = mul(float4(basePos + right * size, 1), VPMatrix);
+    output.uv = float2(0, 1);
+    outStream.Append(output);
+
+    // 삼각형 스트립 재시작
+    outStream.RestartStrip();
+
+    // 정점 4
+    output.pos = mul(float4(basePos+ right * size, 1), VPMatrix);
+    output.uv = float2(0, 1);
+    outStream.Append(output);
+
+    // 정점 5
+    output.pos = mul(float4(basePos + up * size*2 - right * size, 1), VPMatrix);
+    output.uv = float2(1, 0);
+    outStream.Append(output);
+
+    // 정점 6
+    output.pos = mul(float4(basePos - right * size, 1), VPMatrix);
+    output.uv = float2(1, 1);
+    outStream.Append(output);
 }
 
 

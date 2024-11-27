@@ -69,9 +69,9 @@ void RendererComponent::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void RendererComponent::Rendering()
+void RendererComponent::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void RendererComponent::AfterRendering()

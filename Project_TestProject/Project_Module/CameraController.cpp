@@ -109,9 +109,9 @@ void CameraController::BeforeRendering()
     Component::BeforeRendering();
 }
 
-void CameraController::Rendering()
+void CameraController::Rendering(const RenderPacket& renderPack)
 {
-    Component::Rendering();
+    Component::Rendering(renderPack);
 }
 
 void CameraController::AfterRendering()

@@ -255,11 +255,14 @@
     <ClInclude Include="..\shareds\engines\headers\JsonLoader.h">
       <Filter>Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\shareds\engines\headers\Collider.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\CBuffer_struct.h">
       <Filter>Engine\shader\Cbuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\RenderPacket.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Collider.h">
+      <Filter>Engine\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -440,8 +443,11 @@
     <ClCompile Include="..\shareds\engines\sources\JsonLoader.cpp">
       <Filter>Engine\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\RenderPacket.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Collider.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

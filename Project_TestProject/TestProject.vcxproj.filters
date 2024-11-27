@@ -45,6 +45,9 @@
     <ClCompile Include="Project_Study1\PlayerComponent.cpp">
       <Filter>소스 파일\과제1</Filter>
     </ClCompile>
+    <ClCompile Include="Project_Study2\TreeRenderer.cpp">
+      <Filter>소스 파일\과제2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project_Module\CameraController.h">
@@ -63,6 +66,9 @@
       <Filter>소스 파일\과제1</Filter>
     </ClInclude>
     <ClInclude Include="Project_Study2\Study2Scene.h">
+      <Filter>소스 파일\과제2</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Study2\TreeRenderer.h">
       <Filter>소스 파일\과제2</Filter>
     </ClInclude>
   </ItemGroup>

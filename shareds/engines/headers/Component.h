@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "EObject.h"
 #include "IDelayedDestroy.h"
+#include "RenderPacket.h"
 
 namespace dxe
 {
@@ -45,7 +46,7 @@ namespace dxe
         //Remove Cycle
 
         virtual void BeforeRendering();
-        virtual void Rendering();
+        virtual void Rendering(const RenderPacket& renderPack);
         virtual void AfterRendering();
 
         //------------------

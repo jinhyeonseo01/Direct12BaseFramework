@@ -266,9 +266,9 @@ void Study1Scene::RenderingBegin()
     auto cameraComponent = camera->GetComponent<Camera>();
     auto _aspect = GraphicManager::main->setting.screenInfo.width / GraphicManager::main->setting.screenInfo.height;
 
-    cameraComponent->cameraInfo.projectionMatrix = Matrix::CreatePerspectiveFieldOfView(
+    cameraComponent->cameraInfo.ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(
         cameraComponent->_fovy * D2R, _aspect, cameraComponent->_near, cameraComponent->_far);
-    cameraComponent->cameraInfo.viewMatrix = XMMatrixLookToLH(camera->transform->worldPosition(),
+    cameraComponent->cameraInfo.ViewMatrix = XMMatrixLookToLH(camera->transform->worldPosition(),
                                                               camera->transform->forward(),
                                                               camera->transform->up());
 

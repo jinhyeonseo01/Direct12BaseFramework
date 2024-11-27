@@ -20,7 +20,7 @@ public:
     void OnDestroy() override;
     void OnComponentDestroy() override;
     void BeforeRendering() override;
-    void Rendering() override;
+    void Rendering(const RenderPacket& renderPack) override;
     void AfterRendering() override;
 
     std::weak_ptr<GameObject> topRoter;

@@ -88,7 +88,8 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
     output.worldNormal = normalize(mul(float4(input.normal, 0.0f), NormalMatrix).xyz);
     output.uv = input.uv.xy;
     output.color = input.color;
-    output.pos = mul(viewPos, ProjectionMatrix);
+    //output.pos = mul(viewPos, ProjectionMatrix);
+    output.pos = mul(output.worldPos, VPMatrix);
     return output;
 }
 

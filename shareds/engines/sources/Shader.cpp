@@ -272,6 +272,9 @@ void Shader::Init()
         blendDesc.BlendEnable = _info._renderQueueType == RenderQueueType::Transparent ? TRUE : FALSE;
         blendDesc.LogicOpEnable = FALSE;
         blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+        blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+        blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+        blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
 
         if (blendDesc.BlendEnable)
         {
@@ -280,10 +283,12 @@ void Shader::Init()
             case BlendType::AlphaBlend:
                 blendDesc.BlendEnable = TRUE;
                 blendDesc.LogicOpEnable = FALSE;
-                blendDesc.LogicOp = D3D12_LOGIC_OP_COPY;
                 blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
                 blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
                 blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+                blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+                blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+                blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
                 break;
             case BlendType::Add:
                 blendDesc.BlendEnable = TRUE;
@@ -332,12 +337,22 @@ void Shader::Init()
         }
     }
 
-    _pipelineDesc.VS = _shaderCodeTable["vs"]->_shaderByteCode;
-    _pipelineDesc.PS = _shaderCodeTable["ps"]->_shaderByteCode;
+    
+    for (auto& shaderCode : _shaderCodeTable)
+    {
+        if (shaderCode.first == "vs")
+            _pipelineDesc.VS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
+        if (shaderCode.first == "ps")
+            _pipelineDesc.PS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
+        if (shaderCode.first == "gs")
+            _pipelineDesc.GS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
+        if (shaderCode.first == "hs")
+            _pipelineDesc.HS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
+        if (shaderCode.first == "ds")
+            _pipelineDesc.DS = _shaderCodeTable[shaderCode.first]->_shaderByteCode;
+    }
 
     DXAssert(device->CreateGraphicsPipelineState(&_pipelineDesc, ComPtrIDAddr(_pipelineState)));
-
-    Debug::log << "쉐이더 생성 완료\n";
     ++_initCount;
 }
 

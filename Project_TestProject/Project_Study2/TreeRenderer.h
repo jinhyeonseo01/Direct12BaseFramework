@@ -1,13 +1,10 @@
 #pragma once
-#include <stdafx.h>
+#include "RendererComponent.h"
 
-#include "Camera.h"
-#include "Component.h"
-
-class CameraController : public Component
+class TreeRenderer : public RendererComponent
 {
 public:
-    ~CameraController() override;
+    ~TreeRenderer() override;
     void* Clone() override;
     void ReRef() override;
     void Destroy() override;
@@ -23,11 +20,11 @@ public:
     void Rendering(const RenderPacket& renderPack) override;
     void AfterRendering() override;
 
-public:
-    std::shared_ptr<Camera> camera;
 
+    std::shared_ptr<Mesh> points;
 
-    Vector2 prevMourePosition;
-    Vector3 totalAngle = Vector3::Zero;
-    bool cameraControl = false;
+    std::weak_ptr<GameObject> ter;
+
+    std::weak_ptr<Texture> hmT;
 };
+

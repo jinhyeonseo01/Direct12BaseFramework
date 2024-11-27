@@ -240,6 +240,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\MeshSample.h" />
     <ClInclude Include="..\shareds\engines\headers\Model.h" />
     <ClInclude Include="..\shareds\engines\headers\RendererComponent.h" />
+    <ClInclude Include="..\shareds\engines\headers\RenderPacket.h" />
     <ClInclude Include="..\shareds\engines\headers\RenderTargetGroup.h" />
     <ClInclude Include="..\shareds\engines\headers\RenderTexture.h" />
     <ClInclude Include="..\shareds\engines\headers\ResourceManager.h" />
@@ -324,6 +325,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClCompile Include="..\shareds\engines\sources\MeshSample.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Model.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RendererComponent.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\RenderPacket.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RenderTargetGroup.cpp" />
     <ClCompile Include="..\shareds\engines\sources\RenderTexture.cpp" />
     <ClCompile Include="..\shareds\engines\sources\ResourceManager.cpp" />
