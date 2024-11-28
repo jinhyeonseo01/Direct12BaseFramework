@@ -313,7 +313,7 @@ void PlayerComponent::Update()
                 Vector3 normal;
                 if (mesh.lock()->Intersects(box.lock()->gameObject.lock()->transform, ray, dis, normal))
                 {
-                    if (dis >= 0 && dis <= 1)
+                    if (dis >= 0 && dis <= 5)
                     {
                         Vector3 objForward = velocity;
                         normal.Normalize(normal);
@@ -321,7 +321,7 @@ void PlayerComponent::Update()
                         gameObject.lock()->transform->forward(objForward - normal.Dot(objForward) * 1.02 * normal);
                         angle = gameObject.lock()->transform->worldRotation().ToEuler();
                     }
-                    else if (dis >= 0 && dis <= 3)
+                    else if (dis >= 0 && dis <= 20)
                     {
                         Vector3 objForward = velocity;
                         normal.Normalize(normal);
