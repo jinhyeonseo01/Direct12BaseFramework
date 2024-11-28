@@ -26,5 +26,6 @@ public:
     std::weak_ptr<GameObject> ter;
 
     std::weak_ptr<Texture> hmT;
+    int count = 100;
 };
 

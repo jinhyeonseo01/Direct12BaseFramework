@@ -77,11 +77,43 @@ void Study2Scene::Init()
         rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
     info.cullingType = CullingType::BACK;
+    info._zWrite = true;
+    info._zTest = true;
+    info._renderQueueType = RenderQueueType::AlphaTest;
+    info._blendType[0] = BlendType::AlphaBlend;
+    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
+
+    shader = ResourceManager::main->LoadShaderEx(L"gress.hlsl", L"gress", {
+    {"GS_Main", "gs"},
+    {"VS_Main", "vs"},
+    {"PS_Main", "ps"} },
+    GraphicManager::main->setting.shaderMacro,
+    rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::BACK;
+    info._zWrite = true;
+    info._zTest = true;
+    info._renderQueueType = RenderQueueType::Opaque;
+    info._blendType[0] = BlendType::AlphaBlend;
+    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
+    shader = ResourceManager::main->LoadShaderEx(L"water.hlsl", L"water", {
+    {"VS_Main", "vs"},
+    {"PS_Main", "ps"} },
+    GraphicManager::main->setting.shaderMacro,
+    rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::NONE;
     info._zWrite = false;
     info._zTest = true;
     info._renderQueueType = RenderQueueType::Transparent;
     info._blendType[0] = BlendType::AlphaBlend;
-    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     shader->SetShaderSetting(info);
     shader->Init();
 
@@ -98,7 +130,8 @@ void Study2Scene::Init()
         {L"resources/Models/B.fbx",L"B"},
         {L"resources/Models/box.obj",L"box"},
         {L"resources/Models/SkyBox.obj",L"SkyBox"},
-        {L"resources/Models/Apache.fbx", L"Apache"}
+        {L"resources/Models/Apache.fbx", L"Apache"},
+        {L"resources/Models/Plane.fbx", L"Plane" }
         }, false);
 
     ResourceManager::main->LoadTexture(L"resources/Textures/menu.png", L"menu", true);
@@ -106,6 +139,7 @@ void Study2Scene::Init()
     ResourceManager::main->LoadTexture(L"resources/Textures/help.png", L"help", true);
     ResourceManager::main->LoadTexture(L"resources/Textures/Info.png", L"info", true);
     ResourceManager::main->LoadTexture(L"resources/Textures/tree.png", L"tree", true);
+    ResourceManager::main->LoadTexture(L"resources/Textures/water.png", L"Water", true);
 
     auto apacheTexture = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_White.png", L"ApacheTexture", true);
     auto apacheTexture2 = ResourceManager::main->LoadTexture(L"resources/Textures/Apache_Texture_Orange.png", L"ApacheTexture2", true);
@@ -126,6 +160,8 @@ void Study2Scene::Init()
     bModel->CreateGraphicResource();
     auto boxModel = ResourceManager::main->GetModel(L"box");
     boxModel->CreateGraphicResource();
+    auto waterModel = ResourceManager::main->GetModel(L"Plane");
+    waterModel->CreateGraphicResource();
 
     JsonLoader::Load(L"resources/scenes/Study2 Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
 
@@ -211,6 +247,15 @@ void Study2Scene::Init()
     treeMaterial->SetData("_BaseMap",ResourceManager::main->GetTexture(L"tree"));
     treeRenderer->AddMateiral({ treeMaterial });
 
+
+    auto gress = CreateGameObject(L"Gress");
+    auto gressRenderer = tree->AddComponent<TreeRenderer>();
+    auto gressMaterial = std::make_shared<Material>();
+    gressMaterial->shader = ResourceManager::main->GetShader(L"gress");
+    gressRenderer->AddMateiral({ gressMaterial });
+    gressRenderer->count = 1000000;
+
+
     meshRenderers.clear();
     b->GetComponentsWithChilds(meshRenderers);
     for (int i = 0; i < meshRenderers.size(); i++)
@@ -272,6 +317,27 @@ void Study2Scene::Init()
         }
 
     }
+
+
+
+    rootObject = CreateGameObject(L"Water");
+    auto water = CreateGameObjects(waterModel);
+    water->transform->localScale = Vector3::One;
+    water->SetParent(rootObject);
+    meshRenderers.clear();
+    water->GetComponentsWithChilds(meshRenderers);
+    for (int i = 0; i < meshRenderers.size(); i++)
+    {
+        std::shared_ptr<Material> material = std::make_shared<Material>();
+        material->shader = ResourceManager::main->GetShader(L"water");
+        material->SetData("color", Vector4(0, 0, 1, 0.1f));
+        material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"Water"));
+        meshRenderers[i]->AddMateiral({ material });
+    }
+    rootObject->transform->worldPosition(Vector3(0, -120, 0));
+    rootObject->transform->localScale = Vector3(100,100,100);
+
+
 
     for (auto b : boxMRs)
         player->boxs.push_back(b);

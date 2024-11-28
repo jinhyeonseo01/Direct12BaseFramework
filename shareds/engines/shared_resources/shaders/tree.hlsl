@@ -84,9 +84,9 @@ void GS_Main(point VS_OUT input[1], inout TriangleStream<GS_OUT> outStream)
 }
 
 
-[earlydepthstencil]
 float4 PS_Main(GS_OUT input) : SV_Target
 {
     float4 AlbedoColor = _BaseMap.Sample(sampler_no_mip, input.uv);
+    clip(AlbedoColor.a - 0.8);
     return pow(AlbedoColor, 1.0 / 2.2);
 }

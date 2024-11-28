@@ -72,4 +72,12 @@
       <Filter>소스 파일\과제2</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="resources\shaders\water.hlsl">
+      <Filter>소스 파일\과제2</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\gress.hlsl">
+      <Filter>소스 파일\과제2</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

@@ -54,19 +54,17 @@ bool RenderPacket::operator<(const RenderPacket& rpOther) const
         if (shader->_info._renderQueueType == shader2->_info._renderQueueType)
         {
             if (shader->_info._renderQueueType == RenderQueueType::Transparent)
-            {
                 return zDepth > rpOther.zDepth;
+            if (shader->_info._renderQueue == shader2->_info._renderQueue)
+            {
+                if (shader == shader2) {
+                    return mesh < mesh2;
+                }
+                else
+                    return shader < shader2;
             }
             else
-            {
-                if (shader->_info._renderQueue == shader2->_info._renderQueue)
-                    if (shader == shader2)
-                        return mesh < mesh2;
-                    else
-                        return shader < shader2;
-                else
-                    return shader->_info._renderQueue < shader2->_info._renderQueue;
-            }
+                return shader->_info._renderQueue < shader2->_info._renderQueue;
         }
         else
             return shader->_info._renderQueueType < shader2->_info._renderQueueType;

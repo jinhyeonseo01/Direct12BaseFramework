@@ -186,6 +186,16 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     <ClInclude Include="Project_Study2\Study2Scene.h" />
     <ClInclude Include="Project_Study2\TreeRenderer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="resources\shaders\gress.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\water.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

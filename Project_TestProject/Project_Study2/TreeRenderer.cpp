@@ -31,6 +31,12 @@ void TreeRenderer::Init()
 {
     RendererComponent::Init();
 
+}
+
+void TreeRenderer::Start()
+{
+    RendererComponent::Start();
+
     std::vector<std::shared_ptr<GameObject>> targets;
     targets.clear();
     gameObject.lock()->scene.lock()->Finds(L"B2", targets, false);
@@ -47,9 +53,9 @@ void TreeRenderer::Init()
     Vertex vert;
 
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < count; i++)
     {
-        auto localPos = ter.lock()->transform->WorldToLocal_Position(Vector3((rand() % 1000)/1000.0 * 1000.0 - 500.0, 0, (rand() % 1000) / 1000.0 * 1000.0 - 500.0));
+        auto localPos = ter.lock()->transform->WorldToLocal_Position(Vector3((rand() % 1000) / 1000.0 * 1000.0 - 500.0, 0, (rand() % 1000) / 1000.0 * 1000.0 - 500.0));
         Vector4 color = hmT.lock()->GetPixel(
             (std::round(std::abs(localPos.x)) / 100) * hmT.lock()->_size.x,
             (1 - std::round(std::abs(localPos.z)) / 100) * hmT.lock()->_size.y, 1
@@ -62,11 +68,6 @@ void TreeRenderer::Init()
     }
     points->Init(pointList);
     points->CreateVertexBuffer();
-}
-
-void TreeRenderer::Start()
-{
-    RendererComponent::Start();
 }
 
 void TreeRenderer::Update()

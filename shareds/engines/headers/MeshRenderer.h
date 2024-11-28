@@ -24,7 +24,5 @@ namespace dxe
         void BeforeRendering() override;
         void Rendering(const RenderPacket& renderPack) override;
         void AfterRendering() override;
-
-        Vector3 pos;
     };
 }

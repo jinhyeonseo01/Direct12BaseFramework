@@ -51,7 +51,6 @@ void MeshRenderer::Update()
 void MeshRenderer::LateUpdate()
 {
     RendererComponent::LateUpdate();
-    pos = gameObject.lock()->transform->worldPosition();
 }
 
 void MeshRenderer::OnEnable()
@@ -89,8 +88,7 @@ void MeshRenderer::BeforeRendering()
         if (!mesh)
             continue;
         RenderPacket pack( mesh,material,std::dynamic_pointer_cast<Component>(this->shared_from_this()),
-            0);
-        //Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), pos)
+            Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
     }
 }

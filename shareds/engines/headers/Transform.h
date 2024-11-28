@@ -46,7 +46,7 @@ namespace dxe
         Matrix localSRTMatrix = Matrix::Identity; // prev랑 비교후 갱신/ 갱신시 islocal머시기 true 아니면 false
         Matrix localToWorldMatrix = Matrix::Identity;
         bool GetLocalToWorldMatrix(Matrix& localToWorldMatrix);
-        bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorldMatrix);
+        bool GetLocalToWorldMatrix_BottomUp(Matrix& localToWorld);
         bool GetLocalSRTMatrix(Matrix& localSRT);
         bool SetLocalSRTMatrix(Matrix& localSRT);
         bool CheckLocalSRTUpdate() const;
@@ -59,6 +59,7 @@ namespace dxe
 
         bool isLocalSRTChanged = true; //이거 활성화시 시 월드매트릭스 갱신.isLocalToWorldChanged 이거 활성화
         bool isLocalToWorldChanged = true; //부모가 local 업데이트 or 부모 world 변경시 이거 true.worldtrs변경.
+        bool needLocalToWorldChanged = true; // 부모가 업데이트 됬을때 내가 변경되어야함을 표기, 위에꺼랑은 역할이 조금 다른게. 위에껀 자기 기준이라, 전 프레임이랑 같으면 바뀌는데, 이건 내가 바뀌기 전까지 안꺼짐
 
         Vector3 LocalToWorld_Position(const Vector3& value);
         Vector3 LocalToWorld_Direction(const Vector3& value);
