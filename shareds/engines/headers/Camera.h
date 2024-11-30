@@ -24,7 +24,7 @@ namespace dxe
         Matrix _viewProjectionMatrix;
         Matrix _ndcToScreenSpaceMatrix;
 
-        Vector3 GetScreenToWorldDirection(Vector2 mousePosition);
+        Vector3 GetScreenToWorldPosition(Vector2 mousePosition);
 
         CameraParams GetCameraParams();
 

@@ -122,4 +122,24 @@ namespace DirectX::SimpleMath
         // 회전 행렬에서 쿼터니언 생성
         return Quaternion::CreateFromRotationMatrix(lookToMatrix);
     }
+
+    inline Matrix CreateViewportMatrix(Viewport view) {
+        // Scale factors
+        float scaleX = view.width / 2.0f;
+        float scaleY = view.height / 2.0f;
+        float scaleZ = view.maxDepth - view.minDepth;
+
+        // Translation factors
+        float offsetX = 0 + scaleX;//view.x
+        float offsetY = 0 + scaleY;//view.y
+        float offsetZ = view.minDepth;
+
+        // Viewport matrix
+        return Matrix(
+            scaleX, 0.0f, 0.0f, 0.0f,  // X scale
+            0.0f, -scaleY, 0.0f, 0.0f,  // Y scale (Y-axis inverted)
+            0.0f, 0.0f, scaleZ, 0.0f,  // Z scale
+            offsetX, offsetY, offsetZ, 1.0f   // Translation
+        );
+    }
 }

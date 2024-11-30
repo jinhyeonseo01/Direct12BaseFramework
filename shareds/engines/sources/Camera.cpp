@@ -16,12 +16,11 @@ Camera::~Camera()
 {
 }
 
-Vector3 Camera::GetScreenToWorldDirection(Vector2 mousePosition)
+Vector3 Camera::GetScreenToWorldPosition(Vector2 mousePosition)
 {
-    //X = (X + 1) * Viewport.Width * 0.5 + Viewport.TopLeftX
-    //Y = (1 - Y) * Viewport.Height * 0.5 + Viewport.TopLeftY
-    //Z = Viewport.MinDepth + Z * (Viewport.MaxDepth - Viewport.MinDepth)
-    return Vector3();
+    auto cameraParam = GetCameraParams();
+    auto screenToWorld = CreateViewportMatrix(Engine::GetMainEngine()->GetWindowRect()).Invert() * cameraParam.InvertVPMatrix;
+    return Vector3::Transform(Vector3(mousePosition.x, mousePosition.y, 0), screenToWorld);
 }
 
 CameraParams Camera::GetCameraParams()
@@ -58,7 +57,6 @@ CameraParams Camera::GetCameraParams()
     cameraInfo.InvertViewMatrix = cameraInfo.ViewMatrix.Invert();
     cameraInfo.InvertProjectionMatrix = cameraInfo.ProjectionMatrix.Invert();
     cameraInfo.InvertVPMatrix = cameraInfo.VPMatrix.Invert();
-
     return cameraInfo;
 }
 
@@ -92,6 +90,11 @@ void Camera::Start()
 void Camera::Update()
 {
     Component::Update();
+    auto pos = GetScreenToWorldPosition(Input::main->GetMousePosition());
+    Vector3 dir;
+    (pos - gameObject.lock()->transform->worldPosition()).Normalize(dir);
+
+    SceneManager::GetCurrentScene()->Find(L"Cube")->transform->worldPosition(pos + dir * 10); //
 }
 
 void Camera::LateUpdate()
