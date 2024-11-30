@@ -268,7 +268,7 @@
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\shareds\engines\headers\Draw.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -459,7 +459,7 @@
       <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Draw.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

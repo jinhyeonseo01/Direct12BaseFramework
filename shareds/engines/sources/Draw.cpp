@@ -47,8 +47,8 @@ void Draw::Ray(const SimpleMath::Ray& ray, const Color& color)
         GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(
             material->shader.lock(), "CameraParams");
 
-        auto a = table->GetCurrentGroupGPUHandle(0);
-        list->SetGraphicsRootDescriptorTable(1, a);
+        auto currentGroupHandle = table->GetCurrentGroupGPUHandle(0);
+        list->SetGraphicsRootDescriptorTable(1, currentGroupHandle);
 
 
         list->DrawInstanced(2, 1, 0, 0);
@@ -96,8 +96,8 @@ void Draw::Line(const Vector3& start, const Vector3& end, const Color& color)
             GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(
                 material->shader.lock(), "CameraParams");
 
-            auto a = table->GetCurrentGroupGPUHandle(0);
-            list->SetGraphicsRootDescriptorTable(1, a);
+            auto currentGroupHandle = table->GetCurrentGroupGPUHandle(0);
+            list->SetGraphicsRootDescriptorTable(1, currentGroupHandle);
 
 
             list->DrawInstanced(2, 1, 0, 0);

@@ -186,9 +186,12 @@ void Engine::RenderingPipeline()
 
     std::sort(scene->_renderPacketList.begin(), scene->_renderPacketList.end());
 
-
     for (auto& renderPacket : scene->_renderPacketList)
+    {
+        Debug::log << (int)renderPacket.material.lock()->shader.lock()->_info._renderQueueType << " " << renderPacket.material.lock()->shader.lock().get() << "\n";
+
         renderPacket.renderFunction(renderPacket);
+    }Debug::log << "\n\n";
     
     for (int i = gameObjects.size() - 1; i >= 0; --i)
     {

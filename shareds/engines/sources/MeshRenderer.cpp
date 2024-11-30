@@ -136,11 +136,10 @@ void MeshRenderer::Rendering(const RenderPacket& renderPack)
     table->SetCurrentGroupHandle(material->shader.lock(), "DefaultMaterialParams", cbuffer2.handle);
 
 
-    GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(
-        material->shader.lock(), "CameraParams");
+    GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
 
-    auto a = table->GetCurrentGroupGPUHandle(0);
-    list->SetGraphicsRootDescriptorTable(1, a);
+    auto currentGroupStartGPuHandle = table->GetCurrentGroupGPUHandle(0);
+    list->SetGraphicsRootDescriptorTable(1, currentGroupStartGPuHandle);
 
 
     list->DrawIndexedInstanced(mesh->indexCount, 1, 0, 0, 0);

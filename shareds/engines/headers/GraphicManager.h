@@ -81,7 +81,10 @@ namespace dxe
     public:
         SelectorInfo vertexInfo_Full{};
 
+
         Shader* currentShader = nullptr;
+        void* currentVertexBuffer = nullptr;
+        void* currentIndexBuffer = nullptr;
 
     public:
         bool _isRelease = false;
