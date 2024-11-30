@@ -2,13 +2,21 @@
 #include "RenderPacket.h"
 
 
-RenderPacket::RenderPacket(std::weak_ptr<Mesh> mesh, std::weak_ptr<Material> material,
-    std::weak_ptr<Component> component, float zDepth)
+RenderPacket::RenderPacket(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material,
+    std::function<void(const RenderPacket& renderPack)> renderFunction, float zDepth)
 {
     this->mesh = mesh;
     this->material = material;
-    this->component = component;
+    this->renderFunction = renderFunction;
     this->zDepth = zDepth;
+}
+
+RenderPacket::RenderPacket()
+{
+}
+
+RenderPacket::~RenderPacket()
+{
 }
 
 int RenderPacket::Order()
@@ -16,17 +24,20 @@ int RenderPacket::Order()
     return 0;
 }
 
+void RenderPacket::SetLifeExtension(std::shared_ptr<Material> material)
+{
+    materialLC = material;
+}
+
 bool RenderPacket::operator==(const RenderPacket& rpOther) const
 {
-    if (material.lock() && component.lock() && material.lock()->shader.lock())
+    if (material.lock() && material.lock()->shader.lock())
     {
         auto mat = material.lock();
-        auto comp = component.lock();
         auto shader = mat->shader.lock();
         auto mesh = this->mesh.lock();
 
         auto mat2 = rpOther.material.lock();
-        auto comp2 = rpOther.component.lock();
         auto shader2 = rpOther.material.lock()->shader.lock();
         auto mesh2 = rpOther.mesh.lock();
         if (shader->_info._renderQueueType == shader2->_info._renderQueueType)
@@ -39,15 +50,13 @@ bool RenderPacket::operator==(const RenderPacket& rpOther) const
 
 bool RenderPacket::operator<(const RenderPacket& rpOther) const
 {
-    if (material.lock() && component.lock() && material.lock()->shader.lock())
+    if (material.lock() && material.lock()->shader.lock())
     {
         auto mat = material.lock();
-        auto comp = component.lock();
         auto shader = mat->shader.lock();
         auto mesh = this->mesh.lock();
 
         auto mat2 = rpOther.material.lock();
-        auto comp2 = rpOther.component.lock();
         auto shader2 = rpOther.material.lock()->shader.lock();
         auto mesh2 = rpOther.mesh.lock();
 

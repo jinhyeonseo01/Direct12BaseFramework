@@ -2,6 +2,7 @@
 #include "MeshRenderer.h"
 
 #include "CBuffer_struct.h"
+#include "Draw.h"
 #include "GameObject.h"
 #include "GraphicManager.h"
 #include "Mesh.h"
@@ -46,6 +47,8 @@ void MeshRenderer::Start()
 void MeshRenderer::Update()
 {
     RendererComponent::Update();
+    Draw::Ray(Ray(gameObject.lock()->transform->worldPosition(), Vector3(1, 1, 1)),
+        Color(1,0,0,1));
 }
 
 void MeshRenderer::LateUpdate()
@@ -87,7 +90,7 @@ void MeshRenderer::BeforeRendering()
             continue;
         if (mesh == nullptr)
             continue;
-        RenderPacket pack( mesh,material,std::dynamic_pointer_cast<Component>(this->shared_from_this()),
+        RenderPacket pack( mesh,material, std::bind(&MeshRenderer::Rendering, this, std::placeholders::_1),
             Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
     }

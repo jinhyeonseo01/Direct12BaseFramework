@@ -93,7 +93,7 @@ void Collider::BeforeRendering()
         mesh = ResourceManager::main->GetModel(L"Cube")->_meshList[0];
     if (collision.type == CollisionType::Sphere)
         mesh = ResourceManager::main->GetModel(L"Sphere")->_meshList[0];
-    RenderPacket pack(mesh, material, std::dynamic_pointer_cast<Component>(this->shared_from_this()),
+    RenderPacket pack(mesh, material, std::bind(&Collider::Rendering, this, std::placeholders::_1),
         Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
     SceneManager::GetCurrentScene()->AddRenderPacket(pack);
 

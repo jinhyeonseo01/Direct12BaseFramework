@@ -109,7 +109,7 @@ void TreeRenderer::BeforeRendering()
         auto material = materialList[i]; //.lock()
         if (!material)
             continue;
-        RenderPacket pack(std::weak_ptr<Mesh>(), material, std::dynamic_pointer_cast<Component>(this->shared_from_this()),
+        RenderPacket pack(nullptr, material, std::bind(&TreeRenderer::Rendering, this, std::placeholders::_1),
             Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
     }

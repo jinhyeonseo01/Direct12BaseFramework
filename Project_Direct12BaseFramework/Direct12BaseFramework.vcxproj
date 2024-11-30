@@ -222,6 +222,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\Collision.h" />
     <ClInclude Include="..\shareds\engines\headers\Component.h" />
     <ClInclude Include="..\shareds\engines\headers\DescriptorTable.h" />
+    <ClInclude Include="..\shareds\engines\headers\Draw.h" />
     <ClInclude Include="..\shareds\engines\headers\DXEngine.h" />
     <ClInclude Include="..\shareds\engines\headers\engine_utility.h" />
     <ClInclude Include="..\shareds\engines\headers\EObject.h" />
@@ -305,6 +306,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClCompile Include="..\shareds\engines\sources\Collision.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DescriptorTable.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Draw.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine_Debug.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine_Pipeline.cpp" />
@@ -439,6 +441,15 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)resources\shaders</DestinationFolders>
       <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\draw_ray.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Material.h"
 
+void Material::SetShader(std::shared_ptr<Shader> shader)
+{
+    this->shader = shader;
+}
+
 void Material::GetTextureDatas(std::shared_ptr<DescriptorTable> table, std::shared_ptr<Shader> shader)
 {
     for (auto& texture : _propertyTextures)

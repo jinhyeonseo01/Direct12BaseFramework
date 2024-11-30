@@ -3,6 +3,7 @@
 #include <DXEngine.h>
 #include <Input.h>
 
+#include "Draw.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 #include "SceneManager.h"
@@ -101,7 +102,9 @@ namespace dxe
     void Engine::DeleteEngineAll()
     {
         for (int i = 0, size = Engine::_engineList.size(); i < size; ++i)
+        {
             Engine::_engineList.erase(Engine::_engineList.begin());
+        }
         Engine::_mainEngineIndex = -1;
     }
 
@@ -153,6 +156,7 @@ namespace dxe
             _engineMainThread->request_stop();
         _engineMainThread.release();
 
+        Draw::Release();
         resource->Release();
         graphic->Release();
         Debug::log << std::format("엔진 종료 (이름:{})", std::to_string(_titleName)) << "\n";

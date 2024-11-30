@@ -69,6 +69,15 @@ void TestScene::Init()
     shader->SetShaderSetting(info);
     shader->Init();
 
+    shader = ResourceManager::main->LoadShader(L"draw_ray.hlsl", L"draw_ray", rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::NONE;
+    info._zWrite = true;
+    info._zTest = true;
+    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
 
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));

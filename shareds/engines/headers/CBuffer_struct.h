@@ -32,3 +32,9 @@ struct alignas(16) CameraParams
     Vector4 cameraFrustumData; // x:fovy, y:aspect, z:near, w:far
     Vector4 cameraScreenData; // x:screenx, y:screeny, z:offsetx, w:offsety
 };
+
+struct alignas(16) DrawRay
+{
+    Vector4 linePos[2];
+    Vector4 color;
+};

@@ -267,6 +267,9 @@
     <ClInclude Include="..\shareds\engines\headers\Collision.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Draw.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
@@ -455,6 +458,9 @@
     <ClCompile Include="..\shareds\engines\sources\Collision.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Draw.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Direct12BaseFramework.rc">
@@ -499,6 +505,9 @@
       <Filter>Engine\shader</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\ui.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\draw_ray.hlsl">
       <Filter>Engine\shader</Filter>
     </CopyFileToFolders>
   </ItemGroup>

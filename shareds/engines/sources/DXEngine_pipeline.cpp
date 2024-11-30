@@ -188,8 +188,7 @@ void Engine::RenderingPipeline()
 
 
     for (auto& renderPacket : scene->_renderPacketList)
-        if (auto renderer = renderPacket.component.lock(); renderer != nullptr)
-            renderer->Rendering(renderPacket);
+        renderPacket.renderFunction(renderPacket);
     
     for (int i = gameObjects.size() - 1; i >= 0; --i)
     {
