@@ -219,6 +219,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\CBuffer_struct.h" />
     <ClInclude Include="..\shareds\engines\headers\class_define.h" />
     <ClInclude Include="..\shareds\engines\headers\Collider.h" />
+    <ClInclude Include="..\shareds\engines\headers\Collision.h" />
     <ClInclude Include="..\shareds\engines\headers\Component.h" />
     <ClInclude Include="..\shareds\engines\headers\DescriptorTable.h" />
     <ClInclude Include="..\shareds\engines\headers\DXEngine.h" />
@@ -301,6 +302,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClCompile Include="..\shareds\engines\sources\CBuffer.cpp" />
     <ClCompile Include="..\shareds\engines\sources\CBufferPool.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Collider.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Collision.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Component.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DescriptorTable.cpp" />
     <ClCompile Include="..\shareds\engines\sources\DXEngine.cpp" />

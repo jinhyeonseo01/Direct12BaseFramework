@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "JsonLoader.h"
+
+#include "Collider.h"
 #include "GameObject.h"
 #include "Component.h"
 #include "Transform.h"
@@ -99,6 +101,12 @@ void JsonLoader::PrevProcessingComponent(json data)
     }
     if (type == L"MeshFilter")
     {
+
+    }
+    if (type == L"BoxCollider" || type == L"SphereCollider")
+    {
+        auto meshRenderer = CreateObject<Collider>(guid);
+        component = meshRenderer;
     }
 
     componentCache.emplace_back(component);
@@ -165,7 +173,6 @@ void JsonLoader::LinkComponent(json jsonData)
         transform->localScale = scale;
     }
 
-
     if (type == L"MeshRenderer")
     {
         auto meshRenderer = EObject::FindObjectByGuid<MeshRenderer>(guid);
@@ -192,6 +199,33 @@ void JsonLoader::LinkComponent(json jsonData)
             meshRenderer->SetModel(model);
             //Debug::log << meshInfo["meshName"].get<std::string>() << "\n";
         }
+    }
+    if (type == L"BoxCollider")
+    {
+        auto collider = EObject::FindObjectByGuid<Collider>(guid);
+        Collision collision{ CollisionType::Box };
+        auto center = Vector3(
+            jsonData["center"][0].get<float>(),
+            jsonData["center"][1].get<float>(),
+            jsonData["center"][2].get<float>());
+        auto size = Vector3(
+            jsonData["size"][0].get<float>(),
+            jsonData["size"][1].get<float>(),
+            jsonData["size"][2].get<float>());
+        collision.SetBox(center, size);
+        collider->SetCollition(collision);
+    }
+    if (type == L"SphereCollider")
+    {
+        auto collider = EObject::FindObjectByGuid<Collider>(guid);
+        Collision collision{ CollisionType::Sphere };
+        auto center = Vector3(
+            jsonData["center"][0].get<float>(),
+            jsonData["center"][1].get<float>(),
+            jsonData["center"][2].get<float>());
+        auto radius = jsonData["radius"].get<float>();
+        collision.SetSphere(center, radius);
+        collider->SetCollition(collision);
     }
 }
 

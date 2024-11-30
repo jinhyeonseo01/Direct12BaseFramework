@@ -185,8 +185,10 @@ void Engine::RenderingPipeline()
     }
 
     std::sort(scene->_renderPacketList.begin(), scene->_renderPacketList.end());
+
+
     for (auto& renderPacket : scene->_renderPacketList)
-        if (auto renderer = renderPacket.component.lock(); renderer)
+        if (auto renderer = renderPacket.component.lock(); renderer != nullptr)
             renderer->Rendering(renderPacket);
     
     for (int i = gameObjects.size() - 1; i >= 0; --i)

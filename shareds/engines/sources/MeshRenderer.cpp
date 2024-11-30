@@ -83,9 +83,9 @@ void MeshRenderer::BeforeRendering()
             break;
         auto material = materialList[i]; //.lock()
         auto mesh = meshList[i % meshList.size()].lock();
-        if (!material)
+        if (material == nullptr)
             continue;
-        if (!mesh)
+        if (mesh == nullptr)
             continue;
         RenderPacket pack( mesh,material,std::dynamic_pointer_cast<Component>(this->shared_from_this()),
             Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));

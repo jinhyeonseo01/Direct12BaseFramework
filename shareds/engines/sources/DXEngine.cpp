@@ -67,6 +67,8 @@ namespace dxe
             Engine::_engineList.emplace_back(engine);
         else
             engine = *findEngine;
+        if (_mainEngineIndex == -1)
+            _mainEngineIndex = 0;
         return engine;
     }
 

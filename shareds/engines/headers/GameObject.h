@@ -4,6 +4,11 @@
 
 namespace dxe
 {
+    enum class GameObjectTag
+    {
+        defualt = 0,
+    };
+
     class GameObject : public EObject, public IDelayedDestroy
     {
     public:
@@ -21,6 +26,8 @@ namespace dxe
         std::shared_ptr<GameObject> Init(bool createTransform = true);
 
     public:
+        std::unordered_set<GameObjectTag> _tags;
+
         __int64 _sortingOrder = 0;
         std::weak_ptr<Scene> scene;
         std::wstring name = L"none";
@@ -166,14 +173,21 @@ namespace dxe
         bool SyncActiveState();
 
     protected:
+        void ActiveUpdateChain(bool _active_total);
+
+    protected:
         bool _ready = false;
 
     public:
         bool IsReady();
         bool Ready();
 
-    protected:
-        void ActiveUpdateChain(bool _active_total);
+    public:
+        void AddTags(std::unordered_set<GameObjectTag> tags);
+        void SubTags(std::unordered_set<GameObjectTag> tags);
+        void MulTags(std::unordered_set<GameObjectTag> tags);
+        bool ContainAllTags(std::unordered_set<GameObjectTag> tags) const;
+        bool ContainAnyTags(std::unordered_set<GameObjectTag> tags) const;
 
     public:
         void Debug(int depth = 0);

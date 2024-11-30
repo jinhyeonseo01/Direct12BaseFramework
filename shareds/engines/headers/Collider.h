@@ -1,44 +1,39 @@
 #pragma once
 #include <stdafx.h>
-
 #include "Component.h"
+#include <Collision.h>
 
-enum class ColliderType
+namespace dxe
 {
-    Box,
-    Sphere,
-    Capsule,
-    Mesh,
-};
 
-class Collider : public Component
-{
-private:
-    BoundingBox aabbBox;
-public:
-    ColliderType type = ColliderType::Box;
+    class Collider : public Component
+    {
+    private:
+    public:
+        Collision collision;
 
-    BoundingSphere sphere;
+        BoundingBox GetAABBBound();
+        void SetCollition(Collision collision);
 
-    bool _convex = false;
+    public:
+        ~Collider() override;
+        void* Clone() override;
+        void ReRef() override;
+        void Destroy() override;
+        void Init() override;
+        void Start() override;
+        void Update() override;
+        void LateUpdate() override;
+        void OnEnable() override;
+        void OnDisable() override;
+        void OnDestroy() override;
+        void OnComponentDestroy() override;
+        void BeforeRendering() override;
+        void Rendering(const RenderPacket& renderPack) override;
+        void AfterRendering() override;
+    public:
+        std::shared_ptr<Material> material;
+    };
 
-    BoundingBox GetAABBBound();
 
-public:
-    ~Collider() override;
-    void* Clone() override;
-    void ReRef() override;
-    void Destroy() override;
-    void Init() override;
-    void Start() override;
-    void Update() override;
-    void LateUpdate() override;
-    void OnEnable() override;
-    void OnDisable() override;
-    void OnDestroy() override;
-    void OnComponentDestroy() override;
-    void BeforeRendering() override;
-    void Rendering(const RenderPacket& renderPack) override;
-    void AfterRendering() override;
-};
-
+}

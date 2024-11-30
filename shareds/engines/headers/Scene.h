@@ -2,6 +2,7 @@
 #include <stdafx.h>
 
 #include "CBuffer_struct.h"
+#include "Collider.h"
 #include "EObject.h"
 #include "Model.h"
 #include "RenderPacket.h"
@@ -52,6 +53,10 @@ namespace dxe
 
         std::shared_ptr<GameObject> Find(std::wstring name, bool includeDestroy = false);
         int Finds(std::wstring name, std::vector<std::shared_ptr<GameObject>>& vec, bool includeDestroy = false);
+
+    public:
+        std::vector<std::weak_ptr<Collider>> colliderTable;
+        bool RayCast(const Vector3& worldPos, const Vector3& worldDirection, float& hitDistance, Vector3& hitNormal);
 
     public:
         void Debug();

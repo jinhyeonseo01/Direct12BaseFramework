@@ -31,8 +31,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
     MSG msg{};
-    try
-    {
+    //try
+    //{
         {
             auto engine = std::make_shared<dxe::Engine>();
             engine->SetTitleName(L"Game");
@@ -45,8 +45,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
 
         //auto scene = SceneManager::CreateScene<Study1Scene>(L"Study1 Scene");
-        auto scene = SceneManager::CreateScene<Study2Scene>(L"Study2 Scene");
-        //auto scene = SceneManager::CreateScene<TestScene>(L"Test Scene");
+        //auto scene = SceneManager::CreateScene<Study2Scene>(L"Study2 Scene");
+        auto scene = SceneManager::CreateScene<TestScene>(L"Test Scene");
 
         while (!dxe::Engine::GetEngineList().empty())
         {
@@ -70,14 +70,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             Debug::log << "모든 엔진이 제거됨\n" << "\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(0));
         }
-    }
-    catch (const std::exception& e)
-    {
-        Debug::log << "예외 발생: " << e.what() << "\n";
-        if (GraphicManager::main)
-            DXSuccess(GraphicManager::main->_device->GetDeviceRemovedReason());
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-    }
+    //}
+    //catch (const std::exception& e)
+    //{
+    //    Debug::log << "예외 발생: " << e.what() << "\n";
+    //    if (GraphicManager::main)
+    //        DXSuccess(GraphicManager::main->_device->GetDeviceRemovedReason());
+    //    std::this_thread::sleep_for(std::chrono::seconds(5));
+    //}
     Release();
     return (int)msg.wParam;
 }

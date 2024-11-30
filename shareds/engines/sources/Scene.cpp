@@ -186,6 +186,11 @@ namespace dxe
         return vec.size();
     }
 
+    bool Scene::RayCast(const Vector3& worldPos, const Vector3& worldDirection, float& hitDistance, Vector3& hitNormal)
+    {
+        return false;
+    }
+
     void Scene::Debug()
     {
         Debug::log << std::format("\nScene : {}", std::to_string(name)) << "\n";

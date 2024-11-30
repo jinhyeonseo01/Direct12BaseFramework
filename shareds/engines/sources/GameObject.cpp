@@ -298,6 +298,48 @@ bool GameObject::Ready()
     return _ready = true;
 }
 
+void GameObject::AddTags(std::unordered_set<GameObjectTag> tags)
+{
+    for (const auto& elem : tags) {
+        _tags.insert(elem);
+    }
+}
+
+void GameObject::SubTags(std::unordered_set<GameObjectTag> tags)
+{
+    for (const auto& elem : tags) {
+        _tags.erase(elem);
+    }
+}
+
+void GameObject::MulTags(std::unordered_set<GameObjectTag> tags)
+{
+    std::unordered_set<GameObjectTag> result;
+    for (const auto& elem : tags) {
+        if (_tags.contains(elem)) {
+            result.insert(elem);
+        }
+    }
+    _tags = result;
+}
+
+bool GameObject::ContainAllTags(std::unordered_set<GameObjectTag> tags) const
+{
+    for (const auto& elem : tags)
+        if (!_tags.contains(elem))
+            return false;
+    return true;
+            
+}
+
+bool GameObject::ContainAnyTags(std::unordered_set<GameObjectTag> tags) const
+{
+    for (const auto& elem : tags)
+        if (_tags.contains(elem))
+            return true;
+    return false;
+}
+
 void GameObject::ActiveUpdateChain(bool _active_total)
 {
     this->_active_total = _active_total && _active_self;

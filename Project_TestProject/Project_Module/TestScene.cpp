@@ -61,6 +61,14 @@ void TestScene::Init()
     shader->SetShaderSetting(info);
     shader->Init();
 
+    shader = ResourceManager::main->LoadShader(L"default_forward.hlsl", L"wireframe", rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::WIREFRAME;
+    info._zWrite = true;
+    info._zTest = true;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
 
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
@@ -80,8 +88,9 @@ void TestScene::Init()
 
 
     //JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
-    JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    //JsonLoader::Load(L"resources/scenes/EmaceArt_LavaScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
     //JsonLoader::Load(L"resources/scenes/SimplePoly City - Low Poly Assets_Demo Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    JsonLoader::Load(L"resources/scenes/SampleScene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
 }
 
 void TestScene::Update()
@@ -94,31 +103,29 @@ void TestScene::RenderingBegin()
     Scene::RenderingBegin();
 
     auto cameraComponent = camera->GetComponent<Camera>();
-    auto _aspect = GraphicManager::main->setting.screenInfo.width / GraphicManager::main->setting.screenInfo.height;
-
-    cameraComponent->cameraInfo.ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(
-        cameraComponent->_fovy * D2R, _aspect, cameraComponent->_near, cameraComponent->_far);
-    cameraComponent->cameraInfo.ViewMatrix = XMMatrixLookToLH(camera->transform->worldPosition(),
-                                                              camera->transform->forward(),
-                                                              camera->transform->up());
-
+    auto cameraData = cameraComponent->GetCameraParams();
+    _cameraParams = cameraData;
     auto cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
         "CameraParams", sizeof(CameraParams), 3);
-    cameraBuffer.SetData(&cameraComponent->cameraInfo, sizeof(CameraParams));
+    cameraBuffer.SetData(&cameraData, sizeof(CameraParams));
 
     GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
 
 
-    /**/
+    auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
+    auto skyShader = skyMaterial->shader.lock();
+    auto skyMesh = skyBox->_meshList[0];
+
+
+    auto list = GraphicManager::main->GetCurrentCommandList();
+    auto pool = GraphicManager::main->GetCurrentCBufferPool();
+    auto table = GraphicManager::main->GetCurrentDescriptorTable();
+
+    if (true) // SkyBox
     {
-        auto skyBox = ResourceManager::main->GetModel(L"SkyBox");
-        auto skyShader = skyMaterial->shader.lock();
-        auto skyMesh = skyBox->_meshList[0];
 
+        float skyBoxSize = 50;
 
-        auto list = GraphicManager::main->GetCurrentCommandList();
-        auto pool = GraphicManager::main->GetCurrentCBufferPool();
-        auto table = GraphicManager::main->GetCurrentDescriptorTable();
 
         skyShader->SetPipeline(list);
 
@@ -132,7 +139,7 @@ void TestScene::RenderingBegin()
 
         data.isSkinned = 0;
         data.WorldMatrix = Matrix::CreateTranslation(camera->transform->worldPosition());
-        data.WorldMatrix = Matrix::CreateScale(Vector3(50, 50, 50)) * data.WorldMatrix;
+        data.WorldMatrix = Matrix::CreateScale(skyBoxSize) * data.WorldMatrix;
         data.NormalMatrix = data.WorldMatrix.Invert().Transpose();
         cbuffer.SetData(&data, sizeof(data));
         table->SetCurrentGroupHandle(skyShader, "TransformParams", cbuffer.handle);
@@ -153,6 +160,8 @@ void TestScene::RenderingBegin()
         list->SetGraphicsRootDescriptorTable(1, tableGroupGpuHandle);
 
         list->DrawIndexedInstanced(skyMesh->indexCount, 1, 0, 0, 0);
+        //list->DrawInstanced(mesh->vertexCount, 1, 0, 0);
+
         table->SetNextGroupHandle();
     }
 }

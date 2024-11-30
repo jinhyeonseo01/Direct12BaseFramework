@@ -10,7 +10,10 @@ cbuffer TransformParams : register(b2)
     row_major matrix NormalMatrix;
     unsigned int isSkinned;
 };
-
+cbuffer DefaultMaterialParams : register(b1)
+{
+    float4 _color;
+};
 
 SamplerState sampler_normal : register(s0);
 SamplerState sampler_no_mip : register(s1);
@@ -60,7 +63,6 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 //[earlydepthstencil]
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color2 = input.color;
-    return 0.5f * (dot(input.worldNormal, normalize(float3(1, 1, -1))) * 0.5 + 0.5f);
+    return _color;
     //return float4(color, 1.0f) * g_tex_0.Sample(g_sam_0, input.uv);
 }

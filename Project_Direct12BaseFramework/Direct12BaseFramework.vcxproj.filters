@@ -264,6 +264,9 @@
     <ClInclude Include="..\shareds\engines\headers\Collider.h">
       <Filter>Engine\Component</Filter>
     </ClInclude>
+    <ClInclude Include="..\shareds\engines\headers\Collision.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shareds\constants\sources\simple_mesh_LH.cpp">
@@ -448,6 +451,9 @@
     </ClCompile>
     <ClCompile Include="..\shareds\engines\sources\Collider.cpp">
       <Filter>Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shareds\engines\sources\Collision.cpp">
+      <Filter>Engine\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
