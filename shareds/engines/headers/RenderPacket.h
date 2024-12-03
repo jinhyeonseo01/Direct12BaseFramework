@@ -11,7 +11,7 @@ public:
     std::shared_ptr<Mesh> meshLC = nullptr;
 
     std::function<void(const RenderPacket& renderPack)> renderFunction;
-    float zDepth = 0.0f;
+    float sortingOrder = 0.0f;
 
     RenderPacket(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material, std::function<void(const RenderPacket& renderPack)> renderFunction, float zDepth = 0);
     RenderPacket();
