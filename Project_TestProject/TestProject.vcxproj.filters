@@ -22,6 +22,9 @@
     <Filter Include="소스 파일\모듈 개발">
       <UniqueIdentifier>{24e03474-86ca-4f5a-8bee-4fcc68cd9838}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\과제3">
+      <UniqueIdentifier>{4b7b480a-6437-4dce-8cb5-31c6014beb89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestProject.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="Project_Study2\TreeRenderer.cpp">
       <Filter>소스 파일\과제2</Filter>
     </ClCompile>
+    <ClCompile Include="Project_Study3\Study3Scene.cpp">
+      <Filter>소스 파일\과제3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project_Module\CameraController.h">
@@ -70,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="Project_Study2\TreeRenderer.h">
       <Filter>소스 파일\과제2</Filter>
+    </ClInclude>
+    <ClInclude Include="Project_Study3\Study3Scene.h">
+      <Filter>소스 파일\과제3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

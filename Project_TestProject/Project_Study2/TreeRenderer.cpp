@@ -113,6 +113,7 @@ void TreeRenderer::BeforeRendering()
             Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
     }
+
 }
 
 void TreeRenderer::Rendering(const RenderPacket& renderPack)

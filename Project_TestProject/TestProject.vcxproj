@@ -170,6 +170,7 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     <ClCompile Include="Project_Study1\Study1Scene.cpp" />
     <ClCompile Include="Project_Study2\Study2Scene.cpp" />
     <ClCompile Include="Project_Study2\TreeRenderer.cpp" />
+    <ClCompile Include="Project_Study3\Study3Scene.cpp" />
     <ClCompile Include="TestProject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -185,6 +186,7 @@ xcopy /Y /E "$(ProjectDir)resources\*" "$(OutDir)resources\"</Command>
     <ClInclude Include="Project_Study1\Study1Scene.h" />
     <ClInclude Include="Project_Study2\Study2Scene.h" />
     <ClInclude Include="Project_Study2\TreeRenderer.h" />
+    <ClInclude Include="Project_Study3\Study3Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\gress.hlsl">

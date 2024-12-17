@@ -19,6 +19,7 @@ RenderPacket::RenderPacket()
 RenderPacket::~RenderPacket()
 {
     materialLC = nullptr;
+    meshLC = nullptr;
 }
 
 RenderPacket::RenderPacket(const RenderPacket& renderPacket)
@@ -71,13 +72,19 @@ RenderPacket& RenderPacket::operator=(RenderPacket&& renderPacket) noexcept
     return *this;
 }
 
-std::shared_ptr<RenderPacket> RenderPacket::Init(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material,
+void RenderPacket::Init(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material,
     std::function<void(const RenderPacket& renderPack)> renderFunction, float zDepth)
 {
     this->mesh = mesh;
     this->material = material;
     this->renderFunction = renderFunction;
     this->sortingOrder = zDepth;
+}
+void RenderPacket::Init(std::weak_ptr<Material> material,
+    std::function<void(const RenderPacket& renderPack)> renderFunction)
+{
+    this->material = material;
+    this->renderFunction = renderFunction;
 }
 
 int RenderPacket::Order()

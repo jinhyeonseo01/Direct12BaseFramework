@@ -15,7 +15,7 @@ public:
     ComPtr<ID3D12Resource> GetResource() { return _resource; }
     ComPtr<ID3D12DescriptorHeap> GetRTV() { return _RTV_DescHeap; }
     ComPtr<ID3D12DescriptorHeap> GetDSV() { return _DSV_DescHeap; }
-    D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandle() { return _SRV_CPUHandle; }
+    D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandle() { return _DescCPUHandle; }
     float* GetClearColor() { return _clearColor; }
 
     void SetClearColor(Vector4 clearColor)
@@ -42,9 +42,9 @@ public:
                                            Vector4 clearColor = Vector4(1, 1, 1, 1));
     static std::shared_ptr<Texture> Load(const std::wstring& path, bool createMipMap = false);
 
-    static std::shared_ptr<Texture> Link(std::shared_ptr<RenderTexture> renderTexture, DXGI_FORMAT format);
-    static std::shared_ptr<Texture> Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width,
-                                         uint32_t height, int mipLevels = 1);
+    static std::shared_ptr<Texture> Link(std::shared_ptr<RenderTexture> renderTexture, DXGI_FORMAT format, ResourceState state);
+    static std::shared_ptr<Texture> Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, ResourceState state,
+                                         uint32_t width, uint32_t height, int mipLevels = 1);
 
     Vector4 GetPixel(int x, int y, int channal = 4) const;
 
@@ -53,20 +53,13 @@ public:
 
     ComPtr<ID3D12DescriptorHeap> _RTV_DescHeap;
     ComPtr<ID3D12DescriptorHeap> _DSV_DescHeap;
-    D3D12_CPU_DESCRIPTOR_HANDLE _SRV_CPUHandle{};
+    D3D12_CPU_DESCRIPTOR_HANDLE _DescCPUHandle{};
 
-    union
-    {
-        D3D12_RENDER_TARGET_VIEW_DESC _RTV_ViewDesc;
-        D3D12_DEPTH_STENCIL_VIEW_DESC _DSV_ViewDesc;
-    };
-
-    union
-    {
-        D3D12_SHADER_RESOURCE_VIEW_DESC _SRV_ViewDesc;
-        D3D12_CONSTANT_BUFFER_VIEW_DESC _CBV_ViewDesc;
-        D3D12_UNORDERED_ACCESS_VIEW_DESC _UAV_ViewDesc;
-    };
+    D3D12_RENDER_TARGET_VIEW_DESC _RTV_ViewDesc;
+    D3D12_DEPTH_STENCIL_VIEW_DESC _DSV_ViewDesc;
+    D3D12_SHADER_RESOURCE_VIEW_DESC _SRV_ViewDesc;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC _CBV_ViewDesc;
+    D3D12_UNORDERED_ACCESS_VIEW_DESC _UAV_ViewDesc;
 
     float _clearColor[4];
     Vector2 _size = Vector2(0, 0);

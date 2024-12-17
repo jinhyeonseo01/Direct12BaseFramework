@@ -90,11 +90,14 @@ void Camera::Start()
 void Camera::Update()
 {
     Component::Update();
+
+    /*
     auto pos = GetScreenToWorldPosition(Input::main->GetMousePosition());
     Vector3 dir;
     (pos - gameObject.lock()->transform->worldPosition()).Normalize(dir);
 
     SceneManager::GetCurrentScene()->Find(L"Cube")->transform->worldPosition(pos + dir * 10); //
+    */
 }
 
 void Camera::LateUpdate()

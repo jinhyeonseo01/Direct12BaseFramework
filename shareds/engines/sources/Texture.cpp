@@ -7,13 +7,13 @@
 
 Texture::Texture()
 {
-    _SRV_CPUHandle.ptr = 0;
+    _DescCPUHandle.ptr = 0;
 }
 
 Texture::~Texture()
 {
-    if (_SRV_CPUHandle.ptr != 0)
-        GraphicManager::main->_textureHandlePool->HandleFree(_SRV_CPUHandle);
+    if (_DescCPUHandle.ptr != 0)
+        GraphicManager::main->_textureHandlePool->HandleFree(_DescCPUHandle);
 }
 
 void Texture::SetState(ResourceState state)
@@ -211,7 +211,7 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
 
     GraphicManager::main->ResourceSet();
 
-    texture->_SRV_CPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
+    texture->_DescCPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
 
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
     SRVDesc.Format = metadata.format;
@@ -226,29 +226,29 @@ std::shared_ptr<Texture> Texture::Load(const std::wstring& path, bool createMipM
     texture->SetSize(Vector2(metadata.width, metadata.height));
     texture->imageFormat = texture->_image.GetMetadata().format;
 
-    device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_SRV_CPUHandle);
+    device->CreateShaderResourceView(texture->_resource.Get(), &SRVDesc, texture->_DescCPUHandle);
     Debug::log << "텍스쳐 로드 성공 : " << fileName << "\n";
     return texture;
 }
 
-std::shared_ptr<Texture> Texture::Link(std::shared_ptr<RenderTexture> renderTexture, DXGI_FORMAT format)
+std::shared_ptr<Texture> Texture::Link(std::shared_ptr<RenderTexture> renderTexture, DXGI_FORMAT format, ResourceState state)
 {
     auto texture = std::make_shared<Texture>();
 
     texture->_resource = renderTexture->GetResource();
     texture->mipLevels = 1;
-    texture->SetState(ResourceState::RT_SRV);
+    texture->SetState(state);
     texture->SetSize(renderTexture->_size);
     texture->CreateFromResource(texture->_resource, format);
     return texture;
 }
 
-std::shared_ptr<Texture> Texture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, uint32_t width,
-                                       uint32_t height, int mipLevels)
+std::shared_ptr<Texture> Texture::Link(ComPtr<ID3D12Resource> resource, DXGI_FORMAT format, ResourceState state,
+                                       uint32_t width, uint32_t height, int mipLevels)
 {
     auto texture = std::make_shared<Texture>();
 
-    texture->SetState(ResourceState::RT_SRV);
+    texture->SetState(state);
     texture->SetSize(Vector2(width, height));
     texture->CreateFromResource(resource, format);
     texture->mipLevels = std::max(mipLevels, 1);
@@ -320,9 +320,10 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         _RTV_ViewDesc = RTVDesc;
         device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
     }*/
-    if (_state == ResourceState::RT_SRV || _state == ResourceState::SRV)
+    if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::SRV)) != 0 ||
+        (static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::RT_SRV)) != 0)
     {
-        _SRV_CPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
+        _DescCPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.Format = format;
@@ -331,6 +332,20 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
         srvDesc.Texture2D.MipLevels = mipLevels;
         _SRV_ViewDesc = srvDesc;
 
-        device->CreateShaderResourceView(_resource.Get(), &_SRV_ViewDesc, _SRV_CPUHandle);
+        device->CreateShaderResourceView(_resource.Get(), &_SRV_ViewDesc, _DescCPUHandle);
+    }
+    if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::UAV)) != 0)
+    {
+        _DescCPUHandle = GraphicManager::main->_textureHandlePool->HandleAlloc();
+
+        D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+        uavDesc.Format = format;
+        uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+        uavDesc.Texture2D.MipSlice = 0;
+        uavDesc.Texture2D.PlaneSlice = 0;
+
+        _UAV_ViewDesc = uavDesc;
+
+        device->CreateUnorderedAccessView(_resource.Get(), nullptr, &_UAV_ViewDesc, _DescCPUHandle);
     }
 }

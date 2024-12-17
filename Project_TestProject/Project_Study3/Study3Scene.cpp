@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include "Study2Scene.h"
+#include "Study3Scene.h"
 #include <DXEngine.h>
 #include "GraphicManager.h"
 #include "Camera.h"
@@ -9,34 +9,34 @@
 #include "MeshRenderer.h"
 #include "MeshSample.h"
 #include "Scene.h"
-#include "TreeRenderer.h"
 #include "CBuffer_struct.h"
 #include "../Project_Module/CameraController.h"
 #include "../Project_Study1/PlayerComponent.h"
+#include "../Project_Study2/TreeRenderer.h"
 
-void* Study2Scene::Clone()
+void* Study3Scene::Clone()
 {
     return Scene::Clone();
 }
 
-void Study2Scene::ReRef()
+void Study3Scene::ReRef()
 {
     Scene::ReRef();
 }
 
-Study2Scene::Study2Scene()
+Study3Scene::Study3Scene()
 {
 }
 
-Study2Scene::Study2Scene(std::wstring name) : Scene(name)
+Study3Scene::Study3Scene(std::wstring name) : Scene(name)
 {
 }
 
-Study2Scene::~Study2Scene()
+Study3Scene::~Study3Scene()
 {
 }
 
-void Study2Scene::Init()
+void Study3Scene::Init()
 {
     Scene::Init();
     auto rtg = GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain);
@@ -69,7 +69,7 @@ void Study2Scene::Init()
     shader->Init();
 
 
-    shader = ResourceManager::main->LoadShaderEx(L"tree.hlsl", L"tree",{
+    shader = ResourceManager::main->LoadShaderEx(L"tree.hlsl", L"tree", {
         {"GS_Main", "gs"},
         {"VS_Main", "vs"},
         {"PS_Main", "ps"} },
@@ -116,6 +116,7 @@ void Study2Scene::Init()
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     shader->SetShaderSetting(info);
     shader->Init();
+
 
     shader = ResourceManager::main->LoadShader(L"default_forward.hlsl", L"wireframe", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
@@ -257,20 +258,22 @@ void Study2Scene::Init()
     b->transform->localPosition = (-Vector3(1, 0, 1) + Vector3(0, -0.3, 0)) * 50 * 10;
     b->SetParent(rootObject);
 
+    
     auto tree = CreateGameObject(L"Trees");
     auto treeRenderer = tree->AddComponent<TreeRenderer>();
     auto treeMaterial = std::make_shared<Material>();
     treeMaterial->shader = ResourceManager::main->GetShader(L"tree");
-    treeMaterial->SetData("_BaseMap",ResourceManager::main->GetTexture(L"tree"));
+    treeMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"tree"));
     treeRenderer->AddMateiral({ treeMaterial });
 
-
+    /*
     auto gress = CreateGameObject(L"Gress");
     auto gressRenderer = tree->AddComponent<TreeRenderer>();
     auto gressMaterial = std::make_shared<Material>();
     gressMaterial->shader = ResourceManager::main->GetShader(L"gress");
     gressRenderer->AddMateiral({ gressMaterial });
     gressRenderer->count = 1000000;
+    */
 
 
     meshRenderers.clear();
@@ -352,7 +355,7 @@ void Study2Scene::Init()
         meshRenderers[i]->AddMateiral({ material });
     }
     rootObject->transform->worldPosition(Vector3(0, -120, 0));
-    rootObject->transform->localScale = Vector3(100,100,100);
+    rootObject->transform->localScale = Vector3(100, 100, 100);
 
 
 
@@ -367,14 +370,15 @@ void Study2Scene::Init()
 
 }
 
-void Study2Scene::Update()
+void Study3Scene::Update()
 {
     Scene::Update();
 }
 
-void Study2Scene::RenderingBegin()
+void Study3Scene::RenderingBegin()
 {
     Scene::RenderingBegin();
+
 
     auto cameraComponent = camera->GetComponent<Camera>();
     auto cameraData = cameraComponent->GetCameraParams();
@@ -440,7 +444,7 @@ void Study2Scene::RenderingBegin()
     }
 }
 
-void Study2Scene::RenderingEnd()
+void Study3Scene::RenderingEnd()
 {
     Scene::RenderingEnd();
 }

@@ -20,7 +20,8 @@ public:
     RenderPacket(RenderPacket&& renderPacket) noexcept;
     RenderPacket& operator=(const RenderPacket& renderPacket);
     RenderPacket& operator=(RenderPacket&& renderPacket) noexcept;
-    std::shared_ptr<RenderPacket> Init(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material, std::function<void(const RenderPacket& renderPack)> renderFunction, float zDepth = 0);
+    void Init(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material, std::function<void(const RenderPacket& renderPack)> renderFunction, float zDepth = 0);
+    void Init(std::weak_ptr<Material> material, std::function<void(const RenderPacket& renderPack)> renderFunction);
 
     int Order();
 

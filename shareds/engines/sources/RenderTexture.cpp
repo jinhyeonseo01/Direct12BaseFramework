@@ -36,7 +36,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
     D3D12_RESOURCE_STATES resourceStates = D3D12_RESOURCE_STATE_COMMON;
     D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr; // Optimized clear value pointer
 
-    if (state == ResourceState::DSV)
+    if ((static_cast<unsigned int>(state) & static_cast<unsigned int>(ResourceState::DSV)) != 0)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
         desc.SampleDesc.Count = 1;
@@ -48,7 +48,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
         pOptimizedClearValue = &optimizedClearValue;
     }
-    else if (state == ResourceState::RTV)
+    else if ((static_cast<unsigned int>(state) & static_cast<unsigned int>(ResourceState::RTV)) != 0)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
         desc.SampleDesc.Count = GraphicManager::main->setting.GetMSAACount();
@@ -91,7 +91,7 @@ void RenderTexture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FOR
     _resource = resource;
     SetFormat(format);
 
-    if (_state == ResourceState::DSV)
+    if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV)) != 0)
     {
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
         heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
@@ -112,8 +112,7 @@ void RenderTexture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FOR
 
         device->CreateDepthStencilView(_resource.Get(), &DSVDesc, DSVHandle);
     }
-
-    else if (_state == ResourceState::RTV)
+    else if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::RTV)) != 0)
     {
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
         heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
