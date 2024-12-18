@@ -23,6 +23,7 @@ public:
     void Init(std::shared_ptr<Mesh> mesh, std::weak_ptr<Material> material, std::function<void(const RenderPacket& renderPack)> renderFunction, float zDepth = 0);
     void Init(std::weak_ptr<Material> material, std::function<void(const RenderPacket& renderPack)> renderFunction);
 
+    RenderQueueType GetRenderQueueType();
     int Order();
 
     bool operator<(const RenderPacket& rpOther) const;

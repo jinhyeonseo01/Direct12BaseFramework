@@ -23,6 +23,7 @@ cbuffer DefaultMaterialParams : register(b1)
 };
 
 Texture2D _BaseMap : register(t1);
+Texture2D _ShadowMap : register(t2);
 
 SamplerState sampler_normal : register(s0);
 SamplerState sampler_no_mip : register(s1);
@@ -43,7 +44,7 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 pos : SV_Position;
+    float4 pos : SV_POSITION;
     float4 worldPos : POSITION;
     float3 worldNormal : NORMAL;
     float4 color : COLOR;
@@ -98,6 +99,8 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 AlbedoColor = _BaseMap.Sample(sampler_aniso_16, input.uv);
+    float4 AlbedoColor2 = _ShadowMap.Sample(sampler_aniso_16, input.uv);
+    return float4(AlbedoColor2.r,0,0,1);
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;

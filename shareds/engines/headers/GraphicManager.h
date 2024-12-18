@@ -5,6 +5,7 @@
 #include "CBufferPool.h"
 #include "DescriptorTable.h"
 #include "GraphicSetting.h"
+#include "Material.h"
 #include "RenderTargetGroup.h"
 #include "RootSignature.h"
 #include "Texture.h"
@@ -154,6 +155,15 @@ namespace dxe
 
         GraphicManager();
         virtual ~GraphicManager();
+
+
+    public:
+
+        void CustomInit();
+
+        std::shared_ptr<Texture> _shadowMap;
+        std::shared_ptr<Material> _shadowMaterial;
+
 
     public:
 #ifdef TRACY_ENABLE

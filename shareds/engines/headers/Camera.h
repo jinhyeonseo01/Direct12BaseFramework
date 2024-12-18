@@ -13,7 +13,7 @@ namespace dxe
 
     public:
         float _near = 0.03f;
-        float _far = 1000.0f;
+        float _far = 100.0f;
         float _fovy = 60.0f;
         float _aspect = 1;
 

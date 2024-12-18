@@ -19,7 +19,7 @@ struct VS_IN
 
 struct VS_OUT
 {
-    float4 pos : SV_Position;
+    float4 pos : SV_POSITION;
     float2 uv : TEXCOORD0;
 };
 

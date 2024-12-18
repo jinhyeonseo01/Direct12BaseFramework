@@ -510,5 +510,8 @@
     <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\draw_ray.hlsl">
       <Filter>Engine\shader</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\shareds\engines\shared_resources\shaders\directional_shadow.hlsl">
+      <Filter>Engine\shader</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@ namespace dxe
     enum class RTGType
     {
         SwapChain,
-        ShadowCascade,
+        Shadow,
         Defferd,
         Transparent,
         PostProcessing,
@@ -34,8 +34,8 @@ namespace dxe
         D3D12_VIEWPORT _viewport;
         D3D12_RECT _rect;
 
-        void Create(std::vector<std::shared_ptr<RenderTexture>>& renderTargetList,
-                    std::shared_ptr<RenderTexture> depthStencil);
+        void Create(const std::vector<std::shared_ptr<RenderTexture>>& renderTargetList,
+                    const std::shared_ptr<RenderTexture>& depthStencil);
 
         void ResourceBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
         void OMSetRenderTargets(uint32_t count, uint32_t offset);

@@ -2,6 +2,7 @@
 #include <GraphicManager.h>
 
 #include "CBuffer_struct.h"
+#include "ResourceManager.h"
 
 
 void GraphicManager::CreateTextureHandlePool()
@@ -65,7 +66,49 @@ void GraphicManager::RefreshRenderTargetGroups()
 
         this->_renderTargetGroupTable.emplace(static_cast<int>(RTGType::SwapChain), rtGroup);
     }
+
+    {
+        std::shared_ptr<RenderTexture> shadowMapa = RenderTexture::Create(DXGI_FORMAT_R32_FLOAT,//DXGI_FORMAT_D32_FLOAT
+            1024, 1024,
+            CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+            D3D12_HEAP_FLAG_NONE, ResourceState::RTV);
+
+        std::shared_ptr<RenderTexture> shadowMap = RenderTexture::Create(DXGI_FORMAT_D32_FLOAT,//DXGI_FORMAT_D32_FLOAT
+            1024, 1024,
+            CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+            D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
+
+        _shadowMap = Texture::Link(shadowMapa,
+            DXGI_FORMAT_R32_FLOAT, ResourceState::RT_SRV);
+
+        auto rtGroup = std::make_shared<RenderTargetGroup>();
+        rtGroup->Create({ shadowMapa }, shadowMap);
+        rtGroup->SetViewport(1024, 1024);
+
+        this->_renderTargetGroupTable.emplace(static_cast<int>(RTGType::Shadow), rtGroup);
+    }
 }
+
+void GraphicManager::CustomInit()
+{
+    ShaderInfo info;
+    auto shadowShader = ResourceManager::main->LoadShader(L"directional_shadow.hlsl", L"directional_shadow", 
+        GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList);
+    info.cullingType = CullingType::NONE;
+    info._zWrite = true;
+    info._zTest = true;
+    info._stencilTest = false;
+    //info._depthOnly = true;
+    info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    shadowShader->SetMSAADisable();
+    shadowShader->SetDepthStencil(GetRenderTargetGroup(RTGType::Shadow)->_depthStencilTexture);
+    shadowShader->SetShaderSetting(info);
+    shadowShader->Init();
+
+    _shadowMaterial = std::make_shared<Material>();
+    _shadowMaterial->shader = shadowShader;
+}
+
 
 void GraphicManager::RenderPrepare()
 {
@@ -87,9 +130,6 @@ void GraphicManager::RenderPrepare()
         auto currentSwapChainRT = _swapChainRT[_swapChainIndex];
         ResourceBarrier(currentSwapChainRT->GetResource(), D3D12_RESOURCE_STATE_PRESENT,
                         D3D12_RESOURCE_STATE_RENDER_TARGET);
-        GetRenderTargetGroup(RTGType::SwapChain)->OMSetRenderTargets(1, _swapChainIndex);
-        GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(_swapChainIndex);
-        GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
 
 
         // 여기서 미리 Camera와 환경세팅의 ConstantBuffer를 등록함.

@@ -43,22 +43,38 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         desc.SampleDesc.Quality = 0;
         desc.MipLevels = 1;
         desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+        desc.Format = format;
         resourceStates = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-
+        //DXGI_FORMAT_R32_TYPELESS
+        //desc.Format = DXGI_FORMAT_R32_TYPELESS;
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
-        pOptimizedClearValue = &optimizedClearValue;
+    }
+    if ((static_cast<unsigned int>(state) & static_cast<unsigned int>(ResourceState::DSV_SRV)) != 0)
+    {
+        desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+        desc.SampleDesc.Count = 1;
+        desc.SampleDesc.Quality = 0;
+        desc.MipLevels = 1;
+        desc.Format = DXGI_FORMAT_R32_TYPELESS;
+        desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+        resourceStates = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+        //DXGI_FORMAT_R32_TYPELESS
+        //desc.Format = DXGI_FORMAT_R32_TYPELESS;
+        optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
     }
     else if ((static_cast<unsigned int>(state) & static_cast<unsigned int>(ResourceState::RTV)) != 0)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-        desc.SampleDesc.Count = GraphicManager::main->setting.GetMSAACount();
-        desc.SampleDesc.Quality = GraphicManager::main->setting.GetMSAAQuality();
+        //desc.SampleDesc.Count = GraphicManager::main->setting.GetMSAACount();
+        //desc.SampleDesc.Quality = GraphicManager::main->setting.GetMSAAQuality();
+        desc.SampleDesc.Count = 1;
+        desc.SampleDesc.Quality = 0;
         desc.MipLevels = 1;
+        desc.Format = format;
         desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-        resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        resourceStates = D3D12_RESOURCE_STATE_RENDER_TARGET;// D3D12_RESOURCE_STATE_RENDER_TARGET| DXGI_FORMAT_R32_FLOAT
         float arrFloat[4] = {clearColor.x, clearColor.y, clearColor.z, clearColor.w};
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, arrFloat);
-        pOptimizedClearValue = &optimizedClearValue;
     }
 
     DXAssert(device->CreateCommittedResource(
@@ -66,7 +82,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         heapFlags,
         &desc,
         resourceStates,
-        pOptimizedClearValue,
+        &optimizedClearValue,//&optimizedClearValue
         ComPtrIDAddr(texture->_resource))); //ComPtrIDAddr(texture->_resource)
     texture->CreateFromResource(texture->_resource, format);
     return texture;
@@ -91,7 +107,8 @@ void RenderTexture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FOR
     _resource = resource;
     SetFormat(format);
 
-    if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV)) != 0)
+    if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV)) != 0 ||
+        (static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV_SRV)) != 0)
     {
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
         heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;

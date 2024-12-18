@@ -77,6 +77,7 @@ void GraphicManager::Init()
     Refresh();
 
     InitShader();
+    CustomInit();
 
     _isRelease = false;
 }
@@ -520,7 +521,6 @@ void GraphicManager::InitShader()
         VertexProp::bone_weights,
     };
     vertexInfo_Full = Vertex::GetSelectorInfo(props);
-
     _noneTexture = Texture::Load(L"resources/textures/noneTexture.png", false);
 }
 
@@ -646,3 +646,4 @@ GraphicManager::~GraphicManager()
 {
     Release();
 }
+

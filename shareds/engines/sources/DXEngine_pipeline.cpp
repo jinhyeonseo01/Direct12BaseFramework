@@ -184,14 +184,43 @@ void Engine::RenderingPipeline()
         //GetAcrive -> prevRendering
     }
 
+
     std::sort(scene->_renderPacketList.begin(), scene->_renderPacketList.end());
+
+
+    GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(),
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->OMSetRenderTargets();
+    GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->ClearRenderTargetViews();
+    GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->ClearDepthStencilView();
+
 
     for (auto& renderPacket : scene->_renderPacketList)
     {
-        //Debug::log << (int)renderPacket.material.lock()->shader.lock()->_info._renderQueueType << " " << renderPacket.material.lock()->shader.lock().get() << "\n";
+        if (renderPacket.GetRenderQueueType() == RenderQueueType::Opaque)
+        {
+            RenderPacket packet = renderPacket;
+            packet.material = GraphicManager::main->_shadowMaterial;
+            packet.renderFunction(packet);
+        }
+    }
 
-        renderPacket.renderFunction(renderPacket);
-    }//Debug::log << "\n\n";
+
+    GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(),
+        D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+
+    GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain)->OMSetRenderTargets(1, GraphicManager::main->_swapChainIndex);
+    GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(GraphicManager::main->_swapChainIndex);
+    GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
+
+    for (auto& renderPacket : scene->_renderPacketList)
+    {
+        RenderPacket packet = renderPacket;
+        packet.material.lock()->SetData("_ShadowMap", GraphicManager::main->_shadowMap);
+        packet.renderFunction(packet);
+    }
+
     
     for (int i = gameObjects.size() - 1; i >= 0; --i)
     {

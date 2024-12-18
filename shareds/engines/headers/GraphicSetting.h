@@ -6,11 +6,13 @@ namespace dxe
 {
     enum class ResourceState : uint32_t
     {
-        RTV = 0x01,
-        DSV = 0x02,
-        SRV = 0x03,
-        RT_SRV = 0x04,
-        UAV = 0x05
+        None = 0,
+        RTV = 1 << 0,
+        DSV = 1 << 1,
+        SRV = 1 << 2,
+        RT_SRV = 1 << 3,
+        UAV = 1 << 4,
+        DSV_SRV = 1 << 5,
     };
 
 

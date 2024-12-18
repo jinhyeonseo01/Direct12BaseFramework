@@ -278,48 +278,7 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FORMAT fo
 {
     auto device = GraphicManager::main->_device;
     _resource = resource;
-    /*
-    if (_state == ResourceState::DSV)
-    {
-        D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-        heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-        heapDesc.NumDescriptors = 1;
-        heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-        heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptors(&heapDesc, ComPtrIDAddr(_DSV_DescHeap)));
 
-        D3D12_CPU_DESCRIPTOR_HANDLE DSVHandle = _DSV_DescHeap->GetCPUDescriptorHandleForHeapStart();
-
-        D3D12_DEPTH_STENCIL_VIEW_DESC DSVDesc = {};
-        DSVDesc.Format = format;
-        DSVDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-        DSVDesc.Flags = D3D12_DSV_FLAG_NONE;
-        DSVDesc.Texture2D.MipSlice = 0;
-
-        _DSV_ViewDesc = DSVDesc;
-
-        device->CreateDepthStencilView(_resource.Get(), &DSVDesc, DSVHandle);
-    }
-
-    else if (_state == ResourceState::RTV)
-    {
-        D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-        heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-        heapDesc.NumDescriptors = 1;
-        heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-        heapDesc.NodeMask = 0;
-        DXAssert(device->CreateDescriptors(&heapDesc, ComPtrIDAddr(_RTV_DescHeap)));
-
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapBegin = _RTV_DescHeap->GetCPUDescriptorHandleForHeapStart();
-        D3D12_RENDER_TARGET_VIEW_DESC RTVDesc{};
-        RTVDesc.Format = format; // 리소스의 포맷
-        RTVDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 텍스처 2D
-        RTVDesc.Texture2D.MipSlice = 0; // MIP 레벨 0
-        RTVDesc.Texture2D.PlaneSlice = 0; // 평면 슬라이스 0
-
-        _RTV_ViewDesc = RTVDesc;
-        device->CreateRenderTargetView(_resource.Get(), nullptr, rtvHeapBegin);
-    }*/
     if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::SRV)) != 0 ||
         (static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::RT_SRV)) != 0)
     {

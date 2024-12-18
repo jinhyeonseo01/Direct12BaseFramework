@@ -141,10 +141,18 @@ void Shader::Init()
 
     _pipelineDesc.InputLayout = {_inputElementDesc.data(), static_cast<unsigned int>(_inputElementDesc.size())};
 
-    _pipelineDesc.RTVFormats[0] = GraphicManager::main->setting.screenFormat;
-    _pipelineDesc.NumRenderTargets = std::max(std::min(8, renderTargetCount), 1);
-    for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
-        _pipelineDesc.RTVFormats[i] = RTVForamts[i];
+    if (!_info._depthOnly)
+    {
+        _pipelineDesc.RTVFormats[0] = GraphicManager::main->setting.screenFormat;
+        _pipelineDesc.NumRenderTargets = std::max(std::min(8, renderTargetCount), 1);
+        for (int i = 0; i < _pipelineDesc.NumRenderTargets; i++)
+            _pipelineDesc.RTVFormats[i] = RTVForamts[i];
+    }
+    else
+    {
+        _pipelineDesc.NumRenderTargets = 0;
+        _pipelineDesc.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+    }
 
     _pipelineDesc.PrimitiveTopologyType = _info._primitiveType;
     _pipelineDesc.SampleMask = UINT_MAX;
@@ -155,7 +163,7 @@ void Shader::Init()
         _pipelineDesc.SampleDesc.Count = 1;
         _pipelineDesc.SampleDesc.Quality = 0;
     }
-    _pipelineDesc.DSVFormat = GraphicManager::main->setting.depthStencilFormat;
+    _pipelineDesc.DSVFormat = DSVFormat;
     //_pipelineDesc.
 
     //Material, Animation, Object, Camera, Scene
@@ -371,6 +379,10 @@ void Shader::SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts)
     renderTargetCount = rts.size();
     for (int i = 0; i < std::min(8, renderTargetCount); i++)
         RTVForamts[i] = rts[i]->format;
+}
+void Shader::SetDepthStencil(std::shared_ptr<RenderTexture> dst)
+{
+    DSVFormat = dst->format;
 }
 
 void Shader::SetMSAADisable()

@@ -32,7 +32,8 @@ namespace dxe
         Opaque = 2000,
         AlphaTest = 2500,
         Transparent = 3000,
-        Geometry = 1500
+        Geometry = 1500,
+        UI = 4000
     };
 
     enum class FrontWise
@@ -140,6 +141,7 @@ namespace dxe
     public:
         bool _zTest = true;
         bool _zWrite = true;
+        bool _depthOnly = false;
         CompOper _zComp = CompOper::LEqual;
         bool _stencilTest = false;
         int _stencilIndex = 0;
@@ -188,11 +190,13 @@ namespace dxe
 
         int renderTargetCount = 1;
         DXGI_FORMAT RTVForamts[8]{DXGI_FORMAT_R8G8B8A8_UNORM};
+        DXGI_FORMAT DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
         void Init();
         bool IsNotInit();
         void SetShaderSetting(const ShaderInfo& info);
         void SetRenderTargets(std::vector<std::shared_ptr<RenderTexture>> rts);
+        void SetDepthStencil(std::shared_ptr<RenderTexture> dst);
         void SetMSAADisable();
         void SetPipeline(ComPtr<ID3D12GraphicsCommandList4> command);
 

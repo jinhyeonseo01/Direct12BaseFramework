@@ -12,51 +12,55 @@ RenderTargetGroup::~RenderTargetGroup()
 {
 }
 
-void RenderTargetGroup::Create(std::vector<std::shared_ptr<RenderTexture>>& renderTargetList,
-                               std::shared_ptr<RenderTexture> depthStencil)
+void RenderTargetGroup::Create(const std::vector<std::shared_ptr<RenderTexture>>& renderTargetList,
+                               const std::shared_ptr<RenderTexture>& depthStencil)
 {
     _renderTargetTextureList.clear();
     _renderTargetTextureList = renderTargetList;
     _depthStencilTexture = depthStencil;
 
-    D3D12_DESCRIPTOR_HEAP_DESC _renderTaretGroupHeapDesc = {};
-    _renderTaretGroupHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    int totalNumDesc = 0;
-    for (auto& texture : _renderTargetTextureList)
-        totalNumDesc += texture->GetRTV()->GetDesc().NumDescriptors;
-    _renderTaretGroupHeapDesc.NumDescriptors = totalNumDesc;
-    _renderTaretGroupHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    _renderTaretGroupHeapDesc.NodeMask = 0;
-
-    auto device = GraphicManager::main->_device;
-
-    device->CreateDescriptorHeap(&_renderTaretGroupHeapDesc, ComPtrIDAddr(_renderTargetHeap));
-    auto RTOffsetPtr = _renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
-    auto size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-    for (int i = 0; i < _renderTargetTextureList.size(); i++)
+    if (_renderTargetTextureList.size() != 0)
     {
-        int currentCount = _renderTargetTextureList[i]->GetRTV()->GetDesc().NumDescriptors;
-        for (int j = 0; j < currentCount; j++)
+        D3D12_DESCRIPTOR_HEAP_DESC _renderTaretGroupHeapDesc = {};
+        _renderTaretGroupHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+        int totalNumDesc = 0;
+        for (auto& texture : _renderTargetTextureList)
+            totalNumDesc += texture->GetRTV()->GetDesc().NumDescriptors;
+        _renderTaretGroupHeapDesc.NumDescriptors = totalNumDesc;
+        _renderTaretGroupHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        _renderTaretGroupHeapDesc.NodeMask = 0;
+
+        auto device = GraphicManager::main->_device;
+
+        device->CreateDescriptorHeap(&_renderTaretGroupHeapDesc, ComPtrIDAddr(_renderTargetHeap));
+        auto RTOffsetPtr = _renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
+        auto size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+        for (int i = 0; i < _renderTargetTextureList.size(); i++)
         {
-            CD3DX12_CPU_DESCRIPTOR_HANDLE currentHandle(RTOffsetPtr, i + j, size);
-            unsigned int tempDstSize = 1;
-            unsigned int tempSrcSize = 1;
-            device->CreateRenderTargetView(_renderTargetTextureList[i]->GetResource().Get(),
-                                           &_renderTargetTextureList[i]->_RTV_ViewDesc, currentHandle);
-            auto currentSrcHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(
-                _renderTargetTextureList[i]->GetRTV()->GetCPUDescriptorHandleForHeapStart(), j, size);
-            device->CopyDescriptors(
-                1, &currentHandle, &tempDstSize,
-                1, &currentSrcHandle
-                , &tempSrcSize,
-                D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+            int currentCount = _renderTargetTextureList[i]->GetRTV()->GetDesc().NumDescriptors;
+            for (int j = 0; j < currentCount; j++)
+            {
+                CD3DX12_CPU_DESCRIPTOR_HANDLE currentHandle(RTOffsetPtr, i + j, size);
+                unsigned int tempDstSize = 1;
+                unsigned int tempSrcSize = 1;
+                device->CreateRenderTargetView(_renderTargetTextureList[i]->GetResource().Get(),
+                    &_renderTargetTextureList[i]->_RTV_ViewDesc, currentHandle);
+                auto currentSrcHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(
+                    _renderTargetTextureList[i]->GetRTV()->GetCPUDescriptorHandleForHeapStart(), j, size);
+                device->CopyDescriptors(
+                    1, &currentHandle, &tempDstSize,
+                    1, &currentSrcHandle
+                    , &tempSrcSize,
+                    D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 
-            _renderTargetHandleToTextureIndexList.push_back(i);
-            _renderTargetHandleList.push_back(currentHandle);
+                _renderTargetHandleToTextureIndexList.push_back(i);
+                _renderTargetHandleList.push_back(currentHandle);
+            }
         }
     }
+
     _depthStencilHandle = _depthStencilTexture->GetDSV()->GetCPUDescriptorHandleForHeapStart();
 }
 
@@ -77,6 +81,10 @@ void RenderTargetGroup::OMSetRenderTargets(uint32_t count, uint32_t offset)
         commandList->OMSetRenderTargets(count, &_renderTargetHandleList[offset],
                                         _renderTargetHandleList.size() <= 1 ? FALSE : TRUE/*다중*/, &_depthStencilHandle);
     }
+    else
+    {
+        commandList->OMSetRenderTargets(0, nullptr, FALSE, &_depthStencilHandle);
+    }
 }
 
 void RenderTargetGroup::OMSetRenderTargets()
@@ -89,6 +97,10 @@ void RenderTargetGroup::OMSetRenderTargets()
 
         commandList->OMSetRenderTargets(_renderTargetHandleList.size(), &_renderTargetHandleList[0],
                                         _renderTargetHandleList.size() != 0/*다중*/, &_depthStencilHandle);
+    }
+    else
+    {
+        commandList->OMSetRenderTargets(0, nullptr, FALSE, &_depthStencilHandle);
     }
 }
 

@@ -87,6 +87,18 @@ void RenderPacket::Init(std::weak_ptr<Material> material,
     this->renderFunction = renderFunction;
 }
 
+RenderQueueType RenderPacket::GetRenderQueueType()
+{
+    auto materialPtr = material.lock();
+    if (materialPtr != nullptr && materialPtr->shader.lock() != nullptr)
+    {
+        auto shader = materialPtr->shader.lock();
+        auto mesh = this->mesh.lock();
+        return shader->_info._renderQueueType;
+    }
+    return RenderQueueType::Opaque;
+}
+
 int RenderPacket::Order()
 {
     return sortingOrder;

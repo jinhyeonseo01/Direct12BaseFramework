@@ -55,6 +55,7 @@ void Study3Scene::Init()
     shader->SetMSAADisable();
     ShaderInfo info;
     info.cullingType = CullingType::NONE;
+    info._renderQueueType = RenderQueueType::Sky;
     info._zWrite = false;
     info._zTest = false;
     shader->SetShaderSetting(info);
@@ -63,6 +64,7 @@ void Study3Scene::Init()
     shader = ResourceManager::main->LoadShader(L"ui.hlsl", L"ui", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
     info.cullingType = CullingType::NONE;
+    info._renderQueueType = RenderQueueType::UI;
     info._zWrite = true;
     info._zTest = true;
     shader->SetShaderSetting(info);
@@ -197,7 +199,8 @@ void Study3Scene::Init()
     menuMR->AddMesh({ quad });
     auto menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
-    menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"menu"));
+    //menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"menu"));
+    menuMaterial->SetData("_BaseMap", GraphicManager::main->_shadowMap);
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, 0, 0.1105);
     menu->transform->localScale = Vector3(2, 2, 2);
