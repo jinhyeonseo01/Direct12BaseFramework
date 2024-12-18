@@ -72,5 +72,6 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
+    //return float4(input.pos.z,0,0,0);
     return float4(input.pos.z,0,0,0);
 }

@@ -10,6 +10,7 @@
 #include "MeshSample.h"
 #include "Scene.h"
 #include "CBuffer_struct.h"
+#include "Light.h"
 #include "../Project_Module/CameraController.h"
 #include "../Project_Study1/PlayerComponent.h"
 #include "../Project_Study2/TreeRenderer.h"
@@ -43,17 +44,20 @@ void Study3Scene::Init()
 
     std::shared_ptr<Shader> shader;
 
+
+    ShaderInfo info;
+
     shader = ResourceManager::main->LoadShader(L"forward.hlsl", L"forward", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
     shader->Init();
 
     shader = ResourceManager::main->LoadShader(L"terrain.hlsl", L"terrain", rtg->_renderTargetTextureList);
+    info._renderQueueType = RenderQueueType::Opaque;
     shader->SetMSAADisable();
     shader->Init();
 
     shader = ResourceManager::main->LoadShader(L"skyBox.hlsl", L"sky", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
-    ShaderInfo info;
     info.cullingType = CullingType::NONE;
     info._renderQueueType = RenderQueueType::Sky;
     info._zWrite = false;
@@ -140,8 +144,8 @@ void Study3Scene::Init()
 
     auto cameraObj = CreateGameObject(L"Camera");
     cameraObj->transform->worldPosition(Vector3(0, 0.5, -10.0f));
-    cameraObj->AddComponent<Camera>();
-    //cameraObj->AddComponent<CameraController>();
+    auto cameraComponent = cameraObj->AddComponent<Camera>();
+    cameraComponent->SetMainCamera();
     camera = cameraObj;
 
 
@@ -365,6 +369,18 @@ void Study3Scene::Init()
     for (auto b : boxMRs)
         player->boxs.push_back(b);
 
+
+
+
+
+
+    auto light = CreateGameObject(L"Light");
+    auto lightComponent = light->AddComponent<Light>();
+    light->transform->localPosition = Vector3(0, 100, 0);
+    light->transform->localRotation = Quaternion::CreateFromYawPitchRoll(Vector3(65, 45, 0) * D2R);
+    lightComponent->orthoSize = Vector2(300, 300);
+    lightComponent->_far = 500;
+    
 
 
     skyMaterial = std::make_shared<Material>();

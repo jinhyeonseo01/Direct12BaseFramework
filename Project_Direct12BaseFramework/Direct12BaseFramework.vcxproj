@@ -235,6 +235,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\input_module.h" />
     <ClInclude Include="..\shareds\engines\headers\IType.h" />
     <ClInclude Include="..\shareds\engines\headers\JsonLoader.h" />
+    <ClInclude Include="..\shareds\engines\headers\Light.h" />
     <ClInclude Include="..\shareds\engines\headers\Material.h" />
     <ClInclude Include="..\shareds\engines\headers\Mesh.h" />
     <ClInclude Include="..\shareds\engines\headers\MeshLinker.h" />
@@ -260,7 +261,6 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClInclude Include="..\shareds\engines\headers\Texture.h" />
     <ClInclude Include="..\shareds\engines\headers\Transform.h" />
     <ClInclude Include="..\shareds\engines\headers\Vertex.h" />
-    <ClInclude Include="DXEngine_Setting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\plugins\includes\imgui\backends\imgui_impl_dx12.cpp">
@@ -322,6 +322,7 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
     <ClCompile Include="..\shareds\engines\sources\input_module.cpp" />
     <ClCompile Include="..\shareds\engines\sources\IType.cpp" />
     <ClCompile Include="..\shareds\engines\sources\JsonLoader.cpp" />
+    <ClCompile Include="..\shareds\engines\sources\Light.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Material.cpp" />
     <ClCompile Include="..\shareds\engines\sources\Mesh.cpp" />
     <ClCompile Include="..\shareds\engines\sources\MeshLinker.cpp" />
@@ -458,6 +459,12 @@ xcopy /Y /E "$(SolutionDir)shareds\engines\shared_resources\*" "$(OutDir)resourc
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)resources\shaders</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)resources\shaders</DestinationFolders>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\shareds\engines\shared_resources\shaders\header_light.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

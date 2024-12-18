@@ -1,4 +1,5 @@
 #include "header_camera.hlsl"
+#include "header_light.hlsl"
 
 cbuffer ObjectParams : register(b4)
 {
@@ -23,7 +24,6 @@ cbuffer DefaultMaterialParams : register(b1)
 };
 
 Texture2D _BaseMap : register(t1);
-Texture2D _ShadowMap : register(t2);
 
 SamplerState sampler_normal : register(s0);
 SamplerState sampler_no_mip : register(s1);
@@ -49,6 +49,8 @@ struct VS_OUT
     float3 worldNormal : NORMAL;
     float4 color : COLOR;
     float2 uv : TEXCOORD0;
+
+    float4 shadowUV : POSITION2;
 };
 
 
@@ -91,6 +93,12 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
     output.color = input.color;
     //output.pos = mul(viewPos, ProjectionMatrix);
     output.pos = mul(output.worldPos, VPMatrix);
+    output.shadowUV = mul(output.worldPos, mul(lightVPMatrix, matrix(
+    0.5,0,0,0,
+    0,-0.5,0,0,
+    0,0,1,0,
+    0.5,0.5,0,1
+    )));
     return output;
 }
 
@@ -99,8 +107,11 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 AlbedoColor = _BaseMap.Sample(sampler_aniso_16, input.uv);
-    float4 AlbedoColor2 = _ShadowMap.Sample(sampler_aniso_16, input.uv);
-    return float4(AlbedoColor2.r,0,0,1);
+    float shadowAtt = (_MainLightShadowMap.Sample(sampler_no_mip, input.shadowUV.xy / input.shadowUV.ww).r + 0.0005f - input.shadowUV.z)<0?0:1;
+
+    shadowAtt = shadowAtt * saturate(dot(-lightDirection, input.worldNormal))*0.7+0.3;
+
+    return AlbedoColor * shadowAtt;
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;

@@ -40,5 +40,6 @@ VS_OUT VS_Main(VS_IN input) //, uint vertexID : SV_VertexID
 float4 PS_Main(VS_OUT input) : SV_Target
 {
     float4 AlbedoColor = _BaseMap.Sample(sampler_no_mip, input.uv);
-    return pow(AlbedoColor, 1.0 / 2.2);
+    return pow(AlbedoColor, 1.0);
+    //return pow(AlbedoColor, 1.0 / 2.2);
 }

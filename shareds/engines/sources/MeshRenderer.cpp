@@ -47,8 +47,6 @@ void MeshRenderer::Start()
 void MeshRenderer::Update()
 {
     RendererComponent::Update();
-    Draw::Ray(Ray(gameObject.lock()->transform->worldPosition(), Vector3(1, 1, 1)),
-        Color(1,0,0,1));
 }
 
 void MeshRenderer::LateUpdate()
@@ -137,6 +135,7 @@ void MeshRenderer::Rendering(const RenderPacket& renderPack)
 
 
     GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "CameraParams");
+    GraphicManager::main->GetCurrentDescriptorTable()->RecycleCurrentGroupHandle(material->shader.lock(), "MainLightParams");
 
     auto currentGroupStartGPuHandle = table->GetCurrentGroupGPUHandle(0);
     list->SetGraphicsRootDescriptorTable(1, currentGroupStartGPuHandle);

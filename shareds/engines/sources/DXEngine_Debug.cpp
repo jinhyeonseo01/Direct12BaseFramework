@@ -196,6 +196,10 @@ void Engine::DebugPipeline()
     {
         SceneManager::Reset();
     }
+    if (engine->input->GetKeyUp(KeyCode::F10))
+    {
+        _debugGizmo = !_debugGizmo;
+    }
 
     if (_debugFrameTimerActive)
     {

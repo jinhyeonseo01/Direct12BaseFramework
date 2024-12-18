@@ -8,12 +8,25 @@
 #include "Transform.h"
 
 
+std::weak_ptr<Camera> Camera::mainCamera = std::weak_ptr<Camera>();
+
+
 Camera::Camera()
 {
 }
 
 Camera::~Camera()
 {
+}
+
+std::shared_ptr<Camera> Camera::GetMainCamera()
+{
+    return mainCamera.lock();
+}
+
+void Camera::SetMainCamera()
+{
+    mainCamera = std::dynamic_pointer_cast<Camera>(shared_from_this());
 }
 
 Vector3 Camera::GetScreenToWorldPosition(Vector2 mousePosition)
@@ -32,7 +45,6 @@ CameraParams Camera::GetCameraParams()
         GraphicManager::main->setting.screenInfo.height,
         GraphicManager::main->setting.screenInfo.x,
         GraphicManager::main->setting.screenInfo.y);
-    cameraInfo.cameraFrustumData = Vector4(_fovy * D2R, cameraInfo.cameraScreenData.x / cameraInfo.cameraScreenData.y, _near, _far);
 
     auto worldPosition = gameObject.lock()->transform->worldPosition();
     auto worldDirection = gameObject.lock()->transform->forward();
@@ -42,11 +54,25 @@ CameraParams Camera::GetCameraParams()
     cameraInfo.cameraDirection = Vector4(worldDirection.x, worldDirection.y, worldDirection.z, 0);
     cameraInfo.cameraUp = Vector4(worldUp.x, worldUp.y, worldUp.z, 0);
 
-    cameraInfo.ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(
-        cameraInfo.cameraFrustumData.x, 
-        cameraInfo.cameraFrustumData.y,
-        cameraInfo.cameraFrustumData.z, 
-        cameraInfo.cameraFrustumData.w);
+    if (projectionMode == CameraProjectionMode::Perspective)
+    {
+        cameraInfo.cameraFrustumData = Vector4(_fovy * D2R, cameraInfo.cameraScreenData.x / cameraInfo.cameraScreenData.y, _near, _far);
+        cameraInfo.ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(
+            cameraInfo.cameraFrustumData.x,
+            cameraInfo.cameraFrustumData.y,
+            cameraInfo.cameraFrustumData.z,
+            cameraInfo.cameraFrustumData.w);
+    }
+    if (projectionMode == CameraProjectionMode::Orthographic)
+    {
+        cameraInfo.cameraFrustumData = Vector4(orthoSize.x, orthoSize.y, _near, _far);
+        cameraInfo.ProjectionMatrix = Matrix::CreateOrthographic(
+            cameraInfo.cameraFrustumData.x,
+            cameraInfo.cameraFrustumData.y,
+            cameraInfo.cameraFrustumData.z,
+            cameraInfo.cameraFrustumData.w);
+    }
+
 
     cameraInfo.ViewMatrix = XMMatrixLookToLH(
         cameraInfo.cameraPos,
@@ -80,6 +106,9 @@ void Camera::ReRef()
 void Camera::Init()
 {
     Component::Init();
+
+    if (mainCamera.lock() == nullptr)
+        mainCamera = std::dynamic_pointer_cast<Camera>(shared_from_this());
 }
 
 void Camera::Start()

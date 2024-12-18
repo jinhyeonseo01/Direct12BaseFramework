@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DXEngine.h"
+#include "Light.h"
 #include "RendererComponent.h"
 #include "Scene.h"
 #include "SceneManager.h"
@@ -195,6 +196,20 @@ void Engine::RenderingPipeline()
     GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->ClearRenderTargetViews();
     GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->ClearDepthStencilView();
 
+    auto lightComponent = Light::GetMainShadowLight();
+    auto cameraData = lightComponent->GetCameraParams();
+
+    auto cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
+        "CameraParams", sizeof(CameraParams), 3);
+    cameraBuffer.SetData(&cameraData, sizeof(CameraParams));
+    GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
+
+    auto lightBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
+        "MainLightParams", sizeof(MainLightParams), 3);
+    lightBuffer.SetData(&cameraData, sizeof(MainLightParams));
+    GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("MainLightParams", lightBuffer.handle);
+
+
 
     for (auto& renderPacket : scene->_renderPacketList)
     {
@@ -205,6 +220,14 @@ void Engine::RenderingPipeline()
             packet.renderFunction(packet);
         }
     }
+
+    auto cameraComponent = Camera::GetMainCamera();//Light::GetMainShadowLight()
+    cameraData = cameraComponent->GetCameraParams();
+    cameraBuffer = GraphicManager::main->GetCurrentCBufferPool()->PopCBuffer(
+        "CameraParams", sizeof(CameraParams), 3);
+    cameraBuffer.SetData(&cameraData, sizeof(CameraParams));
+    GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("CameraParams", cameraBuffer.handle);
+
 
 
     GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(),
@@ -217,7 +240,7 @@ void Engine::RenderingPipeline()
     for (auto& renderPacket : scene->_renderPacketList)
     {
         RenderPacket packet = renderPacket;
-        packet.material.lock()->SetData("_ShadowMap", GraphicManager::main->_shadowMap);
+        packet.material.lock()->SetData("_MainLightShadowMap", GraphicManager::main->_shadowMap);
         packet.renderFunction(packet);
     }
 

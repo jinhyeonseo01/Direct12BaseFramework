@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Transform.h"
 
+#include "Draw.h"
+#include "DXEngine.h"
 #include "GameObject.h"
 
 void* Transform::Clone()
@@ -426,6 +428,14 @@ void Transform::OnComponentDestroy()
 void Transform::BeforeRendering()
 {
     Component::BeforeRendering();
+    if (Engine::GetMainEngine()->_debugGizmo)
+    {
+        auto offset = worldPosition();
+        Draw::Line(offset, offset + forward(), Color(0, 0, 1, 1));
+        Draw::Line(offset, offset + up(), Color(0, 1, 0, 1));
+        Draw::Line(offset, offset + right(), Color(1, 0, 0, 1));
+    }
+
 }
 
 void Transform::Rendering(const RenderPacket& renderPack)

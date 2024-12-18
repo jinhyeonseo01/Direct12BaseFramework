@@ -5,17 +5,32 @@
 
 namespace dxe
 {
+    enum class CameraProjectionMode
+    {
+        Perspective,
+        Orthographic
+    };
     class Camera : public Component
     {
+    protected:
+        static std::weak_ptr<Camera> mainCamera;
     public:
         Camera();
-        ~Camera() override;
+        virtual ~Camera() override;
+
+        static std::shared_ptr<Camera> GetMainCamera();
+        void SetMainCamera();
 
     public:
+        CameraProjectionMode projectionMode = CameraProjectionMode::Perspective;
+
+        Vector2 orthoSize = Vector2(1,1);
+
         float _near = 0.03f;
-        float _far = 100.0f;
+        float _far = 1000.0f;
         float _fovy = 60.0f;
         float _aspect = 1;
+
 
         CameraParams cameraInfo;
 

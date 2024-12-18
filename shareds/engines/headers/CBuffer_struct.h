@@ -33,6 +33,22 @@ struct alignas(16) CameraParams
     Vector4 cameraScreenData; // x:screenx, y:screeny, z:offsetx, w:offsety
 };
 
+struct alignas(16) MainLightParams
+{
+    Matrix ViewMatrix = Matrix::Identity;
+    Matrix ProjectionMatrix = Matrix::Identity;
+    Matrix VPMatrix;
+    Matrix InvertViewInvertMatrix;
+    Matrix InvertProjectionMatrix;
+    Matrix InvertVPMatrix;
+
+    Vector4 lightPos; // worldPos
+    Vector4 lightDirection; // worldDirction
+    Vector4 lightUp;
+    Vector4 lightFrustumData; // fovy aspect near far
+    Vector4 lightScreenData; // screenx, screeny, offsetx, offsety
+};
+
 struct alignas(16) DrawRay
 {
     Vector4 linePos[2];

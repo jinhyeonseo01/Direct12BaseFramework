@@ -135,6 +135,9 @@ namespace dxe
 
         double _debugFrameTimer = 0;
         bool _debugFrameTimerActive = false;
+    public:
+        bool _debugGizmo = true;
+
     };
 
     class DebugCommand

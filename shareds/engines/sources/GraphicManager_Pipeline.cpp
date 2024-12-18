@@ -68,22 +68,23 @@ void GraphicManager::RefreshRenderTargetGroups()
     }
 
     {
-        std::shared_ptr<RenderTexture> shadowMapa = RenderTexture::Create(DXGI_FORMAT_R32_FLOAT,//DXGI_FORMAT_D32_FLOAT
-            1024, 1024,
+        float shadowSize = 2048;
+        std::shared_ptr<RenderTexture> shadowMapRenderTexture = RenderTexture::Create(DXGI_FORMAT_R32_FLOAT,//DXGI_FORMAT_D32_FLOAT
+            shadowSize, shadowSize,
             CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
             D3D12_HEAP_FLAG_NONE, ResourceState::RTV);
 
-        std::shared_ptr<RenderTexture> shadowMap = RenderTexture::Create(DXGI_FORMAT_D32_FLOAT,//DXGI_FORMAT_D32_FLOAT
-            1024, 1024,
+        std::shared_ptr<RenderTexture> shadowDepthTexture = RenderTexture::Create(DXGI_FORMAT_D32_FLOAT,//DXGI_FORMAT_D32_FLOAT
+            shadowSize, shadowSize,
             CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
             D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
 
-        _shadowMap = Texture::Link(shadowMapa,
+        _shadowMap = Texture::Link(shadowMapRenderTexture,
             DXGI_FORMAT_R32_FLOAT, ResourceState::RT_SRV);
 
         auto rtGroup = std::make_shared<RenderTargetGroup>();
-        rtGroup->Create({ shadowMapa }, shadowMap);
-        rtGroup->SetViewport(1024, 1024);
+        rtGroup->Create({ shadowMapRenderTexture }, shadowDepthTexture);
+        rtGroup->SetViewport(shadowSize, shadowSize);
 
         this->_renderTargetGroupTable.emplace(static_cast<int>(RTGType::Shadow), rtGroup);
     }
