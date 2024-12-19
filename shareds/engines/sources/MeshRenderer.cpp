@@ -91,6 +91,17 @@ void MeshRenderer::BeforeRendering()
         RenderPacket pack( mesh,material, std::bind(&MeshRenderer::Rendering, this, std::placeholders::_1),
             Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
+
+
+        material = std::make_shared<Material>();
+        material->shader = ResourceManager::main->GetShader(L"wireframe");
+        material->SetData("_Color",
+            Vector4(0, 0, 0, 1));
+
+        RenderPacket pack2(mesh, material, std::bind(&MeshRenderer::Rendering, this, std::placeholders::_1),
+            Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
+        pack2.SetLifeExtension(material);
+        SceneManager::GetCurrentScene()->AddRenderPacket(pack2);
     }
 }
 
@@ -111,7 +122,10 @@ void MeshRenderer::Rendering(const RenderPacket& renderPack)
 
     material->shader.lock()->SetPipeline(list);
 
-    list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    if (isTess)
+        list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    else
+        list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     list->IASetVertexBuffers(0, 1, &mesh->_vertexBufferView);
     list->IASetIndexBuffer(&mesh->_indexBufferView);
 

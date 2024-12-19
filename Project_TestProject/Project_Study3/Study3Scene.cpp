@@ -56,6 +56,32 @@ void Study3Scene::Init()
     shader->SetMSAADisable();
     shader->Init();
 
+    shader = ResourceManager::main->LoadShader(L"default_forward.hlsl", L"wireframe", rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::WIREFRAME;
+    info._zWrite = true;
+    info._zTest = true;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
+    shader = ResourceManager::main->LoadShaderEx(L"forward_tess.hlsl", L"forward_tess", {
+    {"VS_Main", "vs"},
+    {"PS_Main", "ps"},
+    { "HS_Main", "hs" },
+    { "DS_Main", "ds" }
+    },
+    GraphicManager::main->setting.shaderMacro, rtg->_renderTargetTextureList);
+    ShaderInfo info2;
+    info2._renderQueueType = RenderQueueType::Opaque;
+    info2.cullingType = CullingType::WIREFRAME;
+    info2._zWrite = true;
+    info2._zTest = true;
+    info2._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+    shader->SetShaderSetting(info2);
+    shader->SetMSAADisable();
+    shader->Init();
+
+
     shader = ResourceManager::main->LoadShader(L"skyBox.hlsl", L"sky", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
     info.cullingType = CullingType::NONE;
@@ -73,6 +99,7 @@ void Study3Scene::Init()
     info._zTest = true;
     shader->SetShaderSetting(info);
     shader->Init();
+
 
 
     shader = ResourceManager::main->LoadShaderEx(L"tree.hlsl", L"tree", {
@@ -122,6 +149,7 @@ void Study3Scene::Init()
     info._primitiveType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     shader->SetShaderSetting(info);
     shader->Init();
+
 
 
     shader = ResourceManager::main->LoadShader(L"default_forward.hlsl", L"wireframe", rtg->_renderTargetTextureList);
@@ -203,8 +231,8 @@ void Study3Scene::Init()
     menuMR->AddMesh({ quad });
     auto menuMaterial = std::make_shared<Material>();
     menuMaterial->shader = ResourceManager::main->GetShader(L"ui");
-    //menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"menu"));
-    menuMaterial->SetData("_BaseMap", GraphicManager::main->_shadowMap);
+    menuMaterial->SetData("_BaseMap", ResourceManager::main->GetTexture(L"menu"));
+    //menuMaterial->SetData("_BaseMap", GraphicManager::main->_shadowMap);
     menuMR->AddMateiral({ menuMaterial });
     menu->transform->localPosition = Vector3(0, 0, 0.1105);
     menu->transform->localScale = Vector3(2, 2, 2);
@@ -381,6 +409,26 @@ void Study3Scene::Init()
     lightComponent->orthoSize = Vector2(300, 300);
     lightComponent->_far = 500;
     
+
+    rootObject = CreateGameObject(L"BoxTess");
+    auto box = CreateGameObjects(boxModel);
+    box->transform->localScale = Vector3::One;
+    box->SetParent(rootObject);
+    meshRenderers.clear();
+    box->GetComponentsWithChilds(meshRenderers);
+    for (int i = 0; i < meshRenderers.size(); i++)
+    {
+        std::shared_ptr<Material> material = std::make_shared<Material>();
+        material->shader = ResourceManager::main->GetShader(L"forward_tess");
+        material->SetData("color", Vector4(0, 0, 1, 1));
+        material->SetData("_BaseMap", ResourceManager::main->GetTexture(L"noneTexture"));
+        meshRenderers[i]->AddMateiral({ material });
+        meshRenderers[i]->isTess = true;
+        boxMRs.push_back(meshRenderers[i]);
+    }
+    rootObject->transform->worldPosition(Vector3(0,-20,0));
+    rootObject->transform->localScale = Vector3(30, 1, 30);
+
 
 
     skyMaterial = std::make_shared<Material>();

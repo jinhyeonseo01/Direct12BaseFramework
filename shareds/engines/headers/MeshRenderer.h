@@ -24,5 +24,7 @@ namespace dxe
         void BeforeRendering() override;
         void Rendering(const RenderPacket& renderPack) override;
         void AfterRendering() override;
+
+        bool isTess = false;
     };
 }
