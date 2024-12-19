@@ -79,11 +79,11 @@ void GraphicManager::RefreshRenderTargetGroups()
             CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
             D3D12_HEAP_FLAG_NONE, ResourceState::DSV);
 
-        _shadowMap = Texture::Link(shadowMapRenderTexture,
+        _shadowMap = Texture::Link(shadowDepthTexture, //shadowDepthTexture shadowMapRenderTexture
             DXGI_FORMAT_R32_FLOAT, ResourceState::RT_SRV);
 
         auto rtGroup = std::make_shared<RenderTargetGroup>();
-        rtGroup->Create({ shadowMapRenderTexture }, shadowDepthTexture);
+        rtGroup->Create({ shadowMapRenderTexture }, shadowDepthTexture);//shadowMapRenderTexture
         rtGroup->SetViewport(shadowSize, shadowSize);
 
         this->_renderTargetGroupTable.emplace(static_cast<int>(RTGType::Shadow), rtGroup);

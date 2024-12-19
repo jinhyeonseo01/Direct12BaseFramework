@@ -524,5 +524,11 @@
     <FxCompile Include="..\shareds\engines\shared_resources\shaders\forward_tess.hlsl">
       <Filter>Engine\shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Project_TestProject\resources\shaders\forward2.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Project_TestProject\resources\shaders\mirror.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

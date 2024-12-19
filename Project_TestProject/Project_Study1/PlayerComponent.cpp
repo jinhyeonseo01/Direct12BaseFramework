@@ -233,6 +233,21 @@ void PlayerComponent::Update()
         }
 
 
+
+
+        if (Input::main->GetKeyDown(KeyCode::M) && isPlayer)
+        {
+            gameObject.lock()->transform->worldPosition(Vector3(5000, 20, 0));
+        }
+        if (Input::main->GetKeyDown(KeyCode::Q) && isPlayer)
+        {
+            gameObject.lock()->transform->worldPosition(Vector3(0, 0, 0));
+        }
+
+
+
+
+
         //애니메이션 로직
         topRoter.lock()->transform->localRotation = topRoter.lock()->transform->localRotation *
             Quaternion::CreateFromYawPitchRoll(-Engine::GetMainEngine()->deltaTime * 30, 0, 0);

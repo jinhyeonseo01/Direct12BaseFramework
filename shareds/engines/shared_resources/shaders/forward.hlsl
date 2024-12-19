@@ -111,7 +111,7 @@ float4 PS_Main(VS_OUT input) : SV_Target
 
     shadowAtt = shadowAtt * saturate(dot(-lightDirection, input.worldNormal))*0.7+0.3;
 
-    return AlbedoColor * shadowAtt;
+    return AlbedoColor * shadowAtt * _color;
     //float4 AlbedoColor = test.Sample(sampler_aniso_4, input.uv);
     //float4 AlbedoColor = test.Sample(sampler_no_mip, input.uv);
     //return input.color;

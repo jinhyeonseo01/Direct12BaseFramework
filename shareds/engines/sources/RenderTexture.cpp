@@ -49,7 +49,7 @@ std::shared_ptr<RenderTexture> RenderTexture::Create(DXGI_FORMAT format, uint32_
         //desc.Format = DXGI_FORMAT_R32_TYPELESS;
         optimizedClearValue = CD3DX12_CLEAR_VALUE(format, 1.0f, 0);
     }
-    if ((static_cast<unsigned int>(state) & static_cast<unsigned int>(ResourceState::DSV_SRV)) != 0)
+    if ((static_cast<unsigned int>(state) & static_cast<unsigned int>(ResourceState::DSV_R32TL)) != 0)
     {
         desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
         desc.SampleDesc.Count = 1;
@@ -108,7 +108,7 @@ void RenderTexture::CreateFromResource(ComPtr<ID3D12Resource> resource, DXGI_FOR
     SetFormat(format);
 
     if ((static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV)) != 0 ||
-        (static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV_SRV)) != 0)
+        (static_cast<unsigned int>(_state) & static_cast<unsigned int>(ResourceState::DSV_R32TL)) != 0)
     {
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
         heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;

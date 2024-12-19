@@ -84,12 +84,35 @@ void Study3Scene::Init()
 
     shader = ResourceManager::main->LoadShader(L"skyBox.hlsl", L"sky", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
+    info = ShaderInfo();
     info.cullingType = CullingType::NONE;
     info._renderQueueType = RenderQueueType::Sky;
     info._zWrite = false;
     info._zTest = false;
     shader->SetShaderSetting(info);
     shader->Init();
+
+    shader = ResourceManager::main->LoadShader(L"mirror.hlsl", L"mirror", rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info = ShaderInfo();
+    info.cullingType = CullingType::NONE;
+    info._renderQueueType = RenderQueueType::Geometry;
+    info._zWrite = true;
+    info._zTest = true;
+    info._stencilIndex = 1;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
+    shader = ResourceManager::main->LoadShader(L"forward2.hlsl", L"forward2", rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info.cullingType = CullingType::FRONT;
+    info._renderQueueType = RenderQueueType::Opaque;
+    info._zWrite = true;
+    info._zTest = true;
+    info._stencilIndex = 1;
+    shader->SetShaderSetting(info);
+    shader->Init();
+
 
     shader = ResourceManager::main->LoadShader(L"ui.hlsl", L"ui", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
@@ -215,7 +238,7 @@ void Study3Scene::Init()
     auto waterModel = ResourceManager::main->GetModel(L"Plane");
     waterModel->CreateGraphicResource();
 
-    JsonLoader::Load(L"resources/scenes/Study2 Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
+    JsonLoader::Load(L"resources/scenes/Study3 Scene.json", std::dynamic_pointer_cast<Scene>(shared_from_this()));
 
     auto apacheModel = ResourceManager::main->GetModel(L"Apache");
 
@@ -435,6 +458,9 @@ void Study3Scene::Init()
     skyMaterial->shader = ResourceManager::main->GetShader(L"sky");
     skyMaterial->SetData("skyTexture", ResourceManager::main->GetTexture(L"skyTexture"));
 
+
+
+    auto mirror = Find(L"Mirror");
 }
 
 void Study3Scene::Update()
@@ -466,8 +492,7 @@ void Study3Scene::RenderingBegin()
     auto pool = GraphicManager::main->GetCurrentCBufferPool();
     auto table = GraphicManager::main->GetCurrentDescriptorTable();
 
-    if (true) // SkyBox
-    {
+    RenderPacket pack(nullptr, skyMaterial, [=](const RenderPacket& packet) {
 
         float skyBoxSize = 50;
 
@@ -508,7 +533,8 @@ void Study3Scene::RenderingBegin()
         //list->DrawInstanced(mesh->vertexCount, 1, 0, 0);
 
         table->SetNextGroupHandle();
-    }
+    });
+    SceneManager::GetCurrentScene()->AddRenderPacket(pack);
 }
 
 void Study3Scene::RenderingEnd()

@@ -3,6 +3,7 @@
 
 #include "CBuffer_struct.h"
 #include "Draw.h"
+#include "DXEngine.h"
 #include "GameObject.h"
 #include "GraphicManager.h"
 #include "Mesh.h"
@@ -93,15 +94,18 @@ void MeshRenderer::BeforeRendering()
         SceneManager::GetCurrentScene()->AddRenderPacket(pack);
 
 
-        material = std::make_shared<Material>();
-        material->shader = ResourceManager::main->GetShader(L"wireframe");
-        material->SetData("_Color",
-            Vector4(0, 0, 0, 1));
+        if (Engine::GetMainEngine()->_debugGizmo)
+        {
+            material = std::make_shared<Material>();
+            material->shader = ResourceManager::main->GetShader(L"wireframe");
+            material->SetData("_Color",
+                Vector4(0, 0, 0, 1));
 
-        RenderPacket pack2(mesh, material, std::bind(&MeshRenderer::Rendering, this, std::placeholders::_1),
-            Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
-        pack2.SetLifeExtension(material);
-        SceneManager::GetCurrentScene()->AddRenderPacket(pack2);
+            RenderPacket pack2(mesh, material, std::bind(&MeshRenderer::Rendering, this, std::placeholders::_1),
+                Vector3::Distance(Vector3(SceneManager::GetCurrentScene()->_cameraParams.cameraPos), gameObject.lock()->transform->worldPosition()));
+            pack2.SetLifeExtension(material);
+            SceneManager::GetCurrentScene()->AddRenderPacket(pack2);
+        }
     }
 }
 

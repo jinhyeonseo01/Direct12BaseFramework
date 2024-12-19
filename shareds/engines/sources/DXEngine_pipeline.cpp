@@ -189,8 +189,8 @@ void Engine::RenderingPipeline()
     std::sort(scene->_renderPacketList.begin(), scene->_renderPacketList.end());
 
 
-    GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(),
-        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(), //renderTargetTextureList[0]
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);//RENDER_TARGET
 
     GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->OMSetRenderTargets();
     GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->ClearRenderTargetViews();
@@ -230,7 +230,7 @@ void Engine::RenderingPipeline()
 
 
 
-    GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(),
+    GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(),//renderTargetTextureList[0]
         D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 
     GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain)->OMSetRenderTargets(1, GraphicManager::main->_swapChainIndex);

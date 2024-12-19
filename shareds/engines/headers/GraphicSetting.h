@@ -12,7 +12,7 @@ namespace dxe
         SRV = 1 << 2,
         RT_SRV = 1 << 3,
         UAV = 1 << 4,
-        DSV_SRV = 1 << 5,
+        DSV_R32TL = 1 << 5,
     };
 
 

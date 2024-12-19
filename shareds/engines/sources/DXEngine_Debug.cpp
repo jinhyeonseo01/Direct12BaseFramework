@@ -196,7 +196,7 @@ void Engine::DebugPipeline()
     {
         SceneManager::Reset();
     }
-    if (engine->input->GetKeyUp(KeyCode::F10))
+    if (engine->input->GetKeyUp(KeyCode::F9))
     {
         _debugGizmo = !_debugGizmo;
     }
