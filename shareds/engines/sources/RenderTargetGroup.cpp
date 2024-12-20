@@ -124,7 +124,7 @@ void RenderTargetGroup::ClearRenderTargetViews()
 void RenderTargetGroup::ClearDepthStencilView()
 {
     auto commandList = GraphicManager::main->GetCurrentCommandList();
-    commandList->ClearDepthStencilView(_depthStencilHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+    commandList->ClearDepthStencilView(_depthStencilHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 }
 
 void RenderTargetGroup::SetViewport(int width, int height)

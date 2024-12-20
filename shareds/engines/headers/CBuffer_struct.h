@@ -54,3 +54,8 @@ struct alignas(16) DrawRay
     Vector4 linePos[2];
     Vector4 color;
 };
+
+struct alignas(16) ReflectParams
+{
+    Matrix ReflectMatrix = Matrix::Identity;
+};

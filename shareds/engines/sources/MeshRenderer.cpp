@@ -133,6 +133,20 @@ void MeshRenderer::Rendering(const RenderPacket& renderPack)
     list->IASetVertexBuffers(0, 1, &mesh->_vertexBufferView);
     list->IASetIndexBuffer(&mesh->_indexBufferView);
 
+    if (material->shader.lock()->_info._stencilTest)
+    {
+        list->OMSetStencilRef(material->shader.lock()->_info._stencilIndex);
+
+        Matrix refM = Matrix::Identity;
+        material->GetData("ref", refM);
+        auto cbuffer = pool->PopCBuffer("ReflectParams", sizeof(DefaultMaterialParams), 1024);
+        ReflectParams data;
+        data.ReflectMatrix = refM;
+        cbuffer.SetData(&data, sizeof(data));
+        table->SetCurrentGroupHandle(material->shader.lock(), "ReflectParams", cbuffer.handle);
+    }
+    else
+        list->OMSetStencilRef(0);
 
     auto cbuffer = pool->PopCBuffer("TransformParams");
     TransformParams data;

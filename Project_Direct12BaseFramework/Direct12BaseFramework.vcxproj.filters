@@ -530,5 +530,8 @@
     <FxCompile Include="..\Project_TestProject\resources\shaders\mirror.hlsl">
       <Filter>Engine\shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Project_TestProject\resources\shaders\mirror2.hlsl">
+      <Filter>Engine\shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

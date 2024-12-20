@@ -189,6 +189,9 @@ void Engine::RenderingPipeline()
     std::sort(scene->_renderPacketList.begin(), scene->_renderPacketList.end());
 
 
+
+    auto list = GraphicManager::main->GetCurrentCommandList();
+
     GraphicManager::main->ResourceBarrier(GraphicManager::main->GetRenderTargetGroup(RTGType::Shadow)->_renderTargetTextureList[0]->GetResource(), //renderTargetTextureList[0]
         D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);//RENDER_TARGET
 
@@ -210,7 +213,7 @@ void Engine::RenderingPipeline()
     GraphicManager::main->GetCurrentDescriptorTable()->AddRecycleHandle("MainLightParams", lightBuffer.handle);
 
 
-
+    list->OMSetStencilRef(0);
     for (auto& renderPacket : scene->_renderPacketList)
     {
         if (renderPacket.GetRenderQueueType() == RenderQueueType::Opaque)
@@ -237,11 +240,58 @@ void Engine::RenderingPipeline()
     GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain)->ClearRenderTargetView(GraphicManager::main->_swapChainIndex);
     GraphicManager::main->GetRenderTargetGroup(RTGType::SwapChain)->ClearDepthStencilView();
 
+
+    //list->OMSetStencilRef(0);
     for (auto& renderPacket : scene->_renderPacketList)
     {
-        RenderPacket packet = renderPacket;
-        packet.material.lock()->SetData("_MainLightShadowMap", GraphicManager::main->_shadowMap);
-        packet.renderFunction(packet);
+        if (renderPacket.GetRenderQueueType() != RenderQueueType::Geometry)
+        {
+            RenderPacket packet = renderPacket;
+            packet.material.lock()->SetData("_MainLightShadowMap", GraphicManager::main->_shadowMap);
+            packet.renderFunction(packet);
+        }
+    }
+
+
+    for (auto& renderPacket : scene->_renderPacketList)
+    {
+        if (renderPacket.GetRenderQueueType() == RenderQueueType::Geometry)
+        {
+            RenderPacket packet = renderPacket;
+            packet.renderFunction(packet);
+
+            auto prevShader = packet.material.lock()->shader.lock();
+            auto newShader = ResourceManager::main->GetShader(L"mirror2");
+            packet.material.lock()->SetShader(newShader);
+            packet.renderFunction(packet);
+            packet.material.lock()->SetShader(prevShader);
+        }
+    }
+
+    {
+        auto mirror = scene->Find(L"Mirror");
+
+        ReflectParams ref;
+        auto p = Plane(mirror->transform->worldPosition(), mirror->transform->forward());
+        ref.ReflectMatrix = Matrix::CreateReflection(p);
+        
+        for (auto& renderPacket : scene->_renderPacketList)
+        {
+            if (renderPacket.GetRenderQueueType() == RenderQueueType::Opaque)
+            {
+                RenderPacket packet = renderPacket;
+                if (packet.material.lock()->shader.lock() == ResourceManager::main->GetShader(L"forward"))
+                {
+                    auto prevShader = packet.material.lock()->shader.lock();
+                    auto newShader = ResourceManager::main->GetShader(L"forward2");
+                    packet.material.lock()->SetData("ref", ref.ReflectMatrix);
+                    packet.material.lock()->SetShader(newShader);
+                    //packet.material.lock()->SetData("_MainLightShadowMap", GraphicManager::main->_noneTexture);
+                    packet.renderFunction(packet);
+                    packet.material.lock()->SetShader(prevShader);
+                }
+            }
+        }
     }
 
     

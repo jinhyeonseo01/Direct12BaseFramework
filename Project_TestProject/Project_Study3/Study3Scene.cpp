@@ -100,22 +100,53 @@ void Study3Scene::Init()
     info._zWrite = true;
     info._zTest = true;
     info._stencilIndex = 1;
+    info._stencilTest = true;
+    info._stencilComp = CompOper::Always;
+    info._stencilFailOp = D3D12_STENCIL_OP_KEEP;
+    info._stencilPassOp = D3D12_STENCIL_OP_REPLACE;
+    info._stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+
+    shader->SetShaderSetting(info);
+    shader->Init();
+
+
+    shader = ResourceManager::main->LoadShader(L"mirror2.hlsl", L"mirror2", rtg->_renderTargetTextureList);
+    shader->SetMSAADisable();
+    info = ShaderInfo();
+    info.cullingType = CullingType::NONE;
+    info._renderQueueType = RenderQueueType::Geometry;
+    info._zWrite = true;
+    info._zTest = true;
+    info._zComp = CompOper::Always;
+    info._stencilIndex = 1;
+    info._stencilTest = true;
+    info._stencilComp = CompOper::Equal;
+    info._stencilFailOp = D3D12_STENCIL_OP_KEEP;
+    info._stencilPassOp = D3D12_STENCIL_OP_KEEP;
+    info._stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
     shader->SetShaderSetting(info);
     shader->Init();
 
     shader = ResourceManager::main->LoadShader(L"forward2.hlsl", L"forward2", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
+    info = ShaderInfo();
     info.cullingType = CullingType::FRONT;
     info._renderQueueType = RenderQueueType::Opaque;
     info._zWrite = true;
     info._zTest = true;
     info._stencilIndex = 1;
+    info._stencilTest = true;
+    info._stencilComp = CompOper::Equal;
+    info._stencilFailOp = D3D12_STENCIL_OP_KEEP;
+    info._stencilPassOp = D3D12_STENCIL_OP_KEEP;
+    info._stencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
     shader->SetShaderSetting(info);
     shader->Init();
 
 
     shader = ResourceManager::main->LoadShader(L"ui.hlsl", L"ui", rtg->_renderTargetTextureList);
     shader->SetMSAADisable();
+    info = ShaderInfo();
     info.cullingType = CullingType::NONE;
     info._renderQueueType = RenderQueueType::UI;
     info._zWrite = true;
